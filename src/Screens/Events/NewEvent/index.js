@@ -10,7 +10,7 @@ import { Calendar, CalendarList, Agenda } from 'react-native-calendars';
 import moment from 'moment';
 import DatePicker from '../../../Components/DatePicker';
 
-const NewBlog = () => {
+const NewEvent = () => {
   const [ state, setState ] = React.useState({
     image: {},
     tags: [],
@@ -130,12 +130,12 @@ const NewBlog = () => {
           </View>
         ) : null}
 
-        {/* <DatePicker setDate={(date) => setState({ ...state, date })} title="Select event start date" />
-        <DatePicker setDate={(date) => setState({ ...state, date })} title="Select event end date" /> */}
+        <DatePicker setDate={(date) => setState({ ...state, date })} title="Select event start date" />
+        <DatePicker setDate={(date) => setState({ ...state, date })} title="Select event end date" />
 
         {/* free */}
         <View style={{ margin: RFValue(10) }}>
-          {/* <Text style={{ fontSize: RFValue(14) }}>Select event pricing below</Text>
+          <Text style={{ fontSize: RFValue(14) }}>Select event pricing below</Text>
           <View style={{ flexDirection: 'row', marginVertical: RFValue(10) }}>
             <Pressable
               onPress={() => setState({ ...state, free: 'free' })}
@@ -176,9 +176,9 @@ const NewBlog = () => {
                 PAID
               </Text>
             </Pressable>
-          </View> */}
+          </View>
 
-          {/* {state.free === 'paid' && <Text style={{ fontSize: RFValue(14) }}>Enter event price below:</Text>}
+          {state.free === 'paid' && <Text style={{ fontSize: RFValue(14) }}>Enter event price below:</Text>}
           {state.free === 'paid' ? (
             <TextInput
               keyboardType="number-pad"
@@ -193,7 +193,7 @@ const NewBlog = () => {
               value={state.price}
               onChangeText={(price) => setState({ ...state, price })}
             />
-          ) : null} */}
+          ) : null}
 
           <Text style={{ fontSize: RFValue(14) }}>Enter event description:</Text>
           <TextInput
@@ -218,7 +218,7 @@ const NewBlog = () => {
               justifyContent: 'center'
             }}
           >
-            <Text style={{ color: '#fff', fontSize: RFValue(16), fontWeight: 'bold' }}>Create blog</Text>
+            <Text style={{ color: '#fff', fontSize: RFValue(16), fontWeight: 'bold' }}>Create event</Text>
           </Pressable>
         </View>
         {/* end freee */}
@@ -227,4 +227,4 @@ const NewBlog = () => {
   );
 };
 
-export default NewBlog;
+export default NewEvent;

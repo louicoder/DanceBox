@@ -19,7 +19,9 @@ import {
   Events,
   EventProfile,
   Blogs,
-  NewBlog
+  NewBlog,
+  NewEvent,
+  BlogProfile
 } from '../Screens';
 import IconComp from '../Components/Icon';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -60,12 +62,22 @@ const BlogScreens = () => (
       component={NewBlog}
       options={{ header: (props) => <Header title="New Blog Post" iconName="pencil" {...props} /> }}
     />
+    <EventStack.Screen
+      name="BlogProfile"
+      component={BlogProfile}
+      options={{ header: (props) => <Header {...props} title="Blog details" /> }}
+    />
   </BlogStack.Navigator>
 );
 
 const EventScreens = () => (
   <EventStack.Navigator screenOptions={{ header: (props) => null }} headerMode="screen">
     <EventStack.Screen name="Events" component={Events} />
+    <EventStack.Screen
+      name="NewEvent"
+      component={NewEvent}
+      options={{ header: (props) => <Header title="Create New Event" {...props} /> }}
+    />
     <EventStack.Screen
       name="EventProfile"
       component={EventProfile}
@@ -75,55 +87,55 @@ const EventScreens = () => (
 );
 
 const BottomStackScreens = ({}) => (
-  <SafeAreaView style={{ flex: 1 }}>
-    <BottomStack.Navigator
-      shifting={false}
-      screenOptions={{}}
-      activeColor="#ffffff"
-      inactiveColor="#ffffff70"
-      initialRouteName="Events"
-      barStyle={{ backgroundColor: '#000' }}
-      // labeled={false}
-    >
-      <BottomStack.Screen
-        name="Home"
-        component={HomeScreens}
-        options={() => ({
-          tabBarIcon: ({ color }) => <Ionicons color={color} name="home-outline" size={RFValue(20)} />
-        })}
-      />
+  // <SafeAreaView style={{ flex: 1 }}>
+  <BottomStack.Navigator
+    shifting={false}
+    screenOptions={{}}
+    activeColor="#ffffff"
+    inactiveColor="#ffffff70"
+    initialRouteName="Events"
+    barStyle={{ backgroundColor: '#000' }}
+    // labeled={false}
+  >
+    <BottomStack.Screen
+      name="Home"
+      component={HomeScreens}
+      options={() => ({
+        tabBarIcon: ({ color }) => <Ionicons color={color} name="home-outline" size={RFValue(20)} />
+      })}
+    />
 
-      <BottomStack.Screen
-        name="Events"
-        component={EventScreens}
-        options={() => ({
-          tabBarIcon: ({ color }) => <Ionicons color={color} name="calendar-outline" size={RFValue(20)} />
-        })}
-      />
-      <BottomStack.Screen
-        name="Search"
-        component={Search}
-        options={() => ({
-          tabBarIcon: ({ color }) => <Ionicons color={color} name="search-outline" size={RFValue(20)} />
-        })}
-      />
-      <BottomStack.Screen
-        name="BlogScreens"
-        component={BlogScreens}
-        options={() => ({
-          tabBarLabel: 'Blogs',
-          tabBarIcon: ({ color }) => <Ionicons color={color} name="chatbox-ellipses-outline" size={RFValue(20)} />
-        })}
-      />
-      <BottomStack.Screen
-        name="Account"
-        component={Account}
-        options={() => ({
-          tabBarIcon: ({ color }) => <FeatherIcons color={color} name="user" size={RFValue(20)} />
-        })}
-      />
-    </BottomStack.Navigator>
-  </SafeAreaView>
+    <BottomStack.Screen
+      name="Events"
+      component={EventScreens}
+      options={() => ({
+        tabBarIcon: ({ color }) => <Ionicons color={color} name="calendar-outline" size={RFValue(20)} />
+      })}
+    />
+    <BottomStack.Screen
+      name="Search"
+      component={Search}
+      options={() => ({
+        tabBarIcon: ({ color }) => <Ionicons color={color} name="search-outline" size={RFValue(20)} />
+      })}
+    />
+    <BottomStack.Screen
+      name="BlogScreens"
+      component={BlogScreens}
+      options={() => ({
+        tabBarLabel: 'Blogs',
+        tabBarIcon: ({ color }) => <Ionicons color={color} name="chatbox-ellipses-outline" size={RFValue(20)} />
+      })}
+    />
+    <BottomStack.Screen
+      name="Account"
+      component={Account}
+      options={() => ({
+        tabBarIcon: ({ color }) => <FeatherIcons color={color} name="user" size={RFValue(20)} />
+      })}
+    />
+  </BottomStack.Navigator>
+  // </SafeAreaView>
 );
 
 const AllStacks = () => (
