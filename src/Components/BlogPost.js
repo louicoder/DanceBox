@@ -12,10 +12,10 @@ const BlogPost = ({ item, index, last, first, navigation }) => {
         width: '100%',
         paddingHorizontal: RFValue(10),
         marginBottom: RFValue(10),
-        borderBottomWidth: !last && 1,
+        borderBottomWidth: !last ? 1 : 0,
         borderBottomColor: '#eee',
         paddingBottom: RFValue(10),
-        marginTop: first && RFValue(20)
+        marginTop: first ? RFValue(20) : 0
       }}
     >
       <View

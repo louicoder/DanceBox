@@ -9,7 +9,7 @@ const Search = () => {
   const [ state, setState ] = React.useState({ filterShowing: false, category: '', subCategory: '' });
   return (
     <SafeAreaView>
-      <View style={{ paddingHorizontal: RFValue(10), flexDirection: 'row' }}>
+      <View style={{ paddingHorizontal: RFValue(10), flexDirection: 'row', marginTop: RFValue(10) }}>
         <Input
           placeholder="Enter your search"
           extStyles={{ width: '85%', marginBottom: 0 }}

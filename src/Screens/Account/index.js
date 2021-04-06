@@ -77,12 +77,15 @@ const Account = ({ navigation: { navigate } }) => {
           ))}
         </View>
 
-        <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+        <View
+          style={{ flexDirection: 'row', justifyContent: 'space-evenly', height: RFValue(40), alignSelf: 'center' }}
+        >
           <Ripple
             style={{
               borderWidth: 1,
-              padding: RFValue(12),
+              paddingHorizontal: RFValue(10),
               borderRadius: RFValue(3),
+              // width: RFValue(40),
               borderColor: '#aaa',
               justifyContent: 'center',
               alignItems: 'center'
@@ -94,28 +97,43 @@ const Account = ({ navigation: { navigate } }) => {
           <Ripple
             style={{
               borderWidth: 1,
-              padding: RFValue(12),
               marginHorizontal: RFValue(10),
+              width: RFValue(40),
               borderRadius: RFValue(3),
               justifyContent: 'center',
               alignItems: 'center',
               borderColor: '#aaa'
             }}
           >
-            <Icon name="instagram" size={RFValue(25)} />
+            <Icon name="instagram" size={RFValue(30)} />
           </Ripple>
 
           <Ripple
             style={{
               borderWidth: 1,
-              padding: RFValue(12),
+              marginHorizontal: RFValue(10),
+              marginLeft: RFValue(0),
+              width: RFValue(40),
+              borderRadius: RFValue(3),
+              justifyContent: 'center',
+              alignItems: 'center',
+              borderColor: '#aaa'
+            }}
+          >
+            <Icon name="facebook" size={RFValue(30)} />
+          </Ripple>
+
+          <Ripple
+            style={{
+              borderWidth: 1,
+              width: RFValue(40),
               borderRadius: RFValue(3),
               borderColor: '#aaa',
               justifyContent: 'center',
               alignItems: 'center'
             }}
           >
-            <Icon name="facebook" size={RFValue(25)} />
+            <Icon name="youtube" size={RFValue(30)} />
           </Ripple>
         </View>
         <Ripple
