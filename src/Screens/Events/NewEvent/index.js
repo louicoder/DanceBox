@@ -6,9 +6,10 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { HelperFunctions } from '../../../Utils';
 import { PERMISSIONS } from 'react-native-permissions';
 // import DateTimePicker from '@react-native-community/datetimepicker';
-import { Calendar, CalendarList, Agenda } from 'react-native-calendars';
+import { CalendarList, Agenda } from 'react-native-calendars';
 import moment from 'moment';
 import DatePicker from '../../../Components/DatePicker';
+import Calendar from '../../../Components/Calendar';
 
 const NewEvent = () => {
   const [ state, setState ] = React.useState({
@@ -17,7 +18,8 @@ const NewEvent = () => {
     tagsVisible: true,
     date: moment(new Date()).format('YYYY-MM-DD'),
     free: 'free',
-    datePickerVisible: false
+    datePickerVisible: false,
+    isVisible: true
     // dateTime: new Date().toString()
   });
 
@@ -46,6 +48,12 @@ const NewEvent = () => {
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
+        <Calendar
+          isVisible={state.isVisible}
+          date={state.date}
+          setDate={(date) => setState({ ...state, date })}
+          closeModal={() => setState({ ...state, isVisible: false })}
+        />
         {state.image.uri ? (
           <ImageBackground source={{ uri: state.image.uri }} style={{ width: '100%', height: RFValue(300) }}>
             <View

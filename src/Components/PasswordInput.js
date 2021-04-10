@@ -14,10 +14,17 @@ const PasswordInput = ({
   filled = true,
   switchPasswordVisibility
 }) => {
+  const El = React.useRef(null);
+
+  React.useEffect(() => {
+    El.current.setNativeProps({ style: { fontFamily: 'Roboto-Regular' } });
+  }, []);
+
   return (
     <View style={{ marginBottom: RFValue(10), width: '100%', flexDirection: 'row' }}>
       {title ? <Text style={{ marginBottom: RFValue(5), fontSize: RFValue(12) }}>{title}</Text> : null}
       <TextInput
+        ref={El}
         style={{
           height: RFValue(50),
           borderWidth: filled ? 0 : RFValue(1),

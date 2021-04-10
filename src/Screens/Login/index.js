@@ -9,9 +9,11 @@ import Input from '../../Components/Input';
 import Option from '../../Components/Option';
 import PasswordInput from '../../Components/PasswordInput';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
-import LOGO from '../../assets/mildmayLogo.png';
+import LOGO from '../../assets/dancebox-logo.jpg';
+import { useSelector } from 'react-redux';
 
 const Login = ({ navigation }) => {
+  const statex = useSelector((state) => state.Account);
   const [ state, setState ] = React.useState({
     loginMode: true,
     activeLogin: null,
@@ -20,7 +22,7 @@ const Login = ({ navigation }) => {
     passwordVisible: true
   });
   React.useEffect(() => {
-    // console.log('navigation props', navigation);
+    console.log('State props', statex);
   });
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: 'transparent', backgroundColor: 'transparent' }}>
@@ -47,7 +49,7 @@ const Login = ({ navigation }) => {
             style={{ width: RFValue(100), height: RFValue(100), marginBottom: RFValue(20), alignSelf: 'center' }}
           />
 
-          <Text style={{ fontSize: RFValue(25), marginBottom: RFValue(15) }}>
+          <Text style={{ fontSize: RFValue(25), marginBottom: RFValue(15), textAlign: 'center' }}>
             {state.loginMode ? 'Login to your' : 'Create new'} account
           </Text>
 
@@ -89,7 +91,7 @@ const Login = ({ navigation }) => {
           />
 
           <Button
-            extStyles={{ backgroundColor: 'green' }}
+            extStyles={{ backgroundColor: '#010203' }}
             title={state.loginMode ? 'Login' : 'Create account'}
             onPress={() => navigation.navigate('Interests')}
             textStyles={{ color: '#fff' }}
@@ -98,7 +100,7 @@ const Login = ({ navigation }) => {
             onPress={() => setState({ ...state, loginMode: !state.loginMode })}
             style={{ paddingVertical: RFValue(10), borderTopWidth: 1, borderTopColor: '#ddd', marginTop: RFValue(15) }}
           >
-            <Text style={{ fontSize: RFValue(14), fontWeight: '600', color: 'green', alignSelf: 'center' }}>
+            <Text style={{ fontSize: RFValue(14), fontWeight: '600', color: '#010203', alignSelf: 'center' }}>
               {state.loginMode ? 'Create new account ?' : 'Login to your account'}
             </Text>
           </TouchableWithoutFeedback>

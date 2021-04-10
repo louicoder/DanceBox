@@ -8,7 +8,7 @@ import { HelperFunctions } from '../../Utils';
 const TopCategories = ({}) => {
   return (
     <View style={{ width: '100%', paddingHorizontal: RFValue(10) }}>
-      <HeaderLinker title="Top Categories" />
+      <HeaderLinker title="Top Categories" all={false} />
       <View
         style={{
           width: '100%',
@@ -27,7 +27,7 @@ const TopCategories = ({}) => {
             title: 'Classes',
             image: 'https://businessfocus.co.ug/wp-content/uploads/2018/02/Inside-the-hospital-1.jpg'
           },
-          { title: 'Clinics', image: 'https://www.iah.co.ug/pics/IAH/emerncy.jpg' },
+          { title: 'Trending', image: 'https://www.iah.co.ug/pics/IAH/emerncy.jpg' },
           {
             title: 'Ticketing',
             image:

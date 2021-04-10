@@ -5,7 +5,7 @@ import { RFValue } from 'react-native-responsive-fontsize';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Text from './Text';
 
-const HeaderLinker = ({ title, extStyles }) => {
+const HeaderLinker = ({ title, extStyles, all = true }) => {
   return (
     <View
       style={[
@@ -21,10 +21,12 @@ const HeaderLinker = ({ title, extStyles }) => {
       ]}
     >
       <Text text={title} extStyles={{ fontSize: RFValue(14), fontWeight: '700' }} />
-      <Ripple style={{ flexDirection: 'row', alignItems: 'center', height: '100%' }}>
-        <Text text="View all" extStyles={{ marginRight: RFValue(0), fontSize: RFValue(14) }} />
-        <Icon name="chevron-right" size={RFValue(20)} />
-      </Ripple>
+      {all && (
+        <Ripple style={{ flexDirection: 'row', alignItems: 'center', height: '100%' }}>
+          <Text text="View all" extStyles={{ marginRight: RFValue(0), fontSize: RFValue(14) }} />
+          <Icon name="chevron-right" size={RFValue(20)} />
+        </Ripple>
+      )}
     </View>
   );
 };

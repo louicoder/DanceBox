@@ -57,7 +57,7 @@ const DatePicker = ({ extStyles, setDate, title }) => {
         </View>
       </View>
 
-      {state.datePickerVisible && (
+      {/* {state.datePickerVisible && (
         <Calendar
           current={moment(state.date).format('YYYY-MM-DD')}
           minDate={moment(new Date()).format('YYYY-MM-DD')}
@@ -68,7 +68,7 @@ const DatePicker = ({ extStyles, setDate, title }) => {
           }}
           markedDates={{ [moment(state.date).format('YYYY-MM-DD')]: { selected: true } }}
         />
-      )}
+      )} */}
     </View>
   );
 };

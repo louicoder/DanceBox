@@ -139,7 +139,7 @@ const BottomStackScreens = ({}) => (
 );
 
 const AllStacks = () => (
-  <Stacks.Navigator screenOptions={{}} initialRouteName="Home">
+  <Stacks.Navigator screenOptions={{}} initialRouteName="Splash">
     <Stacks.Screen name="Home" component={DrawerScreens} options={{ header: () => null }} />
     <Stacks.Screen name="Login" component={Login} options={{ header: () => null }} />
     <DrawerStack.Screen name="Splash" component={Splash} options={{ header: () => null }} />

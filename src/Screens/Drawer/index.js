@@ -24,8 +24,8 @@ const Drawer = (props) => {
           style={{ width: RFValue(100), height: RFValue(100), borderRadius: 150 }}
           resizeMode="cover"
         />
-        <Text style={{ fontSize: RFValue(20), fontWeight: 'bold' }}>Smuyonga Derrick</Text>
-        <Text style={{ fontSize: RFValue(14), color: '#aaa', marginBottom: RFValue(15) }}>tersa_mars@gmail.com</Text>
+        <Text style={{ fontSize: RFValue(20), fontWeight: 'bold' }}>Bboy Rique</Text>
+        <Text style={{ fontSize: RFValue(14), color: '#aaa', marginBottom: RFValue(15) }}>rique256@mail.com</Text>
       </View>
       <ScrollView style={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
         {[

@@ -23,7 +23,7 @@ const Search = () => {
             borderBottomRightRadius: RFValue(5),
             alignItems: 'center',
             justifyContent: 'center',
-            backgroundColor: 'green'
+            backgroundColor: '#000'
           }}
         >
           <Icon name="magnify" size={RFValue(25)} color="#fff" />
