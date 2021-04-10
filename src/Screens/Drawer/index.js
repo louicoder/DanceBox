@@ -6,6 +6,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Navigation from '../../Navigation';
 import { CONSTANTS, HelperFunctions } from '../../Utils';
 import { useSelector } from 'react-redux';
+import auth from '@react-native-firebase/auth';
 
 const Drawer = (props) => {
   const { user } = useSelector((state) => state.Account);
@@ -36,19 +37,29 @@ const Drawer = (props) => {
       </View>
       <ScrollView style={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
         {[
-          { title: 'Finish Registration', icon: 'information', goto: 'FinishRegistration' },
+          {
+            title: 'Finish Registration',
+            icon: 'information',
+            func: () => props.navigation.navigate('FinishRegistration')
+          },
           { title: 'Settings', icon: 'cog' },
-          { title: 'Profile', icon: 'account-cowboy-hat', goto: 'Account' },
+          { title: 'Profile', icon: 'account-cowboy-hat', func: () => props.navigation.navigate('Account') },
           { title: 'Reviews', icon: 'comment-edit' },
           { title: 'Events', icon: 'calendar-clock' },
           { title: 'Favorites', icon: 'heart' },
           { title: 'Edit Profile', icon: 'account-edit' },
           { title: 'Notifications', icon: 'bell' },
           { title: 'Blog Posts', icon: 'equal-box' },
-          // { title: 'Online doctors', icon: 'signal-variant' },
-          // { title: 'Appointments', icon: 'alarm' },
-          { title: 'Logout', icon: 'lock' }
-        ].map(({ title, icon, goto }) => (
+          {
+            title: 'Logout',
+            icon: 'lock',
+            func: () =>
+              auth()
+                .signOut()
+                .then(() => props.navigation.navigate('Login'))
+                .catch((error) => HelperFunctions.Notify('', error.message))
+          }
+        ].map(({ title, icon, func }) => (
           <Ripple
             key={HelperFunctions.keyGenerator()}
             style={{
@@ -59,7 +70,7 @@ const Drawer = (props) => {
               // paddingVertical: RFValue(20),
               padding: RFValue(16)
             }}
-            onPress={() => (goto ? props.navigation.navigate(goto, { title }) : null)}
+            onPress={() => (func ? func() : null)}
           >
             <Icon name={icon} size={RFValue(20)} style={{ marginRight: RFValue(10) }} />
             <Text style={{ fontSize: RFValue(16) }}>{title}</Text>

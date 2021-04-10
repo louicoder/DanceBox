@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, SafeAreaView, Pressable } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
+import { CONSTANTS } from '../../Utils';
 
 const Interests = ({ navigation }) => {
   const [ state, setState ] = React.useState({ interests: [] });
@@ -19,16 +20,17 @@ const Interests = ({ navigation }) => {
       {/* <Text>This is the interest page</Text> */}
       <Text style={{ marginBottom: RFValue(50), fontSize: RFValue(20), fontWeight: '700' }}>Pick your interests</Text>
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center' }}>
-        {[
-          'Bboy',
-          'contemporary',
-          'Latin',
-          'Popping',
-          'Cultural',
-          'Choreography',
-          'Tap dance',
-          'Blogs'
-        ].map((item) => (
+        {// [
+        // 'Bboy',
+        // 'contemporary',
+        // 'Latin',
+        // 'Popping',
+        // 'Cultural',
+        // 'Choreography',
+        // 'Tap dance',
+        // 'Blogs'
+        // ]
+        CONSTANTS.INTERESTS.map((item) => (
           <Pressable
             style={{
               padding: RFValue(15),
