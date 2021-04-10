@@ -215,7 +215,8 @@ const NewBlog = () => {
               height: RFValue(50),
               width: '100%',
               alignItems: 'center',
-              justifyContent: 'center'
+              justifyContent: 'center',
+              zIndex: 200
             }}
           >
             <Text style={{ color: '#fff', fontSize: RFValue(16), fontWeight: 'bold' }}>Create blog</Text>

@@ -21,8 +21,8 @@ const Login = ({ navigation }) => {
   const [ state, setState ] = React.useState({
     loginMode: true,
     activeLogin: null,
-    email: 'musanje2010@gmail.com',
-    password: 'person',
+    email: '',
+    password: '',
     passwordVisible: true
   });
 
@@ -136,6 +136,7 @@ const Login = ({ navigation }) => {
             secure={state.passwordVisible}
             value={state.password}
             switchPasswordVisibility={() => setState({ ...state, passwordVisible: !state.passwordVisible })}
+            onChangeText={(password) => setState({ ...state, password })}
           />
 
           <Button
