@@ -1,5 +1,4 @@
-import { Queries } from '../../Utils';
-// import auth from '@react-native-firebase/auth';
+import { QUERIES } from '../../Firebase';
 
 export default {
   state: { user: {} },
@@ -10,16 +9,28 @@ export default {
   },
   effects: (dispatch) => ({
     //
+    async createUserAccount ({ payload, callback }) {
+      try {
+        await QUERIES.createUserAccount(payload, callback);
+      } catch (error) {
+        return callback({ success: false, result: error.message });
+      }
+    },
+
+    async signIn ({ payload: { email, password }, callback }) {
+      try {
+        await QUERIES.signIn(email, password, callback);
+      } catch (error) {
+        return callback({ success: false, result: error.message });
+      }
+    },
+
     async getUserDetails ({ uid, callback }) {
-      // try {
-      //   await Queries.getSingleDoc('Users', uid, (resp) => {
-      //     const { email, uid } = auth().currentUser;
-      //     dispatch.Account.setUserDetails({ email, uid, ...resp.doc });
-      //     callback({ success: true, result: resp.doc });
-      //   });
-      // } catch (error) {
-      //   return callback({ success: false, result: error.message });
-      // }
+      try {
+        await QUERIES.getDoc('Users', uid, callback);
+      } catch (error) {
+        return callback({ success: false, result: error.message });
+      }
     }
   })
 };

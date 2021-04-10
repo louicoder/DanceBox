@@ -4,9 +4,12 @@ import Ripple from 'react-native-material-ripple';
 import { RFValue } from 'react-native-responsive-fontsize';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Navigation from '../../Navigation';
-import { HelperFunctions } from '../../Utils';
+import { CONSTANTS, HelperFunctions } from '../../Utils';
+import { useSelector } from 'react-redux';
 
 const Drawer = (props) => {
+  const { user } = useSelector((state) => state.Account);
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View
@@ -17,21 +20,25 @@ const Drawer = (props) => {
           alignItems: 'center',
           marginVertical: RFValue(20),
           marginBottom: 0
+          // borderWidth: 1
+          // flexDirection: 'row'
         }}
       >
         <Image
-          source={{ uri: 'https://www.goplacesdigital.com/wp-content/uploads/2020/06/IMG-20200618-WA0013.jpg' }}
+          source={{ uri: user.imageUrl || CONSTANTS.DEFAULT_PROFILE }}
           style={{ width: RFValue(100), height: RFValue(100), borderRadius: 150 }}
           resizeMode="cover"
         />
-        <Text style={{ fontSize: RFValue(20), fontWeight: 'bold' }}>Bboy Rique</Text>
-        <Text style={{ fontSize: RFValue(14), color: '#aaa', marginBottom: RFValue(15) }}>rique256@mail.com</Text>
+        {user.name || user.username ? (
+          <Text style={{ fontSize: RFValue(16), fontWeight: 'bold' }}>{user.name || user.username}</Text>
+        ) : null}
+        <Text style={{ fontSize: RFValue(12), color: '#aaa', marginBottom: RFValue(15) }}>{user.email}</Text>
       </View>
       <ScrollView style={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
         {[
           { title: 'Finish Registration', icon: 'information', goto: 'FinishRegistration' },
           { title: 'Settings', icon: 'cog' },
-          { title: 'Profile', icon: 'account-cowboy-hat' },
+          { title: 'Profile', icon: 'account-cowboy-hat', goto: 'Account' },
           { title: 'Reviews', icon: 'comment-edit' },
           { title: 'Events', icon: 'calendar-clock' },
           { title: 'Favorites', icon: 'heart' },

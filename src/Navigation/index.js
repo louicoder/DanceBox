@@ -93,7 +93,7 @@ const BottomStackScreens = ({}) => (
     screenOptions={{}}
     activeColor="#ffffff"
     inactiveColor="#ffffff70"
-    initialRouteName="Events"
+    initialRouteName="Home"
     barStyle={{ backgroundColor: '#000' }}
     // labeled={false}
   >

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, SafeAreaView, StatusBar, Image } from 'react-native';
+import { View, Text, TouchableOpacity, SafeAreaView, StatusBar, Image, Alert } from 'react-native';
 import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -10,22 +10,75 @@ import Option from '../../Components/Option';
 import PasswordInput from '../../Components/PasswordInput';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import LOGO from '../../assets/dancebox-logo.jpg';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import LoadingModal from '../../Components/LoadingModal';
+import { HelperFunctions } from '../../Utils';
 
 const Login = ({ navigation }) => {
+  const dispatch = useDispatch();
   const statex = useSelector((state) => state.Account);
+  const loading = useSelector((state) => state.loading.effects.Account);
   const [ state, setState ] = React.useState({
     loginMode: true,
     activeLogin: null,
-    email: '',
-    password: '',
+    email: 'musanje2010@gmail.com',
+    password: 'person',
     passwordVisible: true
   });
-  React.useEffect(() => {
-    console.log('State props', statex);
-  });
+
+  // console.log('loading', loading);
+
+  const loginHandler = () => {
+    console.log('login here');
+    const { email, password } = state;
+    dispatch.Account.signIn({
+      payload: { email, password },
+      callback: ({ error, doc }) => {
+        if (error) return Alert.alert('Error signing in', error);
+        setState({ ...state });
+        console.log('Response from login', doc);
+        dispatch.Account.setUserDetails(doc);
+        return navigation.navigate('Home');
+      }
+    });
+  };
+
+  const createAccountHandler = () => {
+    if (!state.email || !HelperFunctions.validateEmail(state.email) || !state.password)
+      return HelperFunctions.Notify(
+        'Error creating account',
+        'Make sure the Email and password are in a valid format and try again'
+      );
+    const { email, password } = state;
+
+    const payload = {
+      email,
+      password,
+      followers: [],
+      following: [],
+      facebook: '',
+      linkedin: '',
+      twitter: '',
+      whatsapp: '',
+      instagram: '',
+      interests: [],
+      accountType: state.activeLogin,
+      imageUrl: ''
+    };
+
+    dispatch.Account.createUserAccount({
+      payload,
+      callback: (res) => {
+        if (res.error) return Alert.alert('Error signing up', res.error);
+        HelperFunctions.Notify('Success', 'Your account has been created successfully, you can now login');
+        return setState({ ...state, loginMode: true });
+      }
+    });
+  };
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: 'transparent', backgroundColor: 'transparent' }}>
+      <LoadingModal isVisible={loading.createUserAccount || loading.signIn} />
       <KeyboardAwareScrollView style={{ flex: 1 }}>
         <View
           style={{
@@ -35,21 +88,12 @@ const Login = ({ navigation }) => {
             justifyContent: 'center'
           }}
         >
-          {/* <View
-            style={{
-              width: RFValue(100),
-              height: RFValue(100),
-              borderWidth: 1,
-              alignSelf: 'center',
-              marginBottom: RFValue(20)
-            }}
-          /> */}
           <Image
             source={LOGO}
             style={{ width: RFValue(100), height: RFValue(100), marginBottom: RFValue(20), alignSelf: 'center' }}
           />
 
-          <Text style={{ fontSize: RFValue(25), marginBottom: RFValue(15), textAlign: 'center' }}>
+          <Text style={{ fontSize: RFValue(25), marginBottom: RFValue(15), textAlign: 'center', fontWeight: 'bold' }}>
             {state.loginMode ? 'Login to your' : 'Create new'} account
           </Text>
 
@@ -74,26 +118,30 @@ const Login = ({ navigation }) => {
                 <Option
                   {...props}
                   key={index}
-                  onPressIn={() => setState({ ...state, activeLogin: index === state.activeLogin ? null : index })}
-                  selected={state.activeLogin === index}
+                  onPress={() =>
+                    setState({ ...state, activeLogin: props.title === state.activeLogin ? null : props.title })}
+                  selected={state.activeLogin === props.title}
                 />
               ))}
             </View>
           )}
-          <Input placeholder="Enter your email address" />
-          {/* <Input placeholder="Enter your email address" />
-          <Input placeholder="Enter your email address" /> */}
-          {/* <Input placeholder="Enter your password" /> */}
+          <Input
+            placeholder="Enter your email address"
+            value={state.email}
+            onChangeText={(email) => setState({ ...state, email })}
+          />
+
           <PasswordInput
             placeholder="Enter your password"
             secure={state.passwordVisible}
+            value={state.password}
             switchPasswordVisibility={() => setState({ ...state, passwordVisible: !state.passwordVisible })}
           />
 
           <Button
             extStyles={{ backgroundColor: '#010203' }}
             title={state.loginMode ? 'Login' : 'Create account'}
-            onPress={() => navigation.navigate('Interests')}
+            onPress={() => (state.loginMode ? loginHandler() : createAccountHandler())}
             textStyles={{ color: '#fff' }}
           />
           <TouchableWithoutFeedback
@@ -101,7 +149,8 @@ const Login = ({ navigation }) => {
             style={{ paddingVertical: RFValue(10), borderTopWidth: 1, borderTopColor: '#ddd', marginTop: RFValue(15) }}
           >
             <Text style={{ fontSize: RFValue(14), fontWeight: '600', color: '#010203', alignSelf: 'center' }}>
-              {state.loginMode ? 'Create new account ?' : 'Login to your account'}
+              {state.loginMode ? 'Not registered?' : 'Already registered?'}{' '}
+              <Text style={{ color: 'rgb(0,0,255)' }}>{state.loginMode ? 'Register' : 'Login'}</Text>
             </Text>
           </TouchableWithoutFeedback>
         </View>
