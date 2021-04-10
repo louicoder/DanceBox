@@ -8,7 +8,7 @@ import { Button, Text as TextComp } from '../../Components';
 import Header from '../../Components/Header';
 import Listing from './Listing';
 import TopCategories from './TopCategories';
-import LOGO from '../../assets/MUG(2).png';
+import LOGO from '../../assets/dancebox-logo.jpg';
 import BlogPost from '../../Components/BlogPost';
 import { keyGenerator } from '../../Utils/HelperFunctions';
 
@@ -41,6 +41,7 @@ const Home = ({ navigation, ...props }) => {
         >
           <View>
             {/* <TextComp text="Rique Welcome to," extStyles={{ fontSize: RFValue(16) }} /> */}
+            {/* <Image source={LOGO} style={{ width: RFValue(40), height: RFValue(40) }} /> */}
             <TextComp text="Dance Box" extStyles={{ fontSize: RFValue(20), fontWeight: '700', color: '#010203' }} />
           </View>
           <Ripple
