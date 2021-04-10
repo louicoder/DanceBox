@@ -10,7 +10,7 @@ const LoadingModal = ({ children, isVisible }) => {
       style={{
         position: 'absolute',
         width,
-        height,
+        height: '100%',
         backgroundColor: 'rgba(0,0,0,.85)',
         zIndex: 10000,
         alignItems: 'center',

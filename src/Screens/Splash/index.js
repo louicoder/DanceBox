@@ -7,17 +7,19 @@ import { useDispatch, useSelector } from 'react-redux';
 import auth from '@react-native-firebase/auth';
 
 const AUTH = auth();
+let sub;
 const Splash = ({ navigation: { navigate } }) => {
   const dispatch = useDispatch();
   const loading = useSelector((state) => state.loading.effects.Account);
   useEffect(() => {
     if (AUTH.currentUser) {
-      // console.log('USER exists', AUTH.currentUser.uid);
       const { uid } = AUTH.currentUser;
       getUserDetails(uid);
     } else {
-      navigate('Login');
+      navigateoLogin();
     }
+
+    return () => clearTimeout(sub);
   }, []);
 
   const getUserDetails = (uid) =>
@@ -30,9 +32,13 @@ const Splash = ({ navigation: { navigate } }) => {
       }
     });
 
+  const navigateoLogin = () => {
+    return (sub = setTimeout(() => navigate('Login'), 2000));
+  };
+
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#fff' }}>
-      <View style={{ width: '100%', alignItems: 'center' }}>
+      <View style={{ width: '100%', alignItems: 'center', justifyContent: 'center' }}>
         <Image
           style={{
             width: RFValue(100),
@@ -43,7 +49,7 @@ const Splash = ({ navigation: { navigate } }) => {
           }}
           source={LOGO}
         />
-        {/* <Text style={{ color: '#169B5C', fontSize: RFValue(20), fontWeight: 'bold' }}>MildMay Uganda</Text> */}
+        <Text style={{ color: '#010203', fontSize: RFValue(30), fontWeight: 'bold' }}>Dance Box</Text>
       </View>
       <View style={{ position: 'absolute', bottom: RFValue(30) }}>
         {loading.getUserDetails && <ActivityIndicator color="#000" />}

@@ -85,8 +85,8 @@ const Account = ({ navigation: { navigate } }) => {
               style={{
                 alignItems: 'center',
                 marginHorizontal: index === 1 ? RFValue(15) : 0,
-                borderLeftWidth: index === 1 ? 1 : 0,
-                borderRightWidth: index === 1 ? 1 : 0,
+                // borderLeftWidth: index === 1 ? 1 : 0,
+                // borderRightWidth: index === 1 ? 1 : 0,
                 paddingHorizontal: index === 1 ? RFValue(20) : 0,
                 borderColor: '#aaa'
               }}
@@ -113,45 +113,25 @@ const Account = ({ navigation: { navigate } }) => {
           }}
         >
           <Pressable style={Styles.socials}>
-            <Icon name="instagram" size={RFValue(30)} />
+            <Icon name="instagram" size={RFValue(40)} />
           </Pressable>
 
           <Pressable style={Styles.socials}>
-            <Icon name="snapchat" size={RFValue(30)} />
+            <Icon name="snapchat" size={RFValue(40)} />
           </Pressable>
 
           <Pressable style={Styles.socials}>
-            <Icon name="facebook" size={RFValue(30)} />
+            <Icon name="facebook" size={RFValue(40)} />
           </Pressable>
 
           <Pressable style={Styles.socials}>
-            <Icon name="twitter" size={RFValue(30)} />
+            <Icon name="twitter" size={RFValue(40)} />
           </Pressable>
 
           <Pressable style={Styles.socials}>
-            <Icon name="youtube" size={RFValue(30)} />
+            <Icon name="youtube" size={RFValue(40)} />
           </Pressable>
         </View>
-
-        {/* <Ripple
-          style={{ width: '95%', alignSelf: 'center', marginVertical: RFValue(10) }}
-          onPress={() => navigate('FinishRegistration')}
-        >
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              backgroundColor: '#eeeeee75',
-              padding: RFValue(15)
-            }}
-          >
-            <Text style={{ fontSize: RFValue(16), fontWeight: 'bold' }}>Finish your registration - 90%</Text>
-            <Icon name="arrow-right" size={RFValue(20)} />
-          </View>
-          <View style={{ width: '100%', backgroundColor: '#ddd', height: RFValue(5) }}>
-            <View style={{ backgroundColor: '#000', width: '90%', position: 'absolute', height: '100%' }} />
-          </View>
-        </Ripple> */}
 
         <View style={{ paddingHorizontal: RFValue(10) }}>
           <View
@@ -164,9 +144,9 @@ const Account = ({ navigation: { navigate } }) => {
             }}
           >
             {[
-              { icon: 'comment-edit', title: 'Reviews' },
-              { icon: 'bookmark', title: 'Favorites' },
-              { icon: 'calendar', title: 'Events' }
+              { icon: 'comment-outline', title: 'All Reviews' },
+              { icon: 'calendar-outline', title: 'All Events' },
+              { icon: 'bookmark-outline', title: 'Favorites' }
             ].map(({ title, icon }) => (
               <Ripple
                 style={{

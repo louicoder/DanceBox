@@ -48,14 +48,16 @@ const Blogs = ({ navigation }) => {
             bottom: RFValue(10),
             right: RFValue(10),
             paddingVertical: RFValue(10),
-            paddingHorizontal: RFValue(15)
+            paddingHorizontal: RFValue(15),
+            zIndex: 20
           }}
         >
           <Text
             style={{
               color: '#fff',
               fontSize: RFValue(14),
-              marginRight: RFValue(10)
+              marginRight: RFValue(10),
+              zIndex: 20
             }}
           >
             Create Blog
