@@ -2,7 +2,7 @@ import React from 'react';
 import { useEffect } from 'react';
 import { View, Text, Image } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
-import LOGO from '../../assets/mildmayLogo.png';
+import LOGO from '../../assets/dancebox-logo.jpg';
 
 const Splash = ({ navigation: { navigate } }) => {
   useEffect(() => {
@@ -12,12 +12,12 @@ const Splash = ({ navigation: { navigate } }) => {
     };
   });
   return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#fff' }}>
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#000' }}>
       <View style={{ width: '100%', alignItems: 'center' }}>
         <Image style={{ width: RFValue(200), height: RFValue(200) }} source={LOGO} />
         {/* <Text style={{ color: '#169B5C', fontSize: RFValue(20), fontWeight: 'bold' }}>MildMay Uganda</Text> */}
       </View>
-      <Text style={{ color: 'green', position: 'absolute', bottom: RFValue(30) }}>www.skillzeastafrica.com</Text>
+      <Text style={{ color: '#fff', position: 'absolute', bottom: RFValue(30) }}>www.skillzeastafrica.com</Text>
     </View>
   );
 };

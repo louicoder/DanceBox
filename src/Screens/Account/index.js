@@ -6,6 +6,7 @@ import { RFValue } from 'react-native-responsive-fontsize';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Button } from '../../Components';
 import { HelperFunctions } from '../../Utils';
+import Styles from './Styles';
 
 const Account = ({ navigation: { navigate } }) => {
   return (
@@ -41,7 +42,7 @@ const Account = ({ navigation: { navigate } }) => {
               borderBottomColor: '#eee'
             }}
           >
-            <Text style={{ fontSize: RFValue(20), fontWeight: 'bold' }}>@Bboy Energy</Text>
+            <Text style={{ fontSize: RFValue(20), fontWeight: 'bold' }}>@Bboy Rique</Text>
             {/* <Text style={{ fontSize: RFValue(14) }}>mars_345tre@gmail.com</Text> */}
           </View>
         </View>
@@ -78,65 +79,54 @@ const Account = ({ navigation: { navigate } }) => {
         </View>
 
         <View
-          style={{ flexDirection: 'row', justifyContent: 'space-evenly', height: RFValue(40), alignSelf: 'center' }}
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-evenly',
+            height: RFValue(40),
+            alignSelf: 'center',
+
+            marginBottom: RFValue(10)
+            // width: '80%'
+          }}
         >
-          <Ripple
-            style={{
-              borderWidth: 1,
-              paddingHorizontal: RFValue(10),
-              borderRadius: RFValue(3),
-              // width: RFValue(40),
-              borderColor: '#aaa',
-              justifyContent: 'center',
-              alignItems: 'center'
-            }}
-          >
-            <Text style={{ fontSize: RFValue(16) }}>Edit Profile</Text>
-          </Ripple>
-
-          <Ripple
-            style={{
-              borderWidth: 1,
-              marginHorizontal: RFValue(10),
-              width: RFValue(40),
-              borderRadius: RFValue(3),
-              justifyContent: 'center',
-              alignItems: 'center',
-              borderColor: '#aaa'
-            }}
-          >
+          <Pressable style={Styles.socials}>
             <Icon name="instagram" size={RFValue(30)} />
-          </Ripple>
+          </Pressable>
 
-          <Ripple
-            style={{
-              borderWidth: 1,
-              marginHorizontal: RFValue(10),
-              marginLeft: RFValue(0),
-              width: RFValue(40),
-              borderRadius: RFValue(3),
-              justifyContent: 'center',
-              alignItems: 'center',
-              borderColor: '#aaa'
-            }}
-          >
+          <Pressable style={Styles.socials}>
+            <Icon name="snapchat" size={RFValue(30)} />
+          </Pressable>
+
+          <Pressable style={Styles.socials}>
             <Icon name="facebook" size={RFValue(30)} />
-          </Ripple>
+          </Pressable>
 
-          <Ripple
-            style={{
-              borderWidth: 1,
-              width: RFValue(40),
-              borderRadius: RFValue(3),
-              borderColor: '#aaa',
-              justifyContent: 'center',
-              alignItems: 'center'
-            }}
-          >
+          <Pressable style={Styles.socials}>
+            <Icon name="twitter" size={RFValue(30)} />
+          </Pressable>
+
+          <Pressable style={Styles.socials}>
             <Icon name="youtube" size={RFValue(30)} />
-          </Ripple>
+          </Pressable>
         </View>
+
         <Ripple
+          style={{
+            alignSelf: 'center',
+            borderWidth: 1,
+            // paddingHorizontal: RFValue(20),
+            paddingVertical: RFValue(10),
+            borderRadius: RFValue(3),
+            width: '70%',
+            borderColor: '#aaa',
+            justifyContent: 'center',
+            alignItems: 'center',
+            marginVertical: RFValue(10)
+          }}
+        >
+          <Text style={{ fontSize: RFValue(16) }}>Edit Profile</Text>
+        </Ripple>
+        {/* <Ripple
           style={{ width: '95%', alignSelf: 'center', marginVertical: RFValue(10) }}
           onPress={() => navigate('FinishRegistration')}
         >
@@ -154,7 +144,7 @@ const Account = ({ navigation: { navigate } }) => {
           <View style={{ width: '100%', backgroundColor: '#ddd', height: RFValue(5) }}>
             <View style={{ backgroundColor: '#000', width: '90%', position: 'absolute', height: '100%' }} />
           </View>
-        </Ripple>
+        </Ripple> */}
 
         <View style={{ paddingHorizontal: RFValue(10) }}>
           <View

@@ -28,51 +28,54 @@ const Home = ({ navigation, ...props }) => {
   //     .catch((error) => alert(JSON.stringify(error)));
   // };
   return (
-    <View style={{ flex: 1 }}>
-      <View
-        style={{
-          flexDirection: 'row',
-          width: '100%',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          padding: RFValue(10)
-        }}
-      >
-        <View>
-          <TextComp text="Rique Welcome to," extStyles={{ fontSize: RFValue(16) }} />
-          <TextComp text="Danceapp" extStyles={{ fontSize: RFValue(20), fontWeight: '700', color: 'green' }} />
-        </View>
-        <Ripple
-          rippleContainerBorderRadius={RFValue(25)}
-          rippleCentered
+    <SafeAreaView style={{ flex: 1 }}>
+      <View style={{ flexGrow: 1 }}>
+        <View
           style={{
-            height: RFValue(40),
-            width: RFValue(40),
+            flexDirection: 'row',
+            width: '100%',
+            justifyContent: 'space-between',
             alignItems: 'center',
-            justifyContent: 'center',
-            borderRadius: RFValue(25),
-            backgroundColor: '#1c7c54'
+            padding: RFValue(10)
           }}
-          onPress={() => navigation.toggleDrawer()}
         >
-          <Icon name="menu" size={RFValue(20)} color="#fff" />
-        </Ripple>
-      </View>
+          <View>
+            {/* <TextComp text="Rique Welcome to," extStyles={{ fontSize: RFValue(16) }} /> */}
+            <TextComp text="Dance Box" extStyles={{ fontSize: RFValue(20), fontWeight: '700', color: '#010203' }} />
+          </View>
+          <Ripple
+            rippleContainerBorderRadius={RFValue(25)}
+            rippleCentered
+            style={{
+              height: RFValue(40),
+              width: RFValue(40),
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderRadius: RFValue(25),
+              backgroundColor: '#010203'
+            }}
+            onPress={() => navigation.toggleDrawer()}
+          >
+            <Icon name="menu" size={RFValue(20)} color="#fff" />
+          </Ripple>
+        </View>
 
-      <FlatList
-        ListHeaderComponent={<TopCategories />}
-        data={data}
-        key={() => keyGenerator()}
-        renderItem={(props) => (
-          <BlogPost
-            {...props}
-            navigation={navigation}
-            last={props.index === data.length - 1}
-            first={props.index === 0}
-          />
-        )}
-      />
-    </View>
+        <FlatList
+          showsVerticalScrollIndicator={false}
+          ListHeaderComponent={<TopCategories />}
+          data={data}
+          key={() => keyGenerator()}
+          renderItem={(props) => (
+            <BlogPost
+              {...props}
+              navigation={navigation}
+              last={props.index === data.length - 1}
+              first={props.index === 0}
+            />
+          )}
+        />
+      </View>
+    </SafeAreaView>
   );
 };
 

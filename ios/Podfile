@@ -3,7 +3,7 @@ require_relative '../node_modules/@react-native-community/cli-platform-ios/nativ
 
 platform :ios, '10.0'
 
-target 'breakingapp' do
+target 'DanceBox' do
   config = use_native_modules!
 
   use_react_native!(:path => config["reactNativePath"])
@@ -11,8 +11,9 @@ target 'breakingapp' do
 
   pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
   pod 'Permission-Camera', :path => "#{permissions_path}/Camera"
+  pod 'Firebase/Analytics'
 
-  target 'breakingappTests' do
+  target 'DanceBoxTests' do
     inherit! :complete
     # Pods for testing
   end
@@ -27,10 +28,10 @@ target 'breakingapp' do
   end
 end
 
-target 'breakingapp-tvOS' do
-  # Pods for breakingapp-tvOS
+target 'DanceBox-tvOS' do
+  # Pods for DanceBox-tvOS
 
-  target 'breakingapp-tvOSTests' do
+  target 'DanceBox-tvOSTests' do
     inherit! :search_paths
     # Pods for testing
   end

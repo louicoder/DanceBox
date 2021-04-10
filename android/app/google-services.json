@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "164111047123",
+    "project_id": "dancebox-309908",
+    "storage_bucket": "dancebox-309908.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:164111047123:android:beb1f290ad92a71723f726",
+        "android_client_info": {
+          "package_name": "com.dancebox"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "164111047123-9u8o04ccvcvt49uos81geem0rje5re8g.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBieRYQTTuWrjIG_Ps06_TyV6JTB_ZqGXY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "164111047123-9u8o04ccvcvt49uos81geem0rje5re8g.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

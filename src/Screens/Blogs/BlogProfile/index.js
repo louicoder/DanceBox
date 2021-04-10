@@ -39,7 +39,7 @@ const EventProfile = ({ navigation, route, ...props }) => {
           aut saperet aliquid aut ista didicisset. Atqui perspicuum est hominem e corpore animoque constare, cum primae
           sint animi partes, secundae corporis. Cum autem venissemus in Academiae non sine causa nobilitata spatia
         </Text>
-        <Text style={{ marginTop: RFValue(20), fontWeight: '700' }}>Join the conversation on this event</Text>
+        <Text style={{ marginTop: RFValue(20), fontWeight: '700' }}>Join the conversation on this post</Text>
       </View>
     </SingleEvent>
   );
