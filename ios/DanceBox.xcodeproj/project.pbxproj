@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		00E356F31AD99517003FC87E /* DanceBoxTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* DanceBoxTests.m */; };
+		0449693D2621954300DB083F /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0449693C2621954200DB083F /* GoogleService-Info.plist */; };
 		05640849198295565D09AC70 /* libPods-DanceBox.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 191EBD5BEF4CB201BF5B6FB0 /* libPods-DanceBox.a */; };
 		099F4FF25F8D8282B4E0175E /* libPods-DanceBox-DanceBoxTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C9519BF2030A8F6335205BDC /* libPods-DanceBox-DanceBoxTests.a */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
@@ -44,6 +45,7 @@
 		00E356EE1AD99517003FC87E /* DanceBoxTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DanceBoxTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* DanceBoxTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DanceBoxTests.m; sourceTree = "<group>"; };
+		0449693C2621954200DB083F /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../../Users/mac/Desktop/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		04E4DE399E3440A6B1A45AB7 /* FontAwesome5_Brands.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Brands.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Brands.ttf"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* DanceBox.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DanceBox.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = DanceBox/AppDelegate.h; sourceTree = "<group>"; };
@@ -213,6 +215,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				0449693C2621954200DB083F /* GoogleService-Info.plist */,
 				13B07FAE1A68108700A75B9A /* DanceBox */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				00E356EF1AD99517003FC87E /* DanceBoxTests */,
@@ -249,7 +252,6 @@
 				00E356EB1AD99517003FC87E /* Frameworks */,
 				00E356EC1AD99517003FC87E /* Resources */,
 				B4E5E0A2FA07902670040E6D /* [CP] Copy Pods Resources */,
-				6489317C37BFB508F1DED243 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -273,7 +275,6 @@
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				7022AE58695AF26E1E6E27A1 /* [CP] Copy Pods Resources */,
 				0DE758920AD4AB22F6235D4F /* [CP-User] [RNFB] Core Configuration */,
-				BEC21CD5A8DB9BD7D5E46CE2 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -384,6 +385,7 @@
 			files = (
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
+				0449693D2621954300DB083F /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -486,24 +488,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh";
-		};
-		6489317C37BFB508F1DED243 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-DanceBox-DanceBoxTests/Pods-DanceBox-DanceBoxTests-frameworks.sh",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/OpenSSL/OpenSSL.framework/OpenSSL",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OpenSSL.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-DanceBox-DanceBoxTests/Pods-DanceBox-DanceBoxTests-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
 		};
 		7022AE58695AF26E1E6E27A1 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -625,24 +609,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		BEC21CD5A8DB9BD7D5E46CE2 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-DanceBox/Pods-DanceBox-frameworks.sh",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/OpenSSL/OpenSSL.framework/OpenSSL",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OpenSSL.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-DanceBox/Pods-DanceBox-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		FCAA17FAB07DC41216780346 /* [CP] Check Pods Manifest.lock */ = {
