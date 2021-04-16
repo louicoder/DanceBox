@@ -1,9 +1,9 @@
-/**
- * @format
- */
+const App = require('express')();
+// const Cors = require('cors');
+require('dotenv').config();
 
-import { AppRegistry } from 'react-native';
-import App from './src/Store';
-import { name as appName } from './app.json';
+// App.use(Cors());
 
-AppRegistry.registerComponent(appName, () => App);
+App.listen(process.env.PORT || 8080, () => {
+  console.log(`SERVER IS RUNNING ON PORT ${process.env.PORT || 8080}`);
+});
