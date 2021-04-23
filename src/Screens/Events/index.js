@@ -3,13 +3,35 @@ import { View, Text, ScrollView, Pressable, SafeAreaView } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import { RFValue } from 'react-native-responsive-fontsize';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
+import LoadingModal from '../../Components/LoadingModal';
 import { HelperFunctions } from '../../Utils';
 import SingleEvent from './SingleEvent';
 
-const Events = (props) => {
+const Events = ({ navigation, ...props }) => {
+  const dispatch = useDispatch();
   const [ state, setState ] = React.useState({ period: null });
+  const { events } = useSelector((state) => state.Events);
+  const loading = useSelector((state) => state.loading.effects.Events);
+
+  React.useEffect(() => {
+    const sub = navigation.addListener('focus', () => {
+      getEvents();
+    });
+
+    return () => sub;
+  }, []);
+
+  const getEvents = () => {
+    dispatch.Events.getEvents((response) => {
+      console.log('Events', response);
+    });
+  };
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
+      <LoadingModal isVisible={loading.getEvents} />
       <View style={{ flex: 1 }}>
         <View
           style={{
@@ -22,7 +44,7 @@ const Events = (props) => {
         >
           <Text style={{ fontSize: RFValue(30), fontWeight: '700' }}>Events</Text>
           <Pressable
-            onPress={() => props.navigation.navigate('NewEvent')}
+            onPress={() => navigation.navigate('NewEvent')}
             style={{
               backgroundColor: '#000',
               width: RFValue(40),
@@ -69,7 +91,7 @@ const Events = (props) => {
             style={{ flex: 1 }}
             data={events}
             keyExtractor={() => HelperFunctions.keyGenerator()}
-            renderItem={({ item }) => <SingleEvent {...item} {...props} />}
+            renderItem={({ item }) => <SingleEvent {...item} {...props} navigation={navigation} />}
           />
         </View>
       </View>
@@ -78,76 +100,3 @@ const Events = (props) => {
 };
 
 export default Events;
-
-const events = [
-  {
-    title: 'Popping Eliminations',
-    price: 3000,
-    imageUrl: 'https://campusrec.fsu.edu/wp-content/uploads/2019/02/dance.jpg',
-    date: '25th July 2021',
-    going: 200,
-    venue: 'Kanjokya street, Bukoto',
-    comments: [ 'the event is going to be fire', 'I liek the venue', 'We are going blazing' ],
-    likes: [
-      { uid: 'fdfsdsdfs', name: 'louis' },
-      { uid: 'fdfsdsdfs', name: 'louis' },
-      { uid: 'fdfsdsdfs', name: 'louis' }
-    ]
-  },
-  {
-    title: 'Bboy one on one',
-    price: 3000,
-    imageUrl: 'https://campusrec.fsu.edu/wp-content/uploads/2019/02/dance.jpg',
-    date: '25th July 2021',
-    going: 200,
-    venue: 'Kanjokya street, Bukoto',
-    comments: [ 'the event is going to be fire', 'I liek the venue', 'We are going blazing' ],
-    likes: [
-      { uid: 'fdfsdsdfs', name: 'louis' },
-      { uid: 'fdfsdsdfs', name: 'louis' },
-      { uid: 'fdfsdsdfs', name: 'louis' }
-    ]
-  },
-  {
-    title: 'All Styles Breaking Event',
-    price: 3000,
-    imageUrl: 'https://campusrec.fsu.edu/wp-content/uploads/2019/02/dance.jpg',
-    date: '25th July 2021',
-    going: 200,
-    venue: 'Kanjokya street, Bukoto',
-    comments: [ 'the event is going to be fire', 'I liek the venue', 'We are going blazing' ],
-    likes: [
-      { uid: 'fdfsdsdfs', name: 'louis' },
-      { uid: 'fdfsdsdfs', name: 'louis' },
-      { uid: 'fdfsdsdfs', name: 'louis' }
-    ]
-  },
-  {
-    title: 'Krump finals',
-    price: 3000,
-    imageUrl: 'https://campusrec.fsu.edu/wp-content/uploads/2019/02/dance.jpg',
-    date: '25th July 2021',
-    going: 200,
-    venue: 'Kanjokya street, Bukoto',
-    comments: [ 'the event is going to be fire', 'I liek the venue', 'We are going blazing' ],
-    likes: [
-      { uid: 'fdfsdsdfs', name: 'louis' },
-      { uid: 'fdfsdsdfs', name: 'louis' },
-      { uid: 'fdfsdsdfs', name: 'louis' }
-    ]
-  },
-  {
-    title: 'All Styles Breaking Event',
-    price: 3000,
-    imageUrl: 'https://campusrec.fsu.edu/wp-content/uploads/2019/02/dance.jpg',
-    date: '25th July 2021',
-    going: 200,
-    venue: 'Kanjokya street, Bukoto',
-    comments: [ 'the event is going to be fire', 'I liek the venue', 'We are going blazing' ],
-    likes: [
-      { uid: 'fdfsdsdfs', name: 'louis' },
-      { uid: 'fdfsdsdfs', name: 'louis' },
-      { uid: 'fdfsdsdfs', name: 'louis' }
-    ]
-  }
-];

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, ImageBackground, Pressable, TextInput } from 'react-native';
+import { View, Text, ImageBackground, Pressable, TextInput, Alert, Keyboard } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
 import { RFValue } from 'react-native-responsive-fontsize';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -9,15 +9,23 @@ import { PERMISSIONS } from 'react-native-permissions';
 import { Calendar, CalendarList, Agenda } from 'react-native-calendars';
 import moment from 'moment';
 import DatePicker from '../../../Components/DatePicker';
+import LoadingModal from '../../../Components/LoadingModal';
+import { useDispatch } from 'react-redux';
+import { QUERIES } from '../../../Firebase';
 
-const NewBlog = () => {
+const NewBlog = ({ navigation }) => {
+  const dispatch = useDispatch();
   const [ state, setState ] = React.useState({
     image: {},
     tags: [],
     tagsVisible: true,
     date: moment(new Date()).format('YYYY-MM-DD'),
     free: 'free',
-    datePickerVisible: false
+    datePickerVisible: false,
+    loading: false,
+    title: 'My new blog',
+    description:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Qui est in parvis malis. Cupiditates non Epicuri divisione finiebat, sed sua satietate. Ab hoc autem quaedam non melius quam veteres, quaedam omnino relicta. Hoc ne statuam quidem dicturam pater aiebat, si loqui posset. Paria sunt igitur. Neque enim disputari sine reprehensione nec cum iracundia aut pertinacia recte disputari potest. Similiter sensus, cum accessit ad naturam, tuetur illam quidem, sed etiam se tuetur; Itaque hic ipse iam pridem est reiectus; Ad quorum et cognitionem et usum iam corroborati natura ipsa praeeunte deducimur'
     // dateTime: new Date().toString()
   });
 
@@ -27,18 +35,90 @@ const NewBlog = () => {
 
   // const checkPermissions = async () => await HelperFunctions.CheckPermissions()
   // console.log('STATE DATE', new Date(state.date).toISOString('YYYY-MM-DD'));
+  // const selectImage = () =>
+  //   HelperFunctions.CheckPermissions(
+  //     PERMISSIONS.ANDROID.CAMERA,
+  //     HelperFunctions.ImagePicker((image) => {
+  //       console.log('REsponse', image);
+  //       if (image.uri) setState({ ...state, image });
+  //     })
+  //   );
+
   const selectImage = () =>
     HelperFunctions.CheckPermissions(
-      PERMISSIONS.ANDROID.CAMERA,
+      Platform.select({ android: PERMISSIONS.ANDROID.CAMERA, ios: PERMISSIONS.IOS.PHOTO_LIBRARY }),
       HelperFunctions.ImagePicker((image) => {
         console.log('REsponse', image);
         if (image.uri) setState({ ...state, image });
       })
     );
-  console.log('tags', state.tags);
+
+  const RenderModComponent = ({ component, endDate, startDate, setDate, closeModal }) => {
+    // console.log('CReate');
+    switch (component) {
+      case 'time':
+        return <Time />;
+      case 'startdate':
+        return <StartDate setDate={setDate} date={startDate} closeModal={closeModal} />;
+      case 'enddate':
+        return <EndDate setDate={setDate} date={endDate} closeModal={closeModal} />;
+    }
+  };
+
+  const uploadBlogImage = async (blogId) => {
+    try {
+      await HelperFunctions.uploadImage(
+        `Blogs/${blogId}/${state.image.fileName}`,
+        state.image.uri,
+        (progress) => {
+          setState({ ...state, progress, loading: true });
+        },
+        (error) => {
+          setState({ ...state, progressVisible: false, progress: 0 });
+          Alert.alert('Error', error);
+        },
+        async (imageUrl) =>
+          QUERIES.updateDoc('Blogs', blogId, { imageUrl }, (res) => {
+            // updated
+            console.log('updated event', res);
+            setState({ ...state, loading: false });
+            if (res.doc) return navigation.navigate('Blogs');
+          })
+      );
+    } catch (error) {
+      setState({ ...state, loading: false });
+      Alert.alert('Error', error.message);
+    }
+  };
+
+  // const clearFields = () =>
+  //   setState({ ...state, caption: '', image: {}, topics: [], progress: 0, progressVisible: false });
+
+  const createBlog = async () => {
+    setState({ ...state, loading: true });
+    Keyboard.dismiss();
+    try {
+      const dateCreated = new Date().toISOString();
+      const { description, title } = state;
+      const payload = { description, title, dateCreated, likes: [], comments: 0, imageUrl: '' };
+      dispatch.Blogs.createBlog({
+        payload,
+        callback: (res) => {
+          console.log('Response', res);
+          if (state.image.uri) return uploadBlogImage(res.doc);
+          setState({ ...state, loading: false });
+          return navigation.navigate('Blogs');
+        }
+      });
+    } catch (error) {
+      setState({ ...state, loading: false });
+      Alert.alert('Error', error.message);
+    }
+  };
 
   return (
     <View style={{ flex: 1 }}>
+      <LoadingModal isVisible={state.loading} />
       <KeyboardAwareScrollView
         style={{}}
         automaticallyAdjustContentInsets={false}
@@ -72,8 +152,10 @@ const NewBlog = () => {
             </View>
           </ImageBackground>
         ) : null}
+
         {!state.image.uri ? (
-          <View
+          <Pressable
+            onPress={selectImage}
             style={{
               justifyContent: 'center',
               alignItems: 'center',
@@ -86,7 +168,7 @@ const NewBlog = () => {
             <Pressable onPress={selectImage}>
               <Text style={{ color: '#aaa', fontSize: RFValue(14) }}>Click to add an photo</Text>
             </Pressable>
-          </View>
+          </Pressable>
         ) : null}
 
         <Pressable
@@ -130,86 +212,41 @@ const NewBlog = () => {
           </View>
         ) : null}
 
-        {/* <DatePicker setDate={(date) => setState({ ...state, date })} title="Select event start date" />
-        <DatePicker setDate={(date) => setState({ ...state, date })} title="Select event end date" /> */}
-
         {/* free */}
         <View style={{ margin: RFValue(10) }}>
-          {/* <Text style={{ fontSize: RFValue(14) }}>Select event pricing below</Text>
-          <View style={{ flexDirection: 'row', marginVertical: RFValue(10) }}>
-            <Pressable
-              onPress={() => setState({ ...state, free: 'free' })}
-              style={{
-                width: '50%',
-                justifyContent: 'center',
-                alignItems: 'center',
-                height: RFValue(50),
-                backgroundColor: state.free === 'free' ? '#000' : 'transparent',
-                borderWidth: 1,
-                flexDirection: 'row'
-              }}
-            >
-              {state.free === 'free' ? <Icon name="check" size={RFValue(20)} color="#fff" /> : null}
-              <Text
-                style={{ color: state.free === 'free' ? '#fff' : '#000', marginLeft: RFValue(10), fontWeight: 'bold' }}
-              >
-                FREE
-              </Text>
-            </Pressable>
-            <Pressable
-              onPress={() => setState({ ...state, free: 'paid' })}
-              style={{
-                width: '50%',
-                justifyContent: 'center',
-                alignItems: 'center',
-                height: RFValue(50),
-                backgroundColor: state.free === 'paid' ? '#000' : 'transparent',
-                borderWidth: 1,
-                borderLeftWidth: 0,
-                flexDirection: 'row'
-              }}
-            >
-              {state.free === 'paid' ? <Icon name="check" size={RFValue(20)} color="#fff" /> : null}
-              <Text
-                style={{ color: state.free === 'paid' ? '#fff' : '#000', marginLeft: RFValue(10), fontWeight: 'bold' }}
-              >
-                PAID
-              </Text>
-            </Pressable>
-          </View> */}
-
-          {/* {state.free === 'paid' && <Text style={{ fontSize: RFValue(14) }}>Enter event price below:</Text>}
-          {state.free === 'paid' ? (
-            <TextInput
-              keyboardType="number-pad"
-              style={{
-                backgroundColor: '#eee',
-                height: RFValue(50),
-                fontSize: state.price && state.price.length ? RFValue(18) : RFValue(14),
-                paddingHorizontal: RFValue(10),
-                marginVertical: RFValue(10)
-              }}
-              placeholder="Enter event amount in Ugx"
-              value={state.price}
-              onChangeText={(price) => setState({ ...state, price })}
-            />
-          ) : null} */}
-
-          <Text style={{ fontSize: RFValue(14) }}>Enter event description:</Text>
+          <Text style={{ fontSize: RFValue(14) }}>Add your blog title:</Text>
           <TextInput
-            value={state.description}
-            onChangeText={(description) => setState({ ...state, description })}
-            placeholder="Enter event description"
+            scrollEnabled={false}
+            value={state.title}
+            onChangeText={(title) => setState({ ...state, title })}
+            placeholder="Enter blog title"
             // multiline
             style={{
               backgroundColor: '#eee',
-              height: RFValue(50),
+              minHeight: RFValue(50),
+              marginVertical: RFValue(10),
+              fontSize: RFValue(14),
+              paddingHorizontal: RFValue(10)
+            }}
+          />
+
+          <Text style={{ fontSize: RFValue(14) }}>Add your blog description:</Text>
+          <TextInput
+            scrollEnabled={false}
+            value={state.description}
+            onChangeText={(description) => setState({ ...state, description })}
+            placeholder="Enter blog description"
+            multiline
+            style={{
+              backgroundColor: '#eee',
+              minHeight: RFValue(50),
               marginVertical: RFValue(10),
               fontSize: RFValue(14),
               paddingHorizontal: RFValue(10)
             }}
           />
           <Pressable
+            onPress={createBlog}
             style={{
               backgroundColor: '#010203',
               height: RFValue(50),

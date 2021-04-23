@@ -5,7 +5,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const BlogPost = ({ item, index, last, first, navigation }) => {
-  console.log('index', navigation);
+  // console.log('index', navigation);
   return (
     <View
       style={{

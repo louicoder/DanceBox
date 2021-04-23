@@ -40,9 +40,29 @@ export const getDocRealTime = (collection, doc, callback) => {
   }
 };
 
+export const getDocuments = async (collection, callback) => {
+  try {
+    await DB.collection(collection).get().then((snapshot) => {
+      const docs = snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+      // callback({ doc: [ ...snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })) ], error: undefined })
+      return callback({ doc: docs, error: undefined });
+    });
+  } catch (error) {
+    return callback({ error: error.message, doc: undefined });
+  }
+};
+
 export const createDocWithId = async (collection, docId, payload, callback) => {
   try {
     await DB.collection(collection).doc(docId).set(payload).then((doc) => callback({ error: undefined }));
+  } catch (error) {
+    return callback({ error: error.message, doc: undefined });
+  }
+};
+
+export const createDoc = async (collection, payload, callback) => {
+  try {
+    await DB.collection(collection).add(payload).then((doc) => callback({ error: undefined, doc: doc.id }));
   } catch (error) {
     return callback({ error: error.message, doc: undefined });
   }

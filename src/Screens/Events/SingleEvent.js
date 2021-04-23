@@ -8,9 +8,11 @@ const SingleEvent = ({
   imageUrl,
   price,
   title,
-  going,
+  attending,
   venue,
   comments,
+  location,
+  amount,
   likes,
   navigation: { navigate },
   children,
@@ -19,10 +21,10 @@ const SingleEvent = ({
   return (
     <View style={{ marginBottom: RFValue(15) }}>
       <Pressable
-        onPress={() => navigate('EventProfile', { imageUrl, price, title, going, venue, comments, likes, ...rest })}
+        onPress={() => navigate('EventProfile', { imageUrl, price, title, attending, venue, comments, likes, ...rest })}
       >
         <ImageBackground
-          source={{ uri: imageUrl }}
+          source={{ uri: imageUrl || 'https://campusrec.fsu.edu/wp-content/uploads/2019/02/dance.jpg' }}
           style={{ height: RFValue(250), width: '100%', backgroundColor: '#000' }}
           resizeMode="cover"
         >
@@ -35,7 +37,9 @@ const SingleEvent = ({
               flexDirection: 'row'
             }}
           >
-            <Text style={{ fontSize: RFValue(30), color: '#fff', fontWeight: '700' }}>{price} /=</Text>
+            <Text style={{ fontSize: RFValue(30), color: '#fff', fontWeight: '700' }}>
+              {price === 'free' ? 'FREE' : amount} {price === 'paid' && '/='}
+            </Text>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <Icon name="chatbubble-outline" size={RFValue(25)} color="#fff" onPress={() => alert('Here')} />
               <Icon
@@ -53,11 +57,11 @@ const SingleEvent = ({
       <View style={{ padding: RFValue(10) }}>
         <Text style={{ fontSize: RFValue(20), fontWeight: '600' }}>{title}</Text>
         <Text style={{ fontSize: RFValue(14), marginVertical: RFValue(3) }}>
-          {venue}・
-          <Text style={{}}>{going} people going</Text>
+          {location && location.slice(0, 20)}・
+          <Text style={{}}>{attending && attending.length} people going</Text>
         </Text>
         <Text style={{ color: '#aaa' }}>
-          {likes && likes.length} likes ・ {comments && comments.length} comments
+          {likes && likes.length} likes ・ {comments} comments
         </Text>
       </View>
       {children}

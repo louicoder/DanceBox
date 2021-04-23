@@ -5,13 +5,10 @@ import { Calendar, CalendarList, Agenda } from 'react-native-calendars';
 import moment from 'moment';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-const DatePicker = ({ extStyles, setDate, title }) => {
-  const [ state, setState ] = React.useState({
-    date: moment(new Date()).format('YYYY-MM-DD'),
-    datePickerVisible: false
-  });
+const DatePicker = ({ extStyles, date, setDate, title, onPress }) => {
+  const [ state, setState ] = React.useState({ datePickerVisible: false });
   return (
-    <View style={[ extStyles ]}>
+    <Pressable style={[ extStyles ]}>
       <Text style={{ marginHorizontal: RFValue(10), fontSize: RFValue(14), marginTop: RFValue(10) }}>
         {title || 'Select event date'}
       </Text>
@@ -26,7 +23,8 @@ const DatePicker = ({ extStyles, setDate, title }) => {
         }}
       >
         <Pressable
-          onPress={() => setState({ ...state, datePickerVisible: !state.datePickerVisible })}
+          // onPress={() => setState({ ...state, datePickerVisible: !state.datePickerVisible })}
+          onPress={onPress}
           style={{
             flexGrow: 1,
             backgroundColor: '#eee',
@@ -38,13 +36,14 @@ const DatePicker = ({ extStyles, setDate, title }) => {
           }}
         >
           <Text style={{ fontSize: RFValue(16) }}>
-            {state.date ? moment(state.date).format('D/MMMM/YYYY') : 'Click to select a date'}
+            {date ? moment(date).format('D/MMMM/YYYY') : 'Click to select a date'}
           </Text>
           <View style={{ height: '100%', justifyContent: 'center' }}>
             <Icon name={state.datePickerVisible ? 'chevron-up' : 'chevron-down'} size={RFValue(20)} style={{}} />
           </View>
         </Pressable>
-        <View
+        <Pressable
+          onPress={onPress}
           style={{
             width: RFValue(50),
             backgroundColor: '#000',
@@ -54,22 +53,9 @@ const DatePicker = ({ extStyles, setDate, title }) => {
           }}
         >
           <Icon name="calendar-month-outline" size={RFValue(25)} color="#fff" />
-        </View>
+        </Pressable>
       </View>
-
-      {/* {state.datePickerVisible && (
-        <Calendar
-          current={moment(state.date).format('YYYY-MM-DD')}
-          minDate={moment(new Date()).format('YYYY-MM-DD')}
-          enableSwipeMonths={true}
-          onDayPress={({ dateString }) => {
-            setState({ ...state, date: dateString, datePickerVisible: false });
-            setDate(dateString);
-          }}
-          markedDates={{ [moment(state.date).format('YYYY-MM-DD')]: { selected: true } }}
-        />
-      )} */}
-    </View>
+    </Pressable>
   );
 };
 

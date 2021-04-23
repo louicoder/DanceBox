@@ -1,7 +1,9 @@
 import { Alert } from 'react-native';
 import { launchImageLibrary } from 'react-native-image-picker';
 import { request, check } from 'react-native-permissions';
+import Storage from '@react-native-firebase/storage';
 
+// const Storage = storage();
 export const keyGenerator = () => Math.random().toString(36).slice(2);
 
 export const CheckPermissions = async (permission, callback) => {
@@ -32,7 +34,7 @@ const switchPermissionResult = (result, permission, callback) => {
     switch (result) {
       case 'unavailable':
         console.log('This feature is not available (on this device / in this context)');
-        return { error: 'Permissison denied', granted: false };
+        return requestPermission(permission, callback);
       case 'denied':
         console.log('The permission has not been requested / is denied but requestable');
         return requestPermission(permission, callback);

@@ -25,7 +25,7 @@ export default ({
       animationInTiming={350}
       animationOut="fadeOut"
       animationOutTiming={100}
-      onBackdropPress={() => (backdropPress ? closeModal() : null)}
+      onBackdropPress={closeModal}
       backdropTransitionOutTiming={0}
       // propagateSwipe
       // coverScreen

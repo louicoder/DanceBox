@@ -2,11 +2,30 @@ import React from 'react';
 import { View, Text, Pressable, SafeAreaView, ScrollView, FlatList } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { HelperFunctions } from '../../Utils';
 import SingleBlog from './SingleBlog';
 
 const Blogs = ({ navigation }) => {
+  const dispatch = useDispatch();
   const [ state, setState ] = React.useState({ period: null });
+  const { blogs } = useSelector((state) => state.Blogs);
+  const loading = useSelector((state) => state.loading.effects.Blogs);
+
+  React.useEffect(() => {
+    const sub = navigation.addListener('focus', () => {
+      getBlogs();
+    });
+
+    return () => sub;
+  }, []);
+
+  const getBlogs = () => {
+    dispatch.Blogs.getBlogs((response) => {
+      console.log('Events', response);
+    });
+  };
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
