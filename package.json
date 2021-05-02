@@ -13,7 +13,7 @@
   },
   "scripts": {
     "dev": "nodemon index.js",
-    "start": "nodejs index.js"
+    "start": "node index.js"
   },
   "devDependencies": {
     "logger": "^0.0.1",

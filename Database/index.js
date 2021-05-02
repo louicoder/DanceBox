@@ -14,12 +14,10 @@ const connectWithRetry = () =>
       useUnifiedTopology: true,
       useCreateIndex: true,
       useFindAndModify: false
-      // reconnectTries: 10,
-      // reconnectInterval: 5000
     })
     .then(() => console.log(':::::::: CONNECTED TO DATBASE :::::::::'))
     .catch((error) => {
-      console.log('Something went wrong during the connection', error);
+      console.log('Something went wrong during the connection', error.message);
       setTimeout(connectWithRetry, 5000);
     });
 
