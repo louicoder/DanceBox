@@ -1,9 +1,9 @@
 import React from 'react';
-import { View, Text, ImageBackground, Pressable, TextInput, Alert, Keyboard } from 'react-native';
+import { View, Text, ImageBackground, Pressable, TextInput, Alert, Keyboard, KeyboardAvoidingView } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
 import { RFValue } from 'react-native-responsive-fontsize';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { HelperFunctions } from '../../../Utils';
+import { CONSTANTS, HelperFunctions } from '../../../Utils';
 import { PERMISSIONS } from 'react-native-permissions';
 // import DateTimePicker from '@react-native-community/datetimepicker';
 import { Calendar, CalendarList, Agenda } from 'react-native-calendars';
@@ -30,27 +30,30 @@ const NewBlog = ({ navigation }) => {
     datePickerVisible: false,
     loading: false,
     title: 'My new blog',
-    description:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Qui est in parvis malis. Cupiditates non Epicuri divisione finiebat, sed sua satietate. Ab hoc autem quaedam non melius quam veteres, quaedam omnino relicta. Hoc ne statuam quidem dicturam pater aiebat, si loqui posset. Paria sunt igitur. Neque enim disputari sine reprehensione nec cum iracundia aut pertinacia recte disputari potest. Similiter sensus, cum accessit ad naturam, tuetur illam quidem, sed etiam se tuetur; Itaque hic ipse iam pridem est reiectus; Ad quorum et cognitionem et usum iam corroborati natura ipsa praeeunte deducimur',
+    description: '',
     component: 'startdate',
     modalVisible: false
     // dateTime: new Date().toString()
   });
 
-  // React.useEffect(() => {
+  React.useEffect(() => {
+    checkPermissions();
+  }, []);
 
-  // }, [])
-
-  // const checkPermissions = async () => await HelperFunctions.CheckPermissions()
-  // console.log('STATE DATE', new Date(state.date).toISOString('YYYY-MM-DD'));
-  // const selectImage = () =>
-  //   HelperFunctions.CheckPermissions(
-  //     PERMISSIONS.ANDROID.CAMERA,
-  //     HelperFunctions.ImagePicker((image) => {
-  //       console.log('REsponse', image);
-  //       if (image.uri) setState({ ...state, image });
-  //     })
-  //   );
+  const checkPermissions = async () => {
+    try {
+      await HelperFunctions.CHECK_GALLERY_PERMISSIONS((res) => {
+        console.log('Gallery prems', res);
+        if (!res.success)
+          return HelperFunctions.Notify(
+            'Error',
+            'You need to grant DAncebox permissions to access your gallery so you can upload images for you blog'
+          );
+      });
+    } catch (error) {
+      return HelperFunctions.Notify('Error', error.message);
+    }
+  };
 
   const selectImage = () =>
     HelperFunctions.CheckPermissions(
@@ -61,22 +64,22 @@ const NewBlog = ({ navigation }) => {
       })
     );
 
-  const RenderModComponent = ({ component, endDate, startDate, setDate, closeModal }) => {
-    // console.log('CReate');
-    switch (component) {
-      case 'time':
-        return <Time />;
-      case 'startdate':
-        // return <StartDate setDate={setDate} date={startDate} closeModal={closeModal} />;
-        return (
-          <View
-            style={{ width: '100%', height: RFValue(200), backgroundColor: '#fff', position: 'absolute', bottom: 0 }}
-          />
-        );
-      case 'enddate':
-        return <EndDate setDate={setDate} date={endDate} closeModal={closeModal} />;
-    }
-  };
+  // const RenderModComponent = ({ component, endDate, startDate, setDate, closeModal }) => {
+  //   // console.log('CReate');
+  //   switch (component) {
+  //     case 'time':
+  //       return <Time />;
+  //     case 'startdate':
+  //       // return <StartDate setDate={setDate} date={startDate} closeModal={closeModal} />;
+  //       return (
+  //         <View
+  //           style={{ width: '100%', height: RFValue(200), backgroundColor: '#fff', position: 'absolute', bottom: 0 }}
+  //         />
+  //       );
+  //     case 'enddate':
+  //       return <EndDate setDate={setDate} date={endDate} closeModal={closeModal} />;
+  //   }
+  // };
 
   const uploadBlogImage = async (blogId) => {
     try {
@@ -118,6 +121,9 @@ const NewBlog = ({ navigation }) => {
   // console.log('USER::::', user);
   const createBlog = async () => {
     Keyboard.dismiss();
+    if (!state.title) return HelperFunctions.Notify('Error', 'Please add a title for your blog post');
+    if (!state.decription || !state.description.length > 50)
+      return HelperFunctions.Notify('Error', 'The description of your blog post is very short');
     setState({ ...state, loading: true });
 
     try {
@@ -156,7 +162,7 @@ const NewBlog = ({ navigation }) => {
       {/* <Modal isVisible={modal} closeModal={() => setModal(false)}>
         <RenderModComponent component={state.component} />
       </Modal> */}
-      <KeyboardAvoidingView
+      <KeyboardAwareScrollView
         style={{}}
         automaticallyAdjustContentInsets={false}
         // scrollEnabled={false}
@@ -222,7 +228,7 @@ const NewBlog = ({ navigation }) => {
         </Pressable>
         {state.tagsVisible ? (
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginHorizontal: RFValue(10) }}>
-            {[ 'breaking', 'salsa', 'capoera', 'dance class', 'free style', 'beatboxing' ].map((item) => (
+            {CONSTANTS.INTERESTS.map((item) => (
               <Pressable
                 key={HelperFunctions.keyGenerator()}
                 style={{
@@ -261,7 +267,7 @@ const NewBlog = ({ navigation }) => {
             // multiline
             style={{
               backgroundColor: '#eee',
-              minHeight: RFValue(50),
+              height: RFValue(50),
               marginVertical: RFValue(10),
               fontSize: RFValue(14),
               paddingHorizontal: RFValue(10)
@@ -273,11 +279,12 @@ const NewBlog = ({ navigation }) => {
             scrollEnabled={false}
             value={state.description}
             onChangeText={(description) => setState({ ...state, description })}
+            textAlignVertical="top"
             placeholder="Enter blog description"
             multiline
             style={{
               backgroundColor: '#eee',
-              minHeight: RFValue(50),
+              minHeight: RFValue(250),
               marginVertical: RFValue(10),
               fontSize: RFValue(14),
               paddingHorizontal: RFValue(10)
@@ -298,7 +305,7 @@ const NewBlog = ({ navigation }) => {
           </Pressable>
         </View>
         {/* end freee */}
-      </KeyboardAvoidingView>
+      </KeyboardAwareScrollView>
     </View>
   );
 };

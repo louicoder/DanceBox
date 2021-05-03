@@ -6,7 +6,7 @@ import { RFValue } from 'react-native-responsive-fontsize';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { ComingSoon, CommentsLikeButtons, SingleComment } from '../../../Components';
 import Modal from '../../../Components/Modal';
-import { HelperFunctions } from '../../../Utils';
+import { CONSTANTS, HelperFunctions } from '../../../Utils';
 import SingleEvent from '../SingleBlog';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
 
@@ -14,12 +14,22 @@ const BlogProfile = ({ navigation, route, ...props }) => {
   const [ state, setState ] = React.useState({ ...route.params, comment: '' });
   const [ modal, setModal ] = React.useState(false);
 
-  console.log('CHECking commentns', props.comments);
+  React.useEffect(
+    () => {
+      const sub = navigation.addListener('focus', () => {
+        setState({ ...route.params });
+      });
+      return () => sub;
+    },
+    [ navigation, route.params ]
+  );
+
+  // console.log('CHECking commentns', props.comments);
   const Blog = ({ imageUrl, title, description, comments, likes, _id }) => (
-    <View>
-      {imageUrl && (
+    <View style={{ backgroundColor: '#fff', marginBottom: RFValue(15) }}>
+      {imageUrl ? (
         <Image source={{ uri: imageUrl }} style={{ width: '100%', height: RFValue(350) }} resizeMode="cover" />
-      )}
+      ) : null}
 
       <CommentsLikeButtons likes={likes} comments={comments} id={_id} type="blog" blogId={_id} />
 
@@ -38,16 +48,15 @@ const BlogProfile = ({ navigation, route, ...props }) => {
       keyboardVerticalOffset={Platform.OS === 'ios' ? RFValue(90) : 0}
       style={{ flex: 1 }}
     >
-      <ScrollView style={{ flex: 1 }}>
-        <Blog {...state} />
+      <View style={{ flex: 1 }}>
         <View style={{ flexGrow: 1 }}>
           {state.comments && state.comments.length ? (
             <FlatList
-              style={{ flex: 1 }}
-              // ListHeaderComponent={<Blog {...state} />}
+              style={{ flex: 1, backgroundColor: '#aaaaaa80' }}
+              ListHeaderComponent={<Blog {...state} />}
               // ListFooterComponent={}
               data={state.comments}
-              key={() => HelperFunctions.keyGenerator()}
+              keyExtractor={() => HelperFunctions.keyGenerator()}
               showsVerticalScrollIndicator={false}
               renderItem={({ item, index }) => (
                 <SingleComment
@@ -59,15 +68,22 @@ const BlogProfile = ({ navigation, route, ...props }) => {
                 />
               )}
             />
-          ) : (
-            <ComingSoon title="" extStyles={{ height: RFValue(500) }}>
-              <Pressable onPress={() => navigation.navigate('NewBlogComment')}>
-                <Text>Touch to be the first to leave a comment</Text>
+          ) : null}
+          {state.comments && !state.comments.length ? (
+            <ComingSoon title="" extStyles={{ flexGrow: 1 }}>
+              <Pressable
+                style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
+                onPress={() => navigation.navigate('NewBlogComment', { blogId: state._id })}
+              >
+                <Icon name="message-text-outline" size={RFValue(30)} style={{ marginVertical: RFValue(20) }} />
+                <Text style={{ textAlign: 'center', color: '#aaa' }}>
+                  No comments yet, touch here to be the first one to add a comment...
+                </Text>
               </Pressable>
             </ComingSoon>
-          )}
+          ) : null}
         </View>
-      </ScrollView>
+      </View>
     </KeyboardAvoidingView>
   );
 };

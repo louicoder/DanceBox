@@ -1,11 +1,13 @@
 import React from 'react';
-import { View, Text, ScrollView, Pressable, SafeAreaView, Alert } from 'react-native';
+import { View, Text, ScrollView, Pressable, SafeAreaView, Alert, Platform } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
+import { PERMISSIONS } from 'react-native-permissions';
 import { RFValue } from 'react-native-responsive-fontsize';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
 import LoadingModal from '../../Components/LoadingModal';
+import Modal from '../../Components/Modal';
 import { HelperFunctions } from '../../Utils';
 import SingleEvent from './SingleEvent';
 
@@ -23,15 +25,38 @@ const Events = ({ navigation, ...props }) => {
     return () => sub;
   }, []);
 
+  React.useEffect(() => {
+    checkPermissions();
+  }, []);
+
   const getEvents = () => {
     dispatch.Events.getEvents((response) => {
-      console.log('Events', response);
+      // console.log('Events', response);
     });
+  };
+
+  const checkPermissions = async () => {
+    try {
+      await HelperFunctions.CHECK_GALLERY_PERMISSIONS((res) => {
+        // console.log('Gallery prems', res);
+        if (!res.success) {
+          return HelperFunctions.Notify(
+            'Error',
+            'You need to grant DAncebox permissions to access your gallery so you can upload images '
+          );
+          // return navigate('Home');
+        }
+        // return navigate('Home');
+      });
+    } catch (error) {
+      return HelperFunctions.Notify('Error', error.message);
+    }
   };
 
   return (
     <React.Fragment>
       <LoadingModal isVisible={loading.getEvents} />
+
       <SafeAreaView style={{ flex: 1 }}>
         <View style={{ flex: 1 }}>
           <View
@@ -45,8 +70,8 @@ const Events = ({ navigation, ...props }) => {
           >
             <Text style={{ fontSize: RFValue(30), fontWeight: '700' }}>Events</Text>
             <Pressable
-              // onPress={() => navigation.navigate('NewEvent')}
-              onPress={() => Alert.alert('Coming soon', 'This feature is fully coming soon, look out for more updates')}
+              onPress={() => navigation.navigate('NewEvent')}
+              // onPress={() => Alert.alert('Coming soon', 'This feature is fully coming soon, look out for more updates')}
               style={{
                 backgroundColor: '#000',
                 width: RFValue(40),
@@ -93,17 +118,17 @@ const Events = ({ navigation, ...props }) => {
             {events && events.length ? (
               <FlatList
                 showsVerticalScrollIndicator={false}
-                style={{ flex: 1 }}
+                style={{ flex: 1, backgroundColor: '#aaaaaa80' }}
                 data={events}
                 keyExtractor={() => HelperFunctions.keyGenerator()}
                 renderItem={({ item }) => <SingleEvent {...item} {...props} navigation={navigation} />}
               />
             ) : null}
-            {/* {events && !events.length ? (
+            {events && !events.length ? (
               <View style={{ flex: 1, backgroundColor: '#eee', alignItems: 'center', justifyContent: 'center' }}>
-                <Text>Not events yet, keep checking...</Text>
+                <Text>No events yet, keep checking...</Text>
               </View>
-            ) : null} */}
+            ) : null}
           </View>
         </View>
       </SafeAreaView>

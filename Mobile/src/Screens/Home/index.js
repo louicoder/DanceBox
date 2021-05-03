@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Dimensions, FlatList, ScrollView, Image, Text, Linking, Alert } from 'react-native';
+import { View, Dimensions, FlatList, ScrollView, Image, Text, Linking, Alert, Platform } from 'react-native';
 import Ripple from 'react-native-material-ripple';
 import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -11,6 +11,8 @@ import TopCategories from './TopCategories';
 import LOGO from '../../assets/dancebox-logo.jpg';
 import BlogPost from '../../Components/BlogPost';
 import { keyGenerator } from '../../Utils/HelperFunctions';
+import { HelperFunctions } from '../../Utils';
+import { PERMISSIONS } from 'react-native-permissions';
 
 const { width } = Dimensions.get('window');
 
@@ -27,6 +29,21 @@ const Home = ({ navigation, ...props }) => {
   //     })
   //     .catch((error) => alert(JSON.stringify(error)));
   // };
+
+  React.useEffect(() => {
+    checkPermissions();
+  }, []);
+
+  const checkPermissions = async () => {
+    try {
+      await HelperFunctions.CHECK_GALLERY_PERMISSIONS((res) => {
+        console.log('Gallery prems', res);
+      });
+    } catch (error) {
+      return HelperFunctions.Notify('Error', error.message);
+    }
+  };
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={{ flexGrow: 1 }}>

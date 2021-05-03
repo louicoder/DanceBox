@@ -15,7 +15,7 @@ const ComingSoon = ({
           minHeight: RFValue(200),
           alignItems: 'center',
           justifyContent: 'center',
-          backgroundColor: '#eee',
+          // backgroundColor: '#eee',
           paddingHorizontal: RFValue(15)
         },
         extStyles

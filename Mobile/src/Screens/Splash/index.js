@@ -26,12 +26,34 @@ const Splash = ({ navigation: { navigate } }) => {
     dispatch.Account.getUserDetails({
       uid,
       callback: ({ error, doc }) => {
-        console.log('DOC SININ', doc);
+        // console.log('DOC SININ', doc);s
         if (error) return navigate('Login');
         dispatch.Account.setUserDetails(doc);
-        return navigate('Home');
+        checkPermissions();
       }
     });
+
+  React.useEffect(() => {
+    checkPermissions();
+  }, []);
+
+  const checkPermissions = async () => {
+    try {
+      await HelperFunctions.CHECK_GALLERY_PERMISSIONS((res) => {
+        // console.log('Gallery prems', res);
+        if (!res.success) {
+          HelperFunctions.Notify(
+            'Error',
+            'You need to grant DAncebox permissions to access your gallery so you can upload images '
+          );
+          return navigate('Home');
+        }
+        return navigate('Home');
+      });
+    } catch (error) {
+      return HelperFunctions.Notify('Error', error.message);
+    }
+  };
 
   // const navigateoLogin = () => {
   //   return navigate('Interests');

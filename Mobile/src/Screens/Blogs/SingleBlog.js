@@ -36,7 +36,7 @@ const SingleBlog = ({
     _id
   };
 
-  console.log('Lkes', likes);
+  console.log('Lkes', likes.length);
   // const test = `sdfsdfsd {'\n'} new line created `;
   return (
     <View style={{ marginBottom: last ? RFValue(60) : RFValue(15), backgroundColor: '#fff' }}>

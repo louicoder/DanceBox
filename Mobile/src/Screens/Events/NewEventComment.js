@@ -9,51 +9,52 @@ import { HelperFunctions } from '../../Utils';
 
 const { height } = Dimensions.get('window');
 
-const NewBlogComment = ({ navigation, route: { params: { blogId, blog } } }) => {
+const NewBlogComment = ({ navigation, route: { params: { eventId } } }) => {
   const [ comment, setComment ] = React.useState(
-    'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Virtutibus igitur rectissime mihi videris et ad consuetudinem nostrae orationis vitia posuisse contraria. Eam stabilem appellas.'
+    'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quid ei reliquisti, nisi te, quoquo modo loqueretur, intellegere, quid diceret? Non minor, inquit, voluptas percipitur ex vilissimis rebus quam ex pretiosissimis '
   );
   const { user } = useSelector((state) => state.Account);
-  const { blogs } = useSelector((state) => state.Blogs);
-  const loading = useSelector((state) => state.loading.effects.Blogs);
+  const { events } = useSelector((state) => state.Events);
+  const loading = useSelector((state) => state.loading.effects.Events);
   const dispatch = useDispatch();
 
+  // console.log('EVent id', eventId);
+
+  // posting comment
   const postComment = () => {
-    // posting comment
     Keyboard.dismiss();
-    const { email, name, imageUrl, uid } = user;
+    const { email, name = '', imageUrl = '', uid } = user;
     const owner = { email, name, imageUrl, uid };
-    dispatch.Blogs.createBlogComment({
-      blogId,
+    dispatch.Events.createEventComment({
+      eventId,
       payload: { comment, owner },
       callback: (res) => {
-        const blog = blogs.find((blog) => blog._id === blogId);
-        // console.log('REsp from adding comment==', blog);
+        // console.log('Rvent when going back==', res);
         if (!res.success) return HelperFunctions.Notify('Error', res.result);
-        return navigation.navigate('BlogProfile', { ...blog, comments: [ ...blog.comments, { owner, comment } ] });
+        const event = events.find((event) => event._id === eventId);
+        return navigation.navigate('EventProfile', { ...event, comments: [ ...event.comments, { comment, owner } ] });
       }
     });
   };
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <LoadingModal isVisible={loading.createBlogComment} />
+      <LoadingModal isVisible={loading.createEventComment} />
       <KeyboardAwareScrollView style={{ flex: 1, padding: RFValue(10) }}>
         <Text style={{ fontSize: RFValue(14) }}>Add your comment below</Text>
         <TextInput
           textAlignVertical="top"
           placeholder="Enter your comment here..."
           placeholderTextColor="#aaa"
-          scrollEnabled={false}
           value={comment}
+          scrollEnabled={false}
           multiline
           style={{
             backgroundColor: '#eee',
             // flexGrow: 1,
             marginVertical: RFValue(20),
-            height: RFValue(2 / 3 * height),
-            padding: RFValue(10)
-            // height: RFValue(200)
+            padding: RFValue(10),
+            height: RFValue(2 / 3 * height)
           }}
           onChangeText={(comment) => setComment(comment)}
         />

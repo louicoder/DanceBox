@@ -9,6 +9,7 @@ const SingleComment = ({
   imageUrl,
   comment,
   dateCreated,
+  goto,
   owner,
   last,
   navigation: { navigate },
@@ -19,13 +20,14 @@ const SingleComment = ({
   // console.log('OWNER', rest);
 
   return (
-    <View>
+    <View style={{ borderBottomWidth: 1, borderBottomColor: '#eee' }}>
       <View
         style={{
           width: '100%',
-          marginBottom: RFValue(20),
+          paddingVertical: RFValue(10),
           flexDirection: 'row',
-          paddingHorizontal: RFValue(10)
+          paddingHorizontal: RFValue(10),
+          backgroundColor: '#fff'
         }}
         // key={() => HelperFunctions.keyGenerator()}
       >
@@ -34,7 +36,7 @@ const SingleComment = ({
             source={{
               uri: imageUrl || CONSTANTS.DEFAULT_PROFILE
             }}
-            style={{ width: RFValue(50), height: RFValue(50), borderRadius: RFValue(100) }}
+            style={{ width: RFValue(40), height: RFValue(40), borderRadius: RFValue(100) }}
           />
         </View>
         <View style={{ width: '80%' }}>
@@ -44,20 +46,22 @@ const SingleComment = ({
         </View>
       </View>
       {last && (
-        <Pressable
-          onPress={() => navigate('NewBlogComment', { blogId: _id, blog })}
-          style={{
-            width: '95%',
-            backgroundColor: '#000',
-            height: RFValue(40),
-            alignItems: 'center',
-            justifyContent: 'center',
-            alignSelf: 'center',
-            marginBottom: RFValue(15)
-          }}
-        >
-          <Text style={{ fontSize: RFValue(14), color: '#fff' }}>+ Add a comment</Text>
-        </Pressable>
+        <View style={{ width: '100%', backgroundColor: '#fff' }}>
+          <Pressable
+            onPress={() => (goto ? goto() : navigate('NewBlogComment', { blogId: _id, blog }))}
+            style={{
+              width: '95%',
+              backgroundColor: '#000',
+              height: RFValue(40),
+              alignItems: 'center',
+              justifyContent: 'center',
+              alignSelf: 'center',
+              marginBottom: RFValue(15)
+            }}
+          >
+            <Text style={{ fontSize: RFValue(14), color: '#fff' }}>+ Add a comment</Text>
+          </Pressable>
+        </View>
       )}
     </View>
   );
