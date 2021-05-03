@@ -70,6 +70,73 @@ const getRandomEvents = async (req, res) => {
   }
 };
 
+// participate
+const participateInEvent = async (req, res) => {
+  if (!req.params.eventId) return res.json({ success: false, result: 'Blog id is required but missing' });
+  if (!req.body.owner) return res.json({ success: false, result: 'Owner details are required but missing' });
+  if (!req.body.owner.email) return res.json({ success: false, result: 'Owner email is required but missing' });
+  if (!req.body.owner.uid) return res.json({ success: false, result: 'Owner uid is required but missing' });
+
+  // const { comment, owner } = req.body;
+  // const payload = {comment, owner}
+  const { eventId: _id } = req.params;
+  try {
+    await EventsModel.updateOne(
+      { _id },
+      { $push: { participating: { ...req.body, dateCreated: new Date().toISOString() } } }
+    ).then((result) => {
+      if (result.nModified === 1) return res.json({ success: true, result: 'Operation was succesful' });
+      // console.log('updated', result.);
+      return res.json({ success: false, result: 'Nothing was updated please try again' });
+    });
+  } catch (error) {
+    return res.json({ success: false, result: error.message });
+  }
+};
+
+// Attend
+const attendEvent = async (req, res) => {
+  if (!req.params.eventId) return res.json({ success: false, result: 'Blog id is required but missing' });
+  if (!req.body.owner) return res.json({ success: false, result: 'Owner details are required but missing' });
+  if (!req.body.owner.email) return res.json({ success: false, result: 'Owner email is required but missing' });
+  if (!req.body.owner.uid) return res.json({ success: false, result: 'Owner uid is required but missing' });
+
+  // const { comment, owner } = req.body;
+  // const payload = {comment, owner}
+  const { eventId: _id } = req.params;
+  try {
+    await EventsModel.updateOne(
+      { _id },
+      { $push: { attending: { ...req.body, dateCreated: new Date().toISOString() } } }
+    ).then((result) => {
+      if (result.nModified === 1) return res.json({ success: true, result: 'Successfully updated blog' });
+      // console.log('updated', result);
+      return res.json({ success: false, result: 'Nothing was updated please try again' });
+    });
+  } catch (error) {
+    return res.json({ success: false, result: error.message });
+  }
+};
+
+const likeEvent = async (req, res) => {
+  if (!req.params.eventId) return res.json({ success: false, result: 'Blog id is required but missing' });
+  if (!req.body.owner) return res.json({ success: false, result: 'Owner details are required but missing' });
+  if (!req.body.owner.email) return res.json({ success: false, result: 'Owner email is required but missing' });
+  if (!req.body.owner.uid) return res.json({ success: false, result: 'Owner uid is required but missing' });
+
+  const { eventId: _id } = req.params;
+
+  try {
+    await EventsModel.updateOne({ _id }, { $push: { likes: req.body } }).then((result) => {
+      if (result.nModified === 1) return res.json({ success: true, result: 'Successfully updated blog' });
+      console.log('updated', result);
+      return res.json({ success: false, result: 'Nothing was updated please try again' });
+    });
+  } catch (error) {
+    return res.json({ success: false, result: error.message });
+  }
+};
+
 const getEventsForSingleUser = async (req, res) => {
   if (!req.params.ownerUid) return res.json({ success: false, result: 'Owner uid is required but missing' });
   console.log('RE params', req.params);
@@ -123,5 +190,7 @@ module.exports = {
   getEventsForSingleUser,
   updateEvent,
   deleteEvent,
-  allEvents
+  allEvents,
+  participateInEvent,
+  attendEvent
 };

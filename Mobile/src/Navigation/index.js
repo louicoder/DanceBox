@@ -21,7 +21,8 @@ import {
   Blogs,
   NewBlog,
   NewEvent,
-  BlogProfile
+  BlogProfile,
+  NewBlogComment
 } from '../Screens';
 import IconComp from '../Components/Icon';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -55,14 +56,19 @@ const HomeScreens = () => (
 );
 
 const BlogScreens = () => (
-  <BlogStack.Navigator screenOptions={{ header: (props) => null }}>
+  <BlogStack.Navigator screenOptions={{ header: (props) => null }} headerMode="screen">
     <BlogStack.Screen name="Blogs" component={Blogs} />
     <BlogStack.Screen
       name="NewBlog"
       component={NewBlog}
       options={{ header: (props) => <Header title="New Blog Post" iconName="pencil" {...props} /> }}
     />
-    <EventStack.Screen
+    <BlogStack.Screen
+      name="NewBlogComment"
+      component={NewBlogComment}
+      options={{ header: (props) => <Header title="Add Blog Comment" iconName="pencil" {...props} /> }}
+    />
+    <BlogStack.Screen
       name="BlogProfile"
       component={BlogProfile}
       options={{ header: (props) => <Header {...props} title="Blog details" /> }}

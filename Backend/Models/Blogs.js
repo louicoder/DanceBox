@@ -7,8 +7,8 @@ const BlogSchema = new mongoose.Schema({
   imageUrl: String,
   dateCreated: String,
   tags: { type: Array },
-  likes: { type: [ { uid: String, imageUrl: String, name: String, email: String } ] },
-  comments: { type: [ { uid: String, imageUrl: String, name: String, email: String } ] }
+  likes: { type: [] },
+  comments: { type: [] }
 });
 
 module.exports = mongoose.model('blogs', BlogSchema);

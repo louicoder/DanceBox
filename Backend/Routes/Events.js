@@ -7,6 +7,9 @@ router.get('/random', EC.getRandomEvents);
 router.get('/all', EC.allEvents);
 router.get('/user/:ownerUid', EC.getEventsForSingleUser);
 router.patch('/update/:eventId', EC.updateEvent);
+router.patch('/like/:eventId', EC.updateEvent);
+router.patch('/attend/:eventId', EC.attendEvent);
+router.patch('/participate/:eventId', EC.participateInEvent);
 router.delete('/delete/:eventId', EC.deleteEvent);
 
 module.exports = router;

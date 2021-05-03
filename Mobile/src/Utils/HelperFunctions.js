@@ -1,6 +1,6 @@
-import { Alert } from 'react-native';
+import { Alert, Platform } from 'react-native';
 import { launchImageLibrary } from 'react-native-image-picker';
-import { request, check } from 'react-native-permissions';
+import { request, check, PERMISSIONS } from 'react-native-permissions';
 import Storage from '@react-native-firebase/storage';
 
 // const Storage = storage();
@@ -103,3 +103,26 @@ export const validateEmail = (email) => {
 };
 
 export const Notify = (title = 'Information', message) => Alert.alert(title, message);
+
+export const CHECK_GALLERY_PERMISSIONS = async (callback) => {
+  try {
+    await check(
+      Platform.select({
+        android: PERMISSIONS.ANDROID.CAMERA,
+        ios: PERMISSIONS.IOS.PHOTO_LIBRARY
+      })
+    ).then(
+      async (res) =>
+        res === 'granted'
+          ? callback({ success: true, error: undefined })
+          : await request(
+              Platform.select({
+                android: PERMISSIONS.ANDROID.CAMERA,
+                ios: PERMISSIONS.IOS.PHOTO_LIBRARY
+              })
+            ).then((resp) => callback({ success: resp === 'granted' ? true : false }))
+    );
+  } catch (error) {
+    return callback({ success: false, error: error.message });
+  }
+};
