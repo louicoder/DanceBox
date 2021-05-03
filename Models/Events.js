@@ -25,10 +25,10 @@ const eventSchema = new mongoose.Schema({
     default: 'judges'
   },
   judgingNotes: String,
-  attending: { type: { uid: String, imageUrl: String, name: String, email: String } },
-  participants: { type: { uid: String, imageUrl: String, name: String, email: String } },
-  likes: { type: { uid: String, imageUrl: String, name: String, email: String } },
-  comments: { type: { uid: String, imageUrl: String, name: String, email: String } }
+  attending: { type: [ { uid: String, imageUrl: String, name: String, email: String } ] },
+  participants: { type: [ { uid: String, imageUrl: String, name: String, email: String } ] },
+  likes: { type: [ { uid: String, imageUrl: String, name: String, email: String } ] },
+  comments: { type: [ { uid: String, imageUrl: String, name: String, email: String } ] }
 });
 
 module.exports = mongoose.model('events', eventSchema);
