@@ -1,21 +1,17 @@
 const mongoose = require('mongoose');
 
 const eventSchema = new mongoose.Schema({
-  owner: { type: { uid: String, imageUrl: String, name: String, email: String } },
   title: String,
-  date: String,
-  time: String,
+  startDate: String,
+  endDate: String,
   contact: String,
   imageUrl: String,
   venue: String,
   description: String,
   free: Boolean,
   price: Number,
-  category: {
-    type: String,
-    enum: [ 'competition', 'performance', 'workshop', 'class', 'festival', 'video shoot' ],
-    default: 'competition'
-  },
+  tags: { type: Array },
+  category: { type: Array },
   dateCreated: String,
   ticketCompany: String,
   judges: { type: Array },
@@ -24,11 +20,13 @@ const eventSchema = new mongoose.Schema({
     enum: [ 'judges', 'audience', 'both' ],
     default: 'judges'
   },
+  noOfJudges: Number,
   judgingNotes: String,
-  attending: { type: [] },
-  participating: { type: [] },
-  likes: { type: [] },
-  comments: { type: [] }
+  attending: { type: Array },
+  participating: { type: Array },
+  likes: { type: Array },
+  comments: { type: Array },
+  owner: {}
 });
 
 module.exports = mongoose.model('events', eventSchema);

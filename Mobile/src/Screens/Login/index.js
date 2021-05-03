@@ -40,9 +40,29 @@ const Login = ({ navigation }) => {
         setState({ ...state });
         // console.log('Response from login', doc);
         dispatch.Account.setUserDetails(doc);
-        return state.justCreated ? navigation.navigate('Interests', { docId }) : navigation.navigate('Home');
+        return state.justCreated ? checkPermissions() : navigation.navigate('Home');
       }
     });
+  };
+
+  React.useEffect(() => {
+    checkPermissions();
+  }, []);
+
+  const checkPermissions = async () => {
+    try {
+      await HelperFunctions.CHECK_GALLERY_PERMISSIONS((res) => {
+        // console.log('Gallery prems', res);
+        if (!res.success)
+          return HelperFunctions.Notify(
+            'Error',
+            'You need to grant DAncebox permissions to access your gallery so you can upload images for you blog'
+          );
+        return navigation.navigate('Interests', { docId });
+      });
+    } catch (error) {
+      return HelperFunctions.Notify('Error', error.message);
+    }
   };
 
   const createAccountHandler = () => {

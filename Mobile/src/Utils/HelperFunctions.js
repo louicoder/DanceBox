@@ -25,7 +25,7 @@ export const requestPermission = async (permission, callback) => {
       return callback({ error: result });
     });
   } catch (error) {
-    return { error };
+    return callback({ error: error.message });
   }
 };
 
@@ -53,7 +53,7 @@ const switchPermissionResult = (result, permission, callback) => {
   }
 };
 
-export const ImagePicker = (callback, opts = {}) => {
+export const ImagePicker = (callback, opts = { maxWidth: 500, maxHeight: 500 }) => {
   const options = {
     title: 'Select Photo',
     // customButtons: [ { name: 'fb', title: 'Choose Photo from Gallery' } ],
@@ -61,6 +61,7 @@ export const ImagePicker = (callback, opts = {}) => {
       skipBackup: true
       // path: 'images'
     },
+    // we resize image here in the opts above
     ...opts
   };
 
@@ -114,7 +115,7 @@ export const CHECK_GALLERY_PERMISSIONS = async (callback) => {
     ).then(
       async (res) =>
         res === 'granted'
-          ? callback({ success: true, error: undefined })
+          ? callback({ success: true, result: res })
           : await request(
               Platform.select({
                 android: PERMISSIONS.ANDROID.CAMERA,

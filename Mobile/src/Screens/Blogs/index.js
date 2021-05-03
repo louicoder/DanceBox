@@ -5,6 +5,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
 import { ComingSoon } from '../../Components';
+import LoadingModal from '../../Components/LoadingModal';
 import { HelperFunctions } from '../../Utils';
 import SingleBlog from './SingleBlog';
 
@@ -14,22 +15,24 @@ const Blogs = ({ navigation }) => {
   const { blogs } = useSelector((state) => state.Blogs);
   const loading = useSelector((state) => state.loading.effects.Blogs);
 
-  React.useEffect(() => {
-    const sub = navigation.addListener('focus', () => {
-      getBlogs();
-    });
+  React.useEffect(
+    () => {
+      const sub = navigation.addListener('focus', () => {
+        getBlogs();
+      });
 
-    return () => sub;
-  }, []);
+      return () => sub;
+    },
+    [ navigation ]
+  );
 
   const getBlogs = () => {
-    dispatch.Blogs.getBlogs((response) => {
-      console.log('Blogs', response);
-    });
+    dispatch.Blogs.getBlogs((response) => {});
   };
 
   return (
     <View style={{ flex: 1 }}>
+      <LoadingModal isVisible={loading.getBlogs} />
       <SafeAreaView style={{}}>
         <View
           style={{
@@ -125,7 +128,6 @@ const Blogs = ({ navigation }) => {
           )}
         />
       </View>
-      {/* <ComingSoon extStyles={{ flexGrow: 1 }} /> */}
     </View>
   );
 };

@@ -70,10 +70,10 @@ export default {
 
     async likeBlog ({ blogId, payload, callback }, state) {
       try {
-        await AxiosClient.patch(`/blogs/like/${blogId}`, payload).then(({ data }) => {
+        await AxiosClient.put(`/blogs/like/${blogId}`, payload).then(({ data }) => {
           if (data.success) {
             const update = state.Blogs.blogs.map(
-              (blog) => (blog._id === blogId ? { ...blog, likes: [ ...blog.comments, payload ] } : blog)
+              (blog) => (blog._id === blogId ? { ...blog, likes: [ ...blog.likes, payload ] } : blog)
             );
             dispatch.Blogs.setBlogs(update);
             callback(data);

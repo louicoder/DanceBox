@@ -20,7 +20,7 @@ export default {
     async signIn ({ payload: { email, password }, callback }) {
       try {
         await QUERIES.signIn(email, password, (res) => {
-          console.log('USRID', res.doc);
+          // console.log('USRID', res.doc);
           dispatch.Account.setUserDetails(res.doc);
           callback(res);
         });

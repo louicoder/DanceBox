@@ -22,7 +22,8 @@ import {
   NewBlog,
   NewEvent,
   BlogProfile,
-  NewBlogComment
+  NewBlogComment,
+  NewEventComment
 } from '../Screens';
 import IconComp from '../Components/Icon';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -88,6 +89,11 @@ const EventScreens = () => (
       name="EventProfile"
       component={EventProfile}
       options={{ header: (props) => <Header {...props} title="Event details" /> }}
+    />
+    <EventStack.Screen
+      name="NewEventComment"
+      component={NewEventComment}
+      options={{ header: (props) => <Header title="Add Event Comment" iconName="pencil" {...props} /> }}
     />
   </EventStack.Navigator>
 );

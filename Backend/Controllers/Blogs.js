@@ -1,6 +1,7 @@
 const { BlogsModel } = require('../Models');
 
 const createBlog = async (req, res) => {
+  console.log('Hit create');
   try {
     const { title = '', description, owner, imageUrl = '', tags, owner: {} } = req.body;
     const payload = { title, description, owner, imageUrl, tags, dateCreated: new Date().toISOString() };
@@ -12,6 +13,8 @@ const createBlog = async (req, res) => {
 };
 
 const getBlog = async (req, res) => {
+  console.log('Hit getblog');
+
   if (!req.params.blogId) return res.json({ success: false, result: 'Blog id is required but missing' });
   const { blogId: _id } = req.params;
   try {
@@ -48,21 +51,22 @@ const allBlogs = async (req, res) => {
   }
 };
 
-const updateBlog = async (req, res) => {
+const updateBlog = (req, res) => {
+  console.log('Hit updateblog');
+
   if (!req.params.blogId) return res.json({ success: false, result: 'Blog id is required but missing' });
   const { blogId: _id } = req.params;
   try {
-    await BlogsModel.updateOne({ _id }, req.body).then((result) => {
-      if (result.nModified === 1) return res.json({ success: true, result: 'Successfully updated blog' });
-      console.log('updated', result);
-      return res.json({ success: false, result: 'Nothing was updated please try again' });
+    BlogsModel.updateOne({ _id }, req.body, (err) => {
+      if (err) return res.json({ success: false, result: error.message });
+      return res.json({ success: true, result: 'Successfully updated blog' });
     });
   } catch (error) {
     return res.json({ success: false, result: error.message });
   }
 };
 
-const createBlogComment = async (req, res) => {
+const createBlogComment = (req, res) => {
   if (!req.params.blogId) return res.json({ success: false, result: 'Blog id is required but missing' });
   if (!req.body.owner) return res.json({ success: false, result: 'Owner details are required but missing' });
   if (!req.body.owner.email) return res.json({ success: false, result: 'Owner email is required but missing' });
@@ -70,31 +74,31 @@ const createBlogComment = async (req, res) => {
 
   const { blogId: _id } = req.params;
   try {
-    await BlogsModel.updateOne(
+    BlogsModel.updateOne(
       { _id },
-      { $push: { comments: { ...req.body, dateCreated: new Date().toISOString() } } }
-    ).then((result) => {
-      if (result.nModified === 1) return res.json({ success: true, result: 'Successfully updated blog' });
-      console.log('updated', result);
-      return res.json({ success: false, result: 'Nothing was updated please try again' });
-    });
+      { $push: { comments: { ...req.body, dateCreated: new Date().toISOString() } } },
+      (err) => {
+        if (err) return res.json({ success: false, result: error.message });
+        return res.json({ success: true, result: 'Successfully created comment' });
+      }
+    );
   } catch (error) {
     return res.json({ success: false, result: error.message });
   }
 };
 
-const likeBlog = async (req, res) => {
+const likeBlog = (req, res) => {
   if (!req.params.blogId) return res.json({ success: false, result: 'Blog id is required but missing' });
-  if (!req.body.owner) return res.json({ success: false, result: 'Owner details are required but missing' });
-  if (!req.body.owner.email) return res.json({ success: false, result: 'Owner email is required but missing' });
-  if (!req.body.owner.uid) return res.json({ success: false, result: 'Owner uid is required but missing' });
+  if (!req.body) return res.json({ success: false, result: 'Owner details are required but missing' });
+  if (!req.body.email) return res.json({ success: false, result: 'Owner email is required but missing' });
+  if (!req.body.uid) return res.json({ success: false, result: 'Owner uid is required but missing' });
 
   const { blogId: _id } = req.params;
+  // console.lo
   try {
-    await BlogsModel.updateOne({ _id }, { $push: { likes: req.body } }).then((result) => {
-      if (result.nModified === 1) return res.json({ success: true, result: 'Successfully updated blog' });
-      console.log('updated', result);
-      return res.json({ success: false, result: 'Nothing was updated please try again' });
+    BlogsModel.updateOne({ _id }, { $push: { likes: req.body } }, (err) => {
+      if (err) return res.json({ success: false, result: error.message });
+      return res.json({ success: true, result: 'Successfully liked blog' });
     });
   } catch (error) {
     return res.json({ success: false, result: error.message });

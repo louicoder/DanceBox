@@ -13,7 +13,7 @@ const OptionsSelector = ({ items, header, extStyles, defaultValue, setItem }) =>
           <Pressable
             onPress={() => {
               setState(item === state ? '' : item);
-              setItem(item);
+              setItem(item.toLowerCase());
             }}
             style={[
               {

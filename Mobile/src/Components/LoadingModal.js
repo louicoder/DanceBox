@@ -17,7 +17,7 @@ const LoadingModal = ({ children, isVisible }) => {
         justifyContent: 'center'
       }}
     >
-      <Text style={{ color: '#fff', fontSize: RFValue(12) }}>Loading, please wait...</Text>
+      <Text style={{ color: '#fff', fontSize: RFValue(12) }}>Please wait ...</Text>
       {children}
     </View>
   ) : null;

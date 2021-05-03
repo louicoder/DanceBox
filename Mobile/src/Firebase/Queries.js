@@ -8,8 +8,8 @@ export const signIn = async (email, password, callback) => {
   try {
     const account = await AUTH.signInWithEmailAndPassword(email, password);
     if (account.user) {
-      console.log('DOC user', account.user.uid);
-      await DB.collection(collection)
+      // console.log('DOC user', account.user.uid);
+      await DB.collection('Users')
         .doc(doc)
         .get()
         .then((snapshot) => callback({ doc: { ...snapshot.data(), uid: account.user.uid }, error: undefined }));

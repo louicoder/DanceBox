@@ -13,6 +13,7 @@ import Blogs from './Blogs';
 import NewBlog from './Blogs/NewBlog';
 import NewEvent from './Events/NewEvent';
 import NewBlogComment from './Blogs/NewBlogComment';
+import NewEventComment from './Events/NewEventComment';
 
 export {
   Home,
@@ -29,5 +30,6 @@ export {
   Blogs,
   NewBlog,
   NewEvent,
-  NewBlogComment
+  NewBlogComment,
+  NewEventComment
 };
