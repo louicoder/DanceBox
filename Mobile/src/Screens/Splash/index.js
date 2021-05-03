@@ -26,6 +26,7 @@ const Splash = ({ navigation: { navigate } }) => {
     dispatch.Account.getUserDetails({
       uid,
       callback: ({ error, doc }) => {
+        console.log('DOC SININ', doc);
         if (error) return navigate('Login');
         dispatch.Account.setUserDetails(doc);
         return navigate('Home');

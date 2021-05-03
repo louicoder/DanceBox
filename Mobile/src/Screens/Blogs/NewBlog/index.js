@@ -11,10 +11,16 @@ import moment from 'moment';
 import DatePicker from '../../../Components/DatePicker';
 import LoadingModal from '../../../Components/LoadingModal';
 import { useDispatch } from 'react-redux';
+import Modal from '../../../Components/Modal';
 import { QUERIES } from '../../../Firebase';
+import auth from '@react-native-firebase/auth';
+import { useSelector } from 'react-redux';
 
 const NewBlog = ({ navigation }) => {
+  const { user } = useSelector((state) => state.Account);
+  const loading = useSelector((state) => state.loading.effects.Blogs);
   const dispatch = useDispatch();
+  const [ modal, setModal ] = React.useState(true);
   const [ state, setState ] = React.useState({
     image: {},
     tags: [],
@@ -25,7 +31,9 @@ const NewBlog = ({ navigation }) => {
     loading: false,
     title: 'My new blog',
     description:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Qui est in parvis malis. Cupiditates non Epicuri divisione finiebat, sed sua satietate. Ab hoc autem quaedam non melius quam veteres, quaedam omnino relicta. Hoc ne statuam quidem dicturam pater aiebat, si loqui posset. Paria sunt igitur. Neque enim disputari sine reprehensione nec cum iracundia aut pertinacia recte disputari potest. Similiter sensus, cum accessit ad naturam, tuetur illam quidem, sed etiam se tuetur; Itaque hic ipse iam pridem est reiectus; Ad quorum et cognitionem et usum iam corroborati natura ipsa praeeunte deducimur'
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Qui est in parvis malis. Cupiditates non Epicuri divisione finiebat, sed sua satietate. Ab hoc autem quaedam non melius quam veteres, quaedam omnino relicta. Hoc ne statuam quidem dicturam pater aiebat, si loqui posset. Paria sunt igitur. Neque enim disputari sine reprehensione nec cum iracundia aut pertinacia recte disputari potest. Similiter sensus, cum accessit ad naturam, tuetur illam quidem, sed etiam se tuetur; Itaque hic ipse iam pridem est reiectus; Ad quorum et cognitionem et usum iam corroborati natura ipsa praeeunte deducimur',
+    component: 'startdate',
+    modalVisible: false
     // dateTime: new Date().toString()
   });
 
@@ -59,7 +67,12 @@ const NewBlog = ({ navigation }) => {
       case 'time':
         return <Time />;
       case 'startdate':
-        return <StartDate setDate={setDate} date={startDate} closeModal={closeModal} />;
+        // return <StartDate setDate={setDate} date={startDate} closeModal={closeModal} />;
+        return (
+          <View
+            style={{ width: '100%', height: RFValue(200), backgroundColor: '#fff', position: 'absolute', bottom: 0 }}
+          />
+        );
       case 'enddate':
         return <EndDate setDate={setDate} date={endDate} closeModal={closeModal} />;
     }
@@ -78,11 +91,22 @@ const NewBlog = ({ navigation }) => {
           Alert.alert('Error', error);
         },
         async (imageUrl) =>
-          QUERIES.updateDoc('Blogs', blogId, { imageUrl }, (res) => {
-            // updated
-            console.log('updated event', res);
-            setState({ ...state, loading: false });
-            if (res.doc) return navigation.navigate('Blogs');
+          // dispatch.Blogs.updateBlog(blogId, { imageUrl }, (res) => {
+          //   // updated
+          //   console.log('updated event', res);
+          //   setState({ ...state, loading: false });
+          //   if (res.doc) return navigation.navigate('Blogs');
+          // })
+          dispatch.Blogs.updateBlog({
+            blogId,
+            payload: { imageUrl },
+            callback: (res) => {
+              // updated
+              console.log('updated event', res);
+              setState({ ...state, loading: false });
+              if (!res.success) return HelperFunctions.Notify('Error', res.result);
+              return navigation.navigate('Blogs');
+            }
           })
       );
     } catch (error) {
@@ -91,21 +115,31 @@ const NewBlog = ({ navigation }) => {
     }
   };
 
-  // const clearFields = () =>
-  //   setState({ ...state, caption: '', image: {}, topics: [], progress: 0, progressVisible: false });
-
+  // console.log('USER::::', user);
   const createBlog = async () => {
-    setState({ ...state, loading: true });
     Keyboard.dismiss();
+    setState({ ...state, loading: true });
+
     try {
       const dateCreated = new Date().toISOString();
-      const { description, title } = state;
-      const payload = { description, title, dateCreated, likes: [], comments: 0, imageUrl: '' };
+      const { description, title, tags } = state;
+      const payload = {
+        description,
+        title,
+        likes: [],
+        comments: [],
+        imageUrl: '',
+        tags,
+        owner: { uid: user.uid, email: user.email, imageUrl: user.imageUrl || '', name: user.name }
+      };
       dispatch.Blogs.createBlog({
         payload,
         callback: (res) => {
-          console.log('Response', res);
-          if (state.image.uri) return uploadBlogImage(res.doc);
+          console.log('Response BLOG Create', res.result);
+          if (!res.success) {
+            return HelperFunctions.Notify('Error', res.result);
+          }
+          if (state.image.uri) return uploadBlogImage(res.result._id);
           setState({ ...state, loading: false });
           return navigation.navigate('Blogs');
         }
@@ -118,8 +152,11 @@ const NewBlog = ({ navigation }) => {
 
   return (
     <View style={{ flex: 1 }}>
-      <LoadingModal isVisible={state.loading} />
-      <KeyboardAwareScrollView
+      <LoadingModal isVisible={state.loading || loading.updateDoc} />
+      {/* <Modal isVisible={modal} closeModal={() => setModal(false)}>
+        <RenderModComponent component={state.component} />
+      </Modal> */}
+      <KeyboardAvoidingView
         style={{}}
         automaticallyAdjustContentInsets={false}
         // scrollEnabled={false}
@@ -187,6 +224,7 @@ const NewBlog = ({ navigation }) => {
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginHorizontal: RFValue(10) }}>
             {[ 'breaking', 'salsa', 'capoera', 'dance class', 'free style', 'beatboxing' ].map((item) => (
               <Pressable
+                key={HelperFunctions.keyGenerator()}
                 style={{
                   marginRight: RFValue(10),
                   backgroundColor: state.tags && state.tags.includes(item) ? '#000' : 'transparent',
@@ -260,7 +298,7 @@ const NewBlog = ({ navigation }) => {
           </Pressable>
         </View>
         {/* end freee */}
-      </KeyboardAwareScrollView>
+      </KeyboardAvoidingView>
     </View>
   );
 };

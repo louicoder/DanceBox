@@ -21,7 +21,7 @@ const SingleEvent = ({
   return (
     <View style={{ marginBottom: RFValue(15) }}>
       <Pressable
-      // onPress={() => navigate('EventProfile', { imageUrl, price, title, attending, venue, comments, likes, ...rest })}
+        onPress={() => navigate('EventProfile', { imageUrl, price, title, attending, venue, comments, likes, ...rest })}
       >
         <ImageBackground
           source={{ uri: imageUrl || 'https://campusrec.fsu.edu/wp-content/uploads/2019/02/dance.jpg' }}

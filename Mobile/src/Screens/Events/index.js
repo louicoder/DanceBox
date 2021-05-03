@@ -99,11 +99,11 @@ const Events = ({ navigation, ...props }) => {
                 renderItem={({ item }) => <SingleEvent {...item} {...props} navigation={navigation} />}
               />
             ) : null}
-            {events && !events.length ? (
+            {/* {events && !events.length ? (
               <View style={{ flex: 1, backgroundColor: '#eee', alignItems: 'center', justifyContent: 'center' }}>
                 <Text>Not events yet, keep checking...</Text>
               </View>
-            ) : null}
+            ) : null} */}
           </View>
         </View>
       </SafeAreaView>

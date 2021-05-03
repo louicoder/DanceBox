@@ -8,7 +8,11 @@ export const signIn = async (email, password, callback) => {
   try {
     const account = await AUTH.signInWithEmailAndPassword(email, password);
     if (account.user) {
-      return await getDoc('Users', account.user.uid, callback);
+      console.log('DOC user', account.user.uid);
+      await DB.collection(collection)
+        .doc(doc)
+        .get()
+        .then((snapshot) => callback({ doc: { ...snapshot.data(), uid: account.user.uid }, error: undefined }));
     }
     return callback({ doc: account, error: undefined });
   } catch (error) {

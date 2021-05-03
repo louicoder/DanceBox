@@ -62,6 +62,45 @@ const updateBlog = async (req, res) => {
   }
 };
 
+const createBlogComment = async (req, res) => {
+  if (!req.params.blogId) return res.json({ success: false, result: 'Blog id is required but missing' });
+  if (!req.body.owner) return res.json({ success: false, result: 'Owner details are required but missing' });
+  if (!req.body.owner.email) return res.json({ success: false, result: 'Owner email is required but missing' });
+  if (!req.body.owner.uid) return res.json({ success: false, result: 'Owner uid is required but missing' });
+
+  const { blogId: _id } = req.params;
+  try {
+    await BlogsModel.updateOne(
+      { _id },
+      { $push: { comments: { ...req.body, dateCreated: new Date().toISOString() } } }
+    ).then((result) => {
+      if (result.nModified === 1) return res.json({ success: true, result: 'Successfully updated blog' });
+      console.log('updated', result);
+      return res.json({ success: false, result: 'Nothing was updated please try again' });
+    });
+  } catch (error) {
+    return res.json({ success: false, result: error.message });
+  }
+};
+
+const likeBlog = async (req, res) => {
+  if (!req.params.blogId) return res.json({ success: false, result: 'Blog id is required but missing' });
+  if (!req.body.owner) return res.json({ success: false, result: 'Owner details are required but missing' });
+  if (!req.body.owner.email) return res.json({ success: false, result: 'Owner email is required but missing' });
+  if (!req.body.owner.uid) return res.json({ success: false, result: 'Owner uid is required but missing' });
+
+  const { blogId: _id } = req.params;
+  try {
+    await BlogsModel.updateOne({ _id }, { $push: { likes: req.body } }).then((result) => {
+      if (result.nModified === 1) return res.json({ success: true, result: 'Successfully updated blog' });
+      console.log('updated', result);
+      return res.json({ success: false, result: 'Nothing was updated please try again' });
+    });
+  } catch (error) {
+    return res.json({ success: false, result: error.message });
+  }
+};
+
 const deleteBlog = async (req, res) => {
   if (!req.params.blogId) return res.json({ success: false, result: 'Blog id is required but missing' });
   const { blogId: _id } = req.params;
@@ -76,4 +115,14 @@ const deleteBlog = async (req, res) => {
   }
 };
 
-module.exports = { createBlog, getBlog, getRandomBlogs, getBlogsForSingleUser, updateBlog, deleteBlog, allBlogs };
+module.exports = {
+  createBlog,
+  getBlog,
+  getRandomBlogs,
+  getBlogsForSingleUser,
+  updateBlog,
+  deleteBlog,
+  allBlogs,
+  createBlogComment,
+  likeBlog
+};

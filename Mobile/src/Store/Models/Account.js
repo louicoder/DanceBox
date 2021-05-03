@@ -19,7 +19,11 @@ export default {
 
     async signIn ({ payload: { email, password }, callback }) {
       try {
-        await QUERIES.signIn(email, password, callback);
+        await QUERIES.signIn(email, password, (res) => {
+          console.log('USRID', res.doc);
+          dispatch.Account.setUserDetails(res.doc);
+          callback(res);
+        });
       } catch (error) {
         return callback({ success: false, result: error.message });
       }
@@ -27,7 +31,9 @@ export default {
 
     async getUserDetails ({ uid, callback }) {
       try {
-        await QUERIES.getDoc('Users', uid, callback);
+        await QUERIES.getDoc('Users', uid, (res) => {
+          callback({ ...res, doc: { ...res.doc, uid } });
+        });
       } catch (error) {
         return callback({ success: false, result: error.message });
       }

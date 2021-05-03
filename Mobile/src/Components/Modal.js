@@ -37,9 +37,9 @@ export default ({
       // hasBackdrop={false}
       useNativeDriver
     >
-      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'position' : undefined}>
-        <View style={[ styles.modal, externalStyles ]}>{rest.children}</View>
-      </KeyboardAvoidingView>
+      {/* <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'position' : undefined}> */}
+      {rest.children}
+      {/* </KeyboardAvoidingView> */}
     </Modal>
   );
 };

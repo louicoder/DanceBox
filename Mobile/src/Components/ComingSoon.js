@@ -2,7 +2,11 @@ import React from 'react';
 import { View, Text } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 
-const ComingSoon = ({ title = 'Watch this space for some exciting stuff coming your way very soon', extStyles }) => {
+const ComingSoon = ({
+  title = 'Watch this space for some exciting stuff coming your way very soon',
+  extStyles,
+  children
+}) => {
   return (
     <View
       style={[
@@ -18,6 +22,7 @@ const ComingSoon = ({ title = 'Watch this space for some exciting stuff coming y
       ]}
     >
       <Text style={{ color: '#00000080', textAlign: 'center' }}>{title}</Text>
+      {children}
     </View>
   );
 };
