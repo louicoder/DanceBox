@@ -17,13 +17,16 @@ const Events = ({ navigation, ...props }) => {
   const { events } = useSelector((state) => state.Events);
   const loading = useSelector((state) => state.loading.effects.Events);
 
-  React.useEffect(() => {
-    const sub = navigation.addListener('focus', () => {
-      getEvents();
-    });
+  React.useEffect(
+    () => {
+      const sub = navigation.addListener('focus', () => {
+        getEvents();
+      });
 
-    return () => sub;
-  }, []);
+      return () => sub;
+    },
+    [ navigation ]
+  );
 
   React.useEffect(() => {
     checkPermissions();

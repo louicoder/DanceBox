@@ -7,7 +7,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { HelperFunctions } from '../../../Utils';
 import SingleEvent from '../SingleEvent';
 import CommentsLikeButtons from '../../../Components/CommentsLikeButtons';
-import moment from 'moment';
+import LoadingModal from '../../../Components/LoadingModal';
 import SingleComment from '../../../Components/SingleComment';
 import Header from './Header';
 import { useDispatch } from 'react-redux';
@@ -16,6 +16,7 @@ import { useSelector } from 'react-redux';
 const EventProfile = ({ navigation, route, ...props }) => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.Account);
+  const loading = useSelector((state) => state.loading.effects.Events);
   const [ state, setState ] = React.useState({ ...route.params });
 
   React.useEffect(
@@ -63,6 +64,7 @@ const EventProfile = ({ navigation, route, ...props }) => {
       keyboardVerticalOffset={Platform.OS === 'ios' ? RFValue(90) : 0}
       style={{ flex: 1 }}
     >
+      <LoadingModal isVisible={loading.likeEvent} />
       <View style={{ flex: 1 }}>
         <View style={{ flex: 1 }}>
           <FlatList

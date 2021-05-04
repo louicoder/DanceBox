@@ -5,6 +5,7 @@ import { RFValue } from 'react-native-responsive-fontsize';
 import LOGO from '../../assets/dancebox-logo.jpg';
 import { useDispatch, useSelector } from 'react-redux';
 import auth from '@react-native-firebase/auth';
+import { HelperFunctions } from '../../Utils';
 
 const AUTH = auth();
 let sub;

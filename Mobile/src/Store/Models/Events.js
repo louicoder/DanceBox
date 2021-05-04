@@ -2,10 +2,13 @@ import { QUERIES } from '../../Firebase';
 import AxiosClient from '../Axios';
 
 export default {
-  state: { events: [] },
+  state: { events: [], randomEvents: [] },
   reducers: {
     setEvents (state, events) {
       return { ...state, events };
+    },
+    setRandomEvents (state, randomEvents) {
+      return { ...state, randomEvents };
     }
   },
   effects: (dispatch) => ({
@@ -13,7 +16,7 @@ export default {
     async createEvent ({ payload, callback }, state) {
       try {
         await AxiosClient.post('/events/create', payload).then(({ data }) => {
-          console.log('CREahed here----', payload);
+          // console.log('CREahed here----', payload);
           if (data.success) {
             const events = [ ...state.Events.events, data.result ];
             dispatch.Events.setEvents(events);
@@ -30,6 +33,19 @@ export default {
         await AxiosClient.get('/events/all').then(({ data }) => {
           if (data.success) {
             dispatch.Events.setEvents(data.result);
+          }
+          callback(data);
+        });
+      } catch (error) {
+        return callback({ success: false, result: error.message });
+      }
+    },
+
+    async getRandomEvents (callback) {
+      try {
+        await AxiosClient.get('/events/random').then(({ data }) => {
+          if (data.success) {
+            dispatch.Events.setRandomEvents(data.result);
           }
           callback(data);
         });
@@ -113,7 +129,7 @@ export default {
         await AxiosClient.patch(`/events/like/${eventId}`, payload).then(({ data }) => {
           if (data.success) {
             const events = [ ...state.Events.events ].map(
-              (event) => (event._id === eventId ? { ...event, ...payload } : event)
+              (event) => (event._id === eventId ? { ...event, likes: [ ...event.likes, payload ] } : event)
             );
             dispatch.Events.setEvents(events);
             callback(data);

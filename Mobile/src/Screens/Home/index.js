@@ -1,5 +1,17 @@
 import React from 'react';
-import { View, Dimensions, FlatList, ScrollView, Image, Text, Linking, Alert, Platform } from 'react-native';
+import {
+  View,
+  Dimensions,
+  FlatList,
+  ScrollView,
+  Image,
+  Text,
+  Linking,
+  Alert,
+  Platform,
+  ImageBackground,
+  Pressable
+} from 'react-native';
 import Ripple from 'react-native-material-ripple';
 import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -11,24 +23,33 @@ import TopCategories from './TopCategories';
 import LOGO from '../../assets/dancebox-logo.jpg';
 import BlogPost from '../../Components/BlogPost';
 import { keyGenerator } from '../../Utils/HelperFunctions';
-import { HelperFunctions } from '../../Utils';
+import { CONSTANTS, HelperFunctions } from '../../Utils';
 import { PERMISSIONS } from 'react-native-permissions';
+import { useDispatch, useSelector } from 'react-redux';
+import SingleBlog from '../Blogs/SingleBlog';
 
 const { width } = Dimensions.get('window');
 
 const Home = ({ navigation, ...props }) => {
-  // const gotoHandler = async (url) => {
-  //   await Linking.canOpenURL(url)
-  //     .then((supported) => {
-  //       if (supported) {
-  //         return Linking.openURL(url);
-  //       } else {
-  //         console.log("Don't know how to open URI: " + url);
-  //         return alert('You should have a browser to go to');
-  //       }
-  //     })
-  //     .catch((error) => alert(JSON.stringify(error)));
-  // };
+  const dispatch = useDispatch();
+  const { randomEvents } = useSelector((state) => state.Events);
+  const { blogs } = useSelector((state) => state.Blogs);
+
+  // React.useEffect(() => {
+  //   getEvents();
+  // }, []);
+
+  React.useEffect(
+    () => {
+      const sub = navigation.addListener('focus', () => {
+        getRandomEvents();
+        getBlogs();
+      });
+
+      return () => sub;
+    },
+    [ navigation ]
+  );
 
   React.useEffect(() => {
     checkPermissions();
@@ -42,6 +63,19 @@ const Home = ({ navigation, ...props }) => {
     } catch (error) {
       return HelperFunctions.Notify('Error', error.message);
     }
+  };
+
+  const getRandomEvents = () => {
+    dispatch.Events.getRandomEvents((res) => {
+      console.log('REs REANDom', res);
+    });
+  };
+
+  const getBlogs = () => {
+    dispatch.Blogs.getBlogs((res) => {
+      console.log('REs EVS', res);
+      // setState({...state, blogs})
+    });
   };
 
   return (
@@ -78,8 +112,7 @@ const Home = ({ navigation, ...props }) => {
           </Ripple>
         </View>
 
-        <TopCategories />
-        <ComingSoon
+        {/* <ComingSoon
           extStyles={{
             marginHorizontal: RFValue(10),
             width: '95%',
@@ -87,50 +120,106 @@ const Home = ({ navigation, ...props }) => {
             height: RFValue(300),
             marginVertical: RFValue(10)
           }}
-        />
-        {/* <FlatList
-          // style={{ flex: 1 }}
-          showsVerticalScrollIndicator={false}
-          ListHeaderComponent={<TopCategories />}
-          data={data}
-          key={() => keyGenerator()}
-          renderItem={(props) => (
-            <BlogPost
-              {...props}
-              navigation={navigation}
-              last={props.index === data.length - 1}
-              first={props.index === 0}
-            />
-          )}
         /> */}
+        <ScrollView style={{ flex: 1, width: '100%', backgroundColor: '#aaaaaa80' }}>
+          <TopCategories />
+          <View style={{ backgroundColor: '#fff' }}>
+            <Text
+              style={{
+                marginHorizontal: RFValue(10),
+                marginVertical: RFValue(15),
+                fontSize: RFValue(16),
+                fontWeight: 'bold',
+                backgroundColor: '#fff'
+              }}
+            >
+              Interesting you might like:
+            </Text>
+          </View>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              flexWrap: 'wrap',
+              width: '100%',
+              alignItems: 'flex-start',
+              flex: 1,
+              backgroundColor: '#fff',
+              paddingBottom: RFValue(15)
+            }}
+          >
+            {randomEvents.slice(0, 4).map((item) => (
+              <Pressable
+                key={HelperFunctions.keyGenerator()}
+                // onPress={() => navigation.navigate('Events', { screen: 'EventProfile', eventId: item._id })}
+                style={{
+                  width: '49.5%',
+                  height: 49 / 100 * width,
+                  marginBottom: '1%'
+                  // height: RFValue(250)
+                  // marginRight: index + 1 === randomEvents.length ? 0 : RFValue(5)
+                }}
+              >
+                <ImageBackground
+                  style={{ width: null, height: null, flex: 1 }}
+                  resizeMode="cover"
+                  source={{ uri: item.imageUrl || CONSTANTS.EVENTS_PIC }}
+                >
+                  <View
+                    style={{
+                      width: '100%',
+                      position: 'absolute',
+                      backgroundColor: '#00000010',
+                      // height: RFValue(50),
+                      bottom: 0
+                    }}
+                  >
+                    <Text>{item.title}</Text>
+                    <Text>{item.startDate}</Text>
+                    <Text>{item.endDate}</Text>
+                  </View>
+                </ImageBackground>
+              </Pressable>
+            ))}
+            {[ ...Array(4 - randomEvents.slice(0, 4).length) ].map(() => (
+              <View
+                key={HelperFunctions.keyGenerator()}
+                style={{
+                  width: '49.5%',
+                  height: 49 / 100 * width,
+                  marginBottom: '1%',
+                  backgroundColor: '#eee',
+                  justifyContent: 'center',
+                  paddingHorizontal: RFValue(10)
+                  // height: RFValue(250)
+                  // marginRight: index + 1 === randomEvents.length ? 0 : RFValue(5)
+                }}
+              >
+                <Text style={{ color: '#aaaa', fontSize: RFValue(12), textAlign: 'center' }}>
+                  More events coming soon, keep checking...
+                </Text>
+              </View>
+            ))}
+          </View>
+
+          <View style={{ backgroundColor: '#fff', marginTop: RFValue(15), paddingVertical: RFValue(15) }}>
+            <Text
+              style={{
+                marginHorizontal: RFValue(10),
+                fontSize: RFValue(16),
+                fontWeight: 'bold'
+              }}
+            >
+              Blogs posts you might like
+            </Text>
+          </View>
+
+          {blogs &&
+            blogs.map((blog) => <SingleBlog key={HelperFunctions.keyGenerator()} {...blog} navigation={navigation} />)}
+        </ScrollView>
       </View>
     </SafeAreaView>
   );
 };
 
 export default Home;
-
-const data = [
-  {
-    img: 'https://www.iamhiphopmagazine.com/wp-content/uploads/2016/11/bFJ2.jpg'
-  },
-  {
-    img:
-      'https://lh3.googleusercontent.com/proxy/LF-M9Q7SaWK_E9Rj4YW2i_yCeY7HyxVlcYKHI8QUDKk0l8fTcHDmc2X_5ds50yVoaExJ21xedOQ1yUhGaf6V2KyQ-_WOXgjGeIksahIgw9Zk44To9w'
-  },
-  {
-    img:
-      'https://www.musicinafrica.net/sites/default/files/styles/article_slider_large/public/images/article/201502/uganda-wwwzeiterionorg.jpg?itok=1zKOpaCb'
-  },
-  {
-    img:
-      'https://www.musicinafrica.net/sites/default/files/styles/article_slider_large/public/images/article/201704/ghetto-kids.jpg?itok=aXL3oCaE'
-  },
-  {
-    img:
-      'https://www.musicinafrica.net/sites/default/files/styles/article_slider_large/public/images/article/201807/break-2.jpg?itok=7iK-UTV-'
-  },
-  {
-    img: 'https://i.pinimg.com/originals/30/23/74/3023745f3cf3e79cbdf64e1ebc99e484.jpg'
-  }
-];
