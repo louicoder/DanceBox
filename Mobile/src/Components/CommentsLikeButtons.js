@@ -17,6 +17,7 @@ const CommentsLikeButtons = ({ comments, likes, type, id, extStyles }) => {
   const likeHandler = () => {
     switch (type) {
       case 'event':
+        console.log('called here...');
         return eventHandler();
       case 'blog':
         return blogHandler();
@@ -77,13 +78,10 @@ const CommentsLikeButtons = ({ comments, likes, type, id, extStyles }) => {
         extStyles
       ]}
     >
-      {/* <View style={{ flexDirection: 'column', width: '50%' }}>
-      </View> */}
       <Text style={{ fontSize: RFValue(14), color: '#aaa' }}>
         {likes && likes.length} likes ・ {comments && comments.length} comments
       </Text>
       <View style={{ flexDirection: 'row', alignItems: 'center', width: '50%', justifyContent: 'flex-end' }}>
-        {/* <Icon name="chatbubble-outline" size={RFValue(25)} color="#000" onPress={() => alert('Here')} /> */}
         <Icon
           name={liked() ? 'heart' : 'heart-outline'}
           style={{ marginHorizontal: RFValue(10) }}

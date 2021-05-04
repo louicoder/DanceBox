@@ -12,7 +12,7 @@ const Header = ({
   imageUrl,
   title,
   description,
-  likes,
+  // likes,
   comments,
   _id,
   venue,
@@ -32,12 +32,21 @@ const Header = ({
   eventId,
   ...rest
 }) => {
-  console.log('LIKEYY', rest);
   const { user } = useSelector((state) => state.Account);
+  const { events } = useSelector((state) => state.Events);
   const [ visible, setVisible ] = React.useState(false);
 
-  const isParticipant = participating && participating.find((part) => part.owner.uid === user.uid);
-  const isAttending = participating && participating.find((part) => part.owner.uid === user.uid);
+  const isParticipant = () => {
+    const part = events.find((event) => event._id === _id);
+    return part && part.participating.findIndex((el) => el.uid === user.uid) !== -1;
+  };
+
+  const isAttending = () => {
+    const attend = events.find((event) => event._id === _id);
+    return attend && attend.attending.findIndex((el) => el.uid === user.uid) !== -1;
+  };
+
+  const likes = events.find((event) => event._id === _id).likes;
 
   return (
     <View style={{ width: '100%', backgroundColor: '#fff', marginBottom: RFValue(15) }}>
@@ -66,7 +75,7 @@ const Header = ({
 
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '100%', marginTop: RFValue(10) }}>
           <Pressable
-            onPress={() => (isAttending ? null : attend())}
+            onPress={() => (isAttending() ? null : attend())}
             style={{
               height: RFValue(50),
               width: '49%',
@@ -84,11 +93,11 @@ const Header = ({
             </Text>
           </Pressable>
           <Pressable
-            onPress={() => (isParticipant ? null : participate())}
+            onPress={() => (isParticipant() ? null : participate())}
             style={{
               height: RFValue(50),
               width: '49%',
-              backgroundColor: '#010203',
+              backgroundColor: events && isParticipant() ? '#aaa' : '#010203',
               alignItems: 'center',
               justifyContent: 'center',
 

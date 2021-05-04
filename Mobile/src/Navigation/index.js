@@ -53,6 +53,26 @@ const LoginScreen = () => (
 const HomeScreens = () => (
   <HomeStack.Navigator screenOptions={{ header: (props) => null }}>
     <HomeStack.Screen name="Home" component={Home} />
+    <HomeStack.Screen
+      name="BlogProfile"
+      component={BlogProfile}
+      options={{ header: (props) => <Header {...props} title="Blog details" /> }}
+    />
+    <HomeStack.Screen
+      name="NewBlogComment"
+      component={NewBlogComment}
+      options={{ header: (props) => <Header title="Add Blog Comment" iconName="pencil" {...props} /> }}
+    />
+    <HomeStack.Screen
+      name="EventProfile"
+      component={EventProfile}
+      options={{ header: (props) => <Header {...props} title="Event details" /> }}
+    />
+    <HomeStack.Screen
+      name="NewEventComment"
+      component={NewEventComment}
+      options={{ header: (props) => <Header title="Add Event Comment" iconName="pencil" {...props} /> }}
+    />
   </HomeStack.Navigator>
 );
 
