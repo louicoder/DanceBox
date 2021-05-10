@@ -5,6 +5,7 @@ import { RFValue } from 'react-native-responsive-fontsize';
 const Input = ({
   title = '',
   value,
+  number,
   onChangeText,
   extStyles,
   placeholder,
@@ -17,6 +18,7 @@ const Input = ({
     <View style={[ { marginBottom: RFValue(10), width: '100%' }, extStyles ]}>
       {title ? <Text style={{ marginBottom: RFValue(5), fontSize: RFValue(12) }}>{title}</Text> : null}
       <TextInput
+        keyboardType={number ? 'number-pad' : 'default'}
         multiline={multiline}
         autoCapitalize="none"
         autoCorrect={false}

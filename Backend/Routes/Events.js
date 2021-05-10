@@ -8,7 +8,7 @@ router.get('/all', EC.allEvents);
 router.get('/search?', EC.searchEvent);
 router.get('/user/:ownerUid', EC.getEventsForSingleUser);
 router.patch('/update/:eventId', EC.updateEvent);
-router.patch('/like/:eventId', EC.likeEvent);
+router.patch('/like/:eventId/:uid', EC.likeEvent);
 router.patch('/comments/create/:eventId', EC.createEventComment);
 router.patch('/attend/:eventId/:uid', EC.attendEvent);
 router.patch('/unattend/:eventId/:uid', EC.unattendEvent);

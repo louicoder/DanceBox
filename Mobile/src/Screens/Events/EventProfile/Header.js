@@ -9,6 +9,7 @@ import CommentsLikeButtons from '../../../Components/CommentsLikeButtons';
 import { CONSTANTS } from '../../../Utils';
 
 const Header = ({
+  likeHandler,
   imageUrl,
   title,
   description,
@@ -26,10 +27,6 @@ const Header = ({
   judgingNotes,
   startDate,
   endDate,
-  // participate,
-  // unParticipate,
-  // attend,
-  // unAttend,
   attendParticipate,
   unattendUnparticipate,
   navigation,
@@ -41,18 +38,16 @@ const Header = ({
   const [ visible, setVisible ] = React.useState(false);
 
   const isParticipant = () => {
-    const part = events && events.find((event) => event._id === _id);
-    console.log('Participating', part.participating.findIndex((el) => el.uid === user.uid));
-    return part.participating.findIndex((el) => el.uid === user.uid) !== -1;
+    // const part = events.find((event) => event._id === _id);
+    return participating && participating.findIndex((el) => el.uid === user.uid) !== -1;
   };
 
   const isAttending = () => {
-    const attend = events && events.find((event) => event._id === _id);
-    console.log('Attending', attend.attending);
-    return attend.attending.findIndex((el) => el.uid === user.uid) !== -1;
+    // const attend = events.find((event) => event._id === _id);
+    return attending && attending.findIndex((el) => el.uid === user.uid) !== -1;
   };
 
-  // const likes = events && events.find((event) => event._id === _id).likes;
+  // console.log('check likes', likes);
 
   return (
     <View style={{ width: '100%', backgroundColor: '#fff', marginBottom: RFValue(15) }}>
@@ -64,6 +59,7 @@ const Header = ({
 
       <View style={{ paddingHorizontal: RFValue(10) }}>
         <CommentsLikeButtons
+          likeHandler={likeHandler}
           likes={likes}
           comments={comments}
           type="event"

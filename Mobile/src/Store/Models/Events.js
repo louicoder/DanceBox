@@ -1,5 +1,5 @@
-import { QUERIES } from '../../Firebase';
 import AxiosClient from '../Axios';
+import auth from '@react-native-firebase/auth';
 
 export default {
   state: { events: [], randomEvents: [] },
@@ -92,11 +92,9 @@ export default {
     async attendParticipate ({ action, payload, eventId, callback }, state) {
       try {
         const uid = state.Account.user.uid;
-        console.log('STATE EVENTS', state.Events.events);
         await AxiosClient.patch(`/events/${action}/${eventId}/${uid}`, payload).then(({ data }) => {
           let newEvents;
           if (data.success) {
-            const eventCopy = [ ...state.Events.events ];
             if (action === 'attend') {
               newEvents = state.Events.events.map(
                 (event) => event._id === eventId && { ...event, attending: [ ...event.attending, payload ] }
@@ -119,7 +117,6 @@ export default {
     async unattendUnparticipate ({ action, payload, eventId, callback }, state) {
       try {
         const uid = state.Account.user.uid;
-        console.log('STATE EVENTS', state.Events.events);
         await AxiosClient.patch(`/events/${action}/${eventId}/${uid}`, payload).then(({ data }) => {
           let newEvents;
           if (data.success) {
@@ -150,16 +147,28 @@ export default {
       }
     },
 
-    async likeEvent ({ eventId, payload, callback }, state) {
+    async likeEvent ({ eventId, callback }, state) {
       try {
-        await AxiosClient.patch(`/events/like/${eventId}`, payload).then(({ data }) => {
+        const uid = state.Account.user.uid || auth().currentUser.uid;
+
+        await AxiosClient.patch(`/events/like/${eventId}/${uid}`).then(({ data }) => {
           if (data.success) {
-            const events = [ ...state.Events.events ].map(
-              (event) => (event._id === eventId ? { ...event, likes: [ ...event.likes, payload ] } : event)
+            events = state.Events.events.map(
+              (event) => (event._id === eventId ? { ...event, likes: [ ...event.likes, uid ] } : event)
             );
+
             dispatch.Events.setEvents(events);
             callback(data);
           }
+        });
+      } catch (error) {
+        return callback({ success: false, result: error.message });
+      }
+    },
+
+    async getEvent ({ eventId, callback }, state) {
+      try {
+        await AxiosClient.get(`/events/single/${eventId}`).then(({ data }) => {
           callback(data);
         });
       } catch (error) {

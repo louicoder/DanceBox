@@ -16,14 +16,13 @@ const EditAccount = () => {
   const [ state, setState ] = React.useState({
     tagsVisible: true,
     interests: [],
-    about:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cur igitur, cum de re conveniat, non malumus usitate loqui? Experiamur igitur, inquit, etsi habet haec Stoicorum ratio difficilius quiddam et obscurius. Eam si varietatem diceres, intellegerem, ut etiam non dicente te intellego; Duo Reges: constructio interrete. Quorum sine causa fieri nihil putandum est.',
-    whatsapp: 'https://urllink.com',
-    facebook: 'https://urllink.com',
-    instagram: 'https://urllink.com',
-    linkedin: 'https://urllink.com',
-    youtube: 'https://urllink.com',
-    twitter: 'https://urllink.com',
+    about: '',
+    whatsapp: '',
+    facebook: '',
+    instagram: '',
+    linkedin: '',
+    youtube: '',
+    twitter: '',
     name: '',
     username: '',
     ...user
@@ -168,9 +167,10 @@ const EditAccount = () => {
         />
         <Input
           title="Your whatsapp number"
-          placeholder="https://twitter.com/"
+          placeholder="Enter whatsapp number e.g +256xxxxx"
           value={state.whatsapp}
           onChangeText={(whatsapp) => setState({ ...state, whatsapp })}
+          number
         />
         <Pressable
           onPress={updateUserDetails}

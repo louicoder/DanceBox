@@ -162,15 +162,13 @@ const unattendEvent = (req, res) => {
 };
 
 const likeEvent = (req, res) => {
-  if (!req.params.eventId) return res.json({ success: false, result: 'Blog id is required but missing' });
-  if (!req.body) return res.json({ success: false, result: 'Owner details are required but missing' });
-  if (!req.body.email) return res.json({ success: false, result: 'Owner email is required but missing' });
-  if (!req.body.uid) return res.json({ success: false, result: 'Owner uid is required but missing' });
-
-  const { eventId: _id } = req.params;
+  if (!req.params.eventId)
+    return res.json({ success: false, result: 'Event id is required in the params but missing' });
+  if (!req.params.uid) return res.json({ success: false, result: 'User id is required in the params but missing' });
+  const { eventId: _id, uid } = req.params;
 
   try {
-    EventsModel.updateOne({ _id }, { $push: { likes: req.body } }, (err, result) => {
+    EventsModel.updateOne({ _id }, { $push: { likes: uid } }, (err, result) => {
       if (err) return res.json({ success: false, result: error.message });
       return res.json({ success: true, result: 'Successfully liked  event' });
     });

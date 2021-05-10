@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Image, Pressable, TextInput, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, Image, Pressable, TextInput, KeyboardAvoidingView, Platform, Alert } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import Ripple from 'react-native-material-ripple';
 import { RFValue } from 'react-native-responsive-fontsize';
@@ -16,8 +16,30 @@ import { useSelector } from 'react-redux';
 const EventProfile = ({ navigation, route, ...props }) => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.Account);
+  const { events } = useSelector((state) => state.Events);
   const loading = useSelector((state) => state.loading.effects.Events);
-  const [ state, setState ] = React.useState({ ...route.params });
+  const [ event, setEvent ] = React.useState({});
+
+  React.useEffect(
+    () => {
+      getEvent();
+    },
+    [ route.params ]
+  );
+
+  const getEvent = () =>
+    dispatch.Events.getEvent({
+      eventId: route.params._id,
+      callback: (resp) => {
+        console.log('HErrrrrrrr th event', resp.result._id);
+        if (!resp.success)
+          return Alert.alert(
+            'Error getting event',
+            'Something went wrong while trying to fetch this event, please try again'
+          );
+        setEvent(resp.result);
+      }
+    });
 
   const requestPayload = (action) => ({
     action,
@@ -35,40 +57,54 @@ const EventProfile = ({ navigation, route, ...props }) => {
 
   const unattendUnparticipate = (action) => dispatch.Events.unattendUnparticipate(requestPayload(action));
 
+  const likeHandler = () => {
+    const uid = user.uid;
+    dispatch.Events.likeEvent({
+      eventId: event._id,
+      callback: (res) => {
+        if (!res.success) return HelperFunctions.Notify('Error', res.result);
+        setEvent({ ...event, likes: [ ...event.likes, uid ] });
+      }
+    });
+  };
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       keyboardVerticalOffset={Platform.OS === 'ios' ? RFValue(90) : 0}
       style={{ flex: 1 }}
     >
-      <LoadingModal isVisible={loading.likeEvent || loading.attendParticipate} />
-      <View style={{ flex: 1 }}>
+      <LoadingModal isVisible={loading.likeEvent || loading.attendParticipate || loading.getEvent} />
+      {event && (
         <View style={{ flex: 1 }}>
-          <FlatList
-            style={{ flex: 1, backgroundColor: '#aaaaaa80' }}
-            ListHeaderComponent={
-              <Header
-                {...state}
-                navigation={navigation}
-                attendParticipate={attendParticipate}
-                unattendUnparticipate={unattendUnparticipate}
-              />
-            }
-            data={state.comments}
-            key={() => HelperFunctions.keyGenerator()}
-            showsVerticalScrollIndicator={false}
-            keyExtractor={(item) => HelperFunctions.keyGenerator()}
-            renderItem={({ item, index }) => (
-              <SingleComment
-                {...item}
-                navigation={navigation}
-                last={index + 1 === state.comments.length}
-                goto={() => navigation.navigate('NewEventComment', { eventId: state._id })}
-              />
-            )}
-          />
+          <View style={{ flex: 1 }}>
+            <FlatList
+              style={{ flex: 1, backgroundColor: '#aaaaaa80' }}
+              ListHeaderComponent={
+                <Header
+                  {...event}
+                  navigation={navigation}
+                  attendParticipate={attendParticipate}
+                  unattendUnparticipate={unattendUnparticipate}
+                  likeHandler={likeHandler}
+                />
+              }
+              data={event.comments}
+              key={() => HelperFunctions.keyGenerator()}
+              showsVerticalScrollIndicator={false}
+              keyExtractor={(item) => HelperFunctions.keyGenerator()}
+              renderItem={({ item, index }) => (
+                <SingleComment
+                  {...item}
+                  navigation={navigation}
+                  last={index + 1 === event.comments.length}
+                  goto={() => navigation.navigate('NewEventComment', { eventId: event._id })}
+                />
+              )}
+            />
+          </View>
         </View>
-      </View>
+      )}
     </KeyboardAvoidingView>
   );
 };

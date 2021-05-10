@@ -88,17 +88,14 @@ const createBlogComment = (req, res) => {
 };
 
 const likeBlog = (req, res) => {
-  if (!req.params.blogId) return res.json({ success: false, result: 'Blog id is required but missing' });
-  if (!req.body) return res.json({ success: false, result: 'Owner details are required but missing' });
-  if (!req.body.email) return res.json({ success: false, result: 'Owner email is required but missing' });
-  if (!req.body.uid) return res.json({ success: false, result: 'Owner uid is required but missing' });
+  if (!req.params.blogId) return res.json({ success: false, result: 'Blog id is required in the params but missing' });
+  if (!req.params.uid) return res.json({ success: false, result: 'User id is required in the params but missing' });
 
-  const { blogId: _id } = req.params;
-  // console.lo
+  const { blogId: _id, uid } = req.params;
   try {
-    BlogsModel.updateOne({ _id }, { $push: { likes: req.body } }, (err) => {
+    BlogsModel.updateOne({ _id }, { $push: { likes: uid } }, (err, result) => {
       if (err) return res.json({ success: false, result: error.message });
-      return res.json({ success: true, result: 'Successfully liked blog' });
+      return res.json({ success: true, result: 'Successfully liked  blog' });
     });
   } catch (error) {
     return res.json({ success: false, result: error.message });
