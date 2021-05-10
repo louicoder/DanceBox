@@ -42,17 +42,17 @@ const Header = ({
 
   const isParticipant = () => {
     const part = events && events.find((event) => event._id === _id);
-    return part && part.participating.findIndex((el) => el.uid === user.uid) !== -1;
+    console.log('Participating', part.participating.findIndex((el) => el.uid === user.uid));
+    return part.participating.findIndex((el) => el.uid === user.uid) !== -1;
   };
 
   const isAttending = () => {
     const attend = events && events.find((event) => event._id === _id);
-    return attend && attend.attending.findIndex((el) => el.uid === user.uid) !== -1;
+    console.log('Attending', attend.attending);
+    return attend.attending.findIndex((el) => el.uid === user.uid) !== -1;
   };
 
   // const likes = events && events.find((event) => event._id === _id).likes;
-
-  // console.log(isAttending())
 
   return (
     <View style={{ width: '100%', backgroundColor: '#fff', marginBottom: RFValue(15) }}>
@@ -61,6 +61,7 @@ const Header = ({
         resizeMode="cover"
         style={{ width: '100%', height: RFValue(300) }}
       />
+
       <View style={{ paddingHorizontal: RFValue(10) }}>
         <CommentsLikeButtons
           likes={likes}
@@ -69,6 +70,10 @@ const Header = ({
           id={_id}
           extStyles={{ paddingHorizontal: 0 }}
         />
+
+        <Text style={{ fontSize: RFValue(20), paddingVertical: RFValue(10) }}>
+          Entrance Fee: <Text style={{ fontWeight: 'bold' }}>{free ? 'FREE' : price}</Text>
+        </Text>
         <Text style={{ fontSize: RFValue(14) }}>
           Date : {moment(startDate).format('DD/MMMM/YYYY')} - {moment(endDate).format('DD/MMMM/YYYY')}
         </Text>
@@ -94,7 +99,7 @@ const Header = ({
           >
             {/* <Icon name="map-marker" size={RFValue(30)} color="#fff" /> */}
             <Text style={{ fontSize: RFValue(14), color: '#fff', textAlign: 'center', marginLeft: RFValue(5) }}>
-              {isParticipant() ? 'Cancel Attendance' : '+ Attend'}
+              {isAttending() ? 'Cancel Attendance' : '+ Attend'}
             </Text>
           </Pressable>
           <Pressable
@@ -103,7 +108,7 @@ const Header = ({
             style={{
               height: RFValue(50),
               width: '49%',
-              // backgroundColor: events && isParticipant() ? '#aaa' : '#010203',
+              backgroundColor: '#000',
               alignItems: 'center',
               justifyContent: 'center',
 

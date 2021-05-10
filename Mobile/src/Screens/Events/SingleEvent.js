@@ -22,9 +22,10 @@ const SingleEvent = ({
   judgingNotes,
   noOfJudges,
   free,
-  owner,
+  header = true,
   location,
   amount,
+  owner,
   likes,
   _id,
   navigation: { navigate },
@@ -60,7 +61,8 @@ const SingleEvent = ({
 
   return (
     <View style={{ marginBottom: !last ? RFValue(15) : 0, backgroundColor: '#fff' }}>
-      {owner && (
+      {header &&
+      owner && (
         <View
           style={{
             flexDirection: 'row',

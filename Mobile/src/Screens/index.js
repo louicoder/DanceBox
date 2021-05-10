@@ -14,6 +14,9 @@ import NewBlog from './Blogs/NewBlog';
 import NewEvent from './Events/NewEvent';
 import NewBlogComment from './Blogs/NewBlogComment';
 import NewEventComment from './Events/NewEventComment';
+import UserBlogs from './Account/AllBlogs';
+import UserEvents from './Account/AllEvents';
+import EditAccount from './Account/EditAccount';
 
 export {
   Home,
@@ -31,5 +34,8 @@ export {
   NewBlog,
   NewEvent,
   NewBlogComment,
-  NewEventComment
+  NewEventComment,
+  UserBlogs,
+  UserEvents,
+  EditAccount
 };

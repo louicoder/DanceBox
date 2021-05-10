@@ -41,13 +41,12 @@ const NewEvent = ({ navigation }) => {
   const [ imageLoading, setImageLoading ] = React.useState(false);
 
   const [ state, setState ] = React.useState({
-    title: 'The new event here',
+    title: '',
     startDate: new Date(),
     endDate: new Date(),
     image: {},
-    venue: 'Kamwokya studio',
-    description:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ergo id est convenienter naturae vivere, a natura discedere. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ergo id est convenienter naturae vivere, a natura discedere. ',
+    venue: '',
+    description: ' ',
     tags: [],
     tagsVisible: true,
     // date: moment(new Date()).format('YYYY-MM-DD'),
@@ -57,8 +56,7 @@ const NewEvent = ({ navigation }) => {
     modalVisible: false,
     modalComponent: 'startdate',
     // amount: 0,
-    judgingNotes:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ergo id est convenienter naturae vivere, a natura discedere. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ergo id est convenienter naturae vivere, a natura discedere. ',
+    judgingNotes: '',
     judgingCriteria: 'Judges',
     noOfJudges: 3,
     loading: false,
@@ -141,7 +139,7 @@ const NewEvent = ({ navigation }) => {
       attending: [],
       participating: [],
       imageUrl: '',
-      price: parseInt(price),
+      price: state.free ? '0' : price,
       judgingCriteria: criteria,
       owner: { uid: user.uid, email: user.email, name: user.name || '', imageUrl: user.imageUrl || '' }
     };
@@ -270,6 +268,7 @@ const NewEvent = ({ navigation }) => {
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginHorizontal: RFValue(10) }}>
             {CONSTANTS.INTERESTS.map((item) => (
               <Pressable
+                key={HelperFunctions.keyGenerator()}
                 style={{
                   marginRight: RFValue(10),
                   backgroundColor: state.tags && state.tags.includes(item) ? '#000' : 'transparent',

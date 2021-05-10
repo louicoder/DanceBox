@@ -19,30 +19,21 @@ const EventProfile = ({ navigation, route, ...props }) => {
   const loading = useSelector((state) => state.loading.effects.Events);
   const [ state, setState ] = React.useState({ ...route.params });
 
-  React.useEffect(
-    () => {
-      const sub = navigation.addListener('focus', () => {
-        setState({ ...route.params });
-      });
-      return () => sub;
-    },
-    [ navigation, route.params ]
-  );
-
   const requestPayload = (action) => ({
     action,
     eventId: state._id,
     payload: { uid: user.uid, email: user.email, name: user.name || '', imageUrl: user.imageUrl || '' },
-    callback: (resp) => {
-      console.log(`REsp from ${action}`, resp);
-      if (!resp.success) return HelperFunctions.Notify('Error', resp.result);
+    callback: ({ success, result }) => {
+      console.log(`REsp from ${action}`, result);
+      if (!success) return HelperFunctions.Notify('Error', result);
+      setState({ ...state, ...result });
       return HelperFunctions.Notify('Success', 'Successfully added you to the waiting list');
     }
   });
 
   const attendParticipate = (action) => dispatch.Events.attendParticipate(requestPayload(action));
 
-  const unattendUnparticipate = (action) => dispatch.Events.attendParticipate(requestPayload(action));
+  const unattendUnparticipate = (action) => dispatch.Events.unattendUnparticipate(requestPayload(action));
 
   return (
     <KeyboardAvoidingView
@@ -58,10 +49,6 @@ const EventProfile = ({ navigation, route, ...props }) => {
             ListHeaderComponent={
               <Header
                 {...state}
-                // participate={participate}
-                // unParticipate={unParticipate}
-                // attend={attend}
-                // unAttend={unAttend}
                 navigation={navigation}
                 attendParticipate={attendParticipate}
                 unattendUnparticipate={unattendUnparticipate}

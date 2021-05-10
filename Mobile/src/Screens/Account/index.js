@@ -1,6 +1,5 @@
 import React from 'react';
-import { View, Text, SafeAreaView, Image, ScrollView, Pressable, ImageBackground } from 'react-native';
-import { FlatList } from 'react-native-gesture-handler';
+import { View, Text, SafeAreaView, Image, ScrollView, Pressable, ImageBackground, FlatList } from 'react-native';
 import Ripple from 'react-native-material-ripple';
 import { RFValue } from 'react-native-responsive-fontsize';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -8,100 +7,172 @@ import { Button } from '../../Components';
 import { CONSTANTS, HelperFunctions } from '../../Utils';
 import { useSelector } from 'react-redux';
 import Styles from './Styles';
+import { useDispatch } from 'react-redux';
+import SingleBlog from '../Blogs/SingleBlog';
+import SingleEvent from '../Events/SingleEvent';
+import auth from '@react-native-firebase/auth';
+import LoadingModal from '../../Components/LoadingModal';
 
-const Account = ({ navigation: { navigate } }) => {
-  const { user } = useSelector((state) => state.Account);
+const Account = ({ navigation }) => {
+  const dispatch = useDispatch();
+  const { user, events, blogs } = useSelector((state) => state.Account);
+  const [ state, setState ] = React.useState({ image: {}, progress: 0, ...user });
+  const [ imageLoading, setImageLoading ] = React.useState(false);
 
-  // console.log('EUSER', user);
+  React.useEffect(() => {
+    getUserEventsAndBlogs();
+  }, []);
+
+  const getUserEventsAndBlogs = () =>
+    dispatch.Account.getUserEventsAndBlogs({
+      uid: user.uid,
+      callback: (res) => {
+        console.log('REsponses', res);
+      }
+    });
+
+  const selectImage = async () =>
+    await HelperFunctions.CHECK_GALLERY_PERMISSIONS(async (res) => {
+      console.log('rESult', res);
+      if (!res.success) {
+        return HelperFunctions.Notify('Error accessing gallery', res.result);
+      }
+      HelperFunctions.ImagePicker((image) => {
+        // console.log('REsponse', image);
+        if (image.uri) uploadProfileImage(image);
+      });
+    });
+
+  const uploadProfileImage = async (image) => {
+    try {
+      await HelperFunctions.uploadImage(
+        `Profiles/${user.uid || auth().currentUser.uid}/${image.fileName}`,
+        image.uri,
+        (progress) => {
+          setState({ ...state, progress });
+          setImageLoading(true);
+        },
+        (error) => {
+          // setState({ ...state, progressVisible: false, progress: 0 });
+          setImageLoading(false);
+          Alert.alert('Error', error);
+        },
+        async (imageUrl) =>
+          dispatch.Account.updateAccountDetails({
+            uid: user.uid || auth().currentUser.uid,
+            payload: { imageUrl },
+            callback: (resp) => {
+              console.log('REsp from update image', resp);
+              setImageLoading(false);
+              if (resp.error) return HelperFunctions.Notify('Error updating profile photo', resp.result);
+              return HelperFunctions.Notify('Success', 'Your profile photo has been updated successfully');
+            }
+          })
+      );
+    } catch (error) {
+      setImageLoading(false);
+      return HelperFunctions.Notify('Error', error.message);
+    }
+  };
+
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <ScrollView style={{ flex: 1, paddingTop: RFValue(20) }}>
-        <View
-          style={{
-            width: '100%',
-            flexDirection: 'row',
-            paddingHorizontal: RFValue(10),
-            alignItems: 'center'
-          }}
-        >
-          <ImageBackground
-            source={{
-              uri: user.imageUrl || CONSTANTS.DEFAULT_PROFILE
-            }}
-            resizeMode="cover"
-            style={{ width: RFValue(80), height: RFValue(80), alignSelf: 'center', borderRadius: RFValue(200) }}
-            imageStyle={{ borderRadius: RFValue(100) }}
-          >
-            <Pressable
-              style={{
-                borderRadius: RFValue(100),
-                alignItems: 'center',
-                justifyContent: 'center',
-                flex: 1,
-                backgroundColor: 'rgba(0,0,0,.7)'
-              }}
-            >
-              <Icon name="pencil" color="#fff" size={RFValue(40)} />
-            </Pressable>
-          </ImageBackground>
+    <React.Fragment>
+      <LoadingModal isVisible={imageLoading}>
+        {state.progress > 0 &&
+        state.progress < 100 && <Text style={{ color: '#fff', fontSize: RFValue(50) }}>{state.progress}%</Text>}
+      </LoadingModal>
+      <SafeAreaView style={{ flex: 1 }}>
+        <ScrollView style={{ flex: 1 }}>
           <View
             style={{
-              borderBottomColor: '#eee',
-              flexGrow: 1,
-              paddingLeft: RFValue(15)
+              width: '100%',
+              flexDirection: 'row',
+              paddingHorizontal: RFValue(10),
+              alignItems: 'center',
+              paddingTop: RFValue(20)
             }}
           >
-            {<Text style={{ fontSize: RFValue(20), fontWeight: 'bold' }}>{user.name || user.username || '-'}</Text>}
-            <Text style={{ fontSize: RFValue(14), color: '#aaa' }}>{user.email}</Text>
-            <Pressable
-              style={{
-                borderWidth: 1,
-                paddingVertical: RFValue(10),
-                borderRadius: RFValue(3),
-                width: '100%',
-                borderColor: '#01020330',
-                justifyContent: 'center',
-                alignItems: 'center',
-                marginVertical: RFValue(10)
+            <ImageBackground
+              source={{
+                uri: user.imageUrl || CONSTANTS.DEFAULT_PROFILE
               }}
+              resizeMode="cover"
+              style={{ width: RFValue(80), height: RFValue(80), alignSelf: 'center', borderRadius: RFValue(200) }}
+              imageStyle={{ borderRadius: RFValue(100) }}
             >
-              <Text style={{ fontSize: RFValue(16) }}>Edit Profile</Text>
-            </Pressable>
-          </View>
-        </View>
-
-        {/* stats */}
-        <View
-          style={{
-            width: '100%',
-            flexDirection: 'row',
-            justifyContent: 'center',
-            marginVertical: RFValue(20)
-          }}
-        >
-          {[
-            { title: 'Followers', count: user && user.followers.length },
-            { title: 'Following', count: user && user.following.length },
-            { title: 'Reviews', count: '0' }
-          ].map(({ title, count }, index) => (
+              <Pressable
+                onPress={selectImage}
+                style={{
+                  borderRadius: RFValue(100),
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flex: 1,
+                  backgroundColor: 'rgba(0,0,0,.6)'
+                }}
+              >
+                <Icon name="pencil" color="#fff" size={RFValue(40)} />
+              </Pressable>
+            </ImageBackground>
             <View
               style={{
-                alignItems: 'center',
-                marginHorizontal: index === 1 ? RFValue(15) : 0,
-                // borderLeftWidth: index === 1 ? 1 : 0,
-                // borderRightWidth: index === 1 ? 1 : 0,
-                paddingHorizontal: index === 1 ? RFValue(20) : 0,
-                borderColor: '#aaa'
+                borderBottomColor: '#eee',
+                flexGrow: 1,
+                paddingLeft: RFValue(15)
               }}
             >
-              <Text style={{ fontSize: RFValue(18), fontWeight: 'bold' }}>{count}</Text>
-              <Text style={{ fontSize: RFValue(14), color: '#aaa' }}>{title}</Text>
+              {<Text style={{ fontSize: RFValue(16), fontWeight: 'bold' }}>{user.name || user.username || '-'}</Text>}
+              <Text style={{ fontSize: RFValue(12), color: '#aaa' }}>{user.email}</Text>
+              <Pressable
+                onPress={() => navigation.navigate('EditAccount')}
+                style={{
+                  // borderWidth: 1,
+                  backgroundColor: '#010203',
+                  paddingVertical: RFValue(10),
+                  borderRadius: RFValue(3),
+                  width: '100%',
+                  borderColor: '#01020330',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  marginVertical: RFValue(10)
+                }}
+              >
+                <Text style={{ fontSize: RFValue(14), color: '#fff' }}>Edit Profile</Text>
+              </Pressable>
             </View>
-          ))}
-        </View>
-        {/* End stats */}
+          </View>
 
-        <View
+          {/* stats */}
+          <View
+            style={{
+              width: '100%',
+              flexDirection: 'row',
+              justifyContent: 'center',
+              marginVertical: RFValue(10)
+            }}
+          >
+            {[
+              { title: 'Followers', count: user.followers && user.followers.length },
+              { title: 'Following', count: user.following && user.following.length },
+              { title: 'Reviews', count: '0' }
+            ].map(({ title, count }, index) => (
+              <View
+                style={{
+                  alignItems: 'center',
+                  marginHorizontal: index === 1 ? RFValue(15) : 0,
+                  // borderLeftWidth: index === 1 ? 1 : 0,
+                  // borderRightWidth: index === 1 ? 1 : 0,
+                  paddingHorizontal: index === 1 ? RFValue(20) : 0,
+                  borderColor: '#aaa'
+                }}
+              >
+                <Text style={{ fontSize: RFValue(18), fontWeight: 'bold' }}>{count}</Text>
+                <Text style={{ fontSize: RFValue(14), color: '#aaa' }}>{title}</Text>
+              </View>
+            ))}
+          </View>
+          {/* End stats */}
+
+          {/* <View
           style={{
             flexDirection: 'row',
             justifyContent: 'space-between',
@@ -134,135 +205,91 @@ const Account = ({ navigation: { navigate } }) => {
           <Pressable style={Styles.socials}>
             <Icon name="youtube" size={RFValue(40)} />
           </Pressable>
-        </View>
+        </View> */}
 
-        <View style={{ paddingHorizontal: RFValue(10) }}>
-          <View
-            style={{
-              width: '100%',
-              flexDirection: 'row',
-              // alignItems: 'center',
-              justifyContent: 'space-between',
-              paddingVertical: RFValue(10)
-            }}
-          >
-            {[
-              { icon: 'comment-outline', title: 'All Reviews' },
-              { icon: 'calendar-outline', title: 'All Events' },
-              { icon: 'bookmark-outline', title: 'Favorites' }
-            ].map(({ title, icon }) => (
-              <Ripple
-                style={{
-                  width: '32%',
-                  backgroundColor: '#eee',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  paddingVertical: RFValue(10),
-                  borderRadius: RFValue(5)
-                }}
-              >
-                <Icon name={icon} size={RFValue(40)} />
-                <Text>{title}</Text>
-              </Ripple>
-            ))}
-          </View>
-
-          <View>
-            <Text style={{ fontSize: RFValue(16), fontWeight: 'bold', marginVertical: RFValue(10) }}>
-              Latest Reviews
-            </Text>
+          <View style={{}}>
             <View
               style={{
                 width: '100%',
-                height: RFValue(200),
-                alignItems: 'center',
-                justifyContent: 'center',
-                backgroundColor: '#eee'
+                paddingHorizontal: RFValue(10),
+                flexDirection: 'row',
+                // alignItems: 'center',
+                justifyContent: 'space-between'
+                // paddingVertical: RFValue(10)
               }}
             >
-              <Text>your reviews will be here...</Text>
-            </View>
-
-            {/* <FlatList
-              style={{ marginVertical: RFValue(10) }}
-              keyExtractor={() => HelperFunctions.keyGenerator()}
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              data={reviews}
-              renderItem={({ item: { email, review, dateCreated }, index }) => (
-                <View
+              {[
+                { icon: 'card-text', title: 'All Blogs', onPress: () => navigation.navigate('UserBlogs') },
+                { icon: 'calendar-outline', title: 'All Events', onPress: () => navigation.navigate('UserEvents') },
+                { icon: 'bookmark-outline', title: 'Favorites', onPress: () => null }
+              ].map(({ title, icon, onPress }) => (
+                <Ripple
+                  onPress={onPress}
                   style={{
-                    // borderWidth: 1,
-                    width: RFValue(300),
-                    // height: RFValue(100),
-                    backgroundColor: '#eeeeee80',
-                    padding: RFValue(10),
-                    marginRight: RFValue(10)
+                    width: '32%',
+                    backgroundColor: '#eee',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    paddingVertical: RFValue(10),
+                    borderRadius: RFValue(5)
                   }}
                 >
-                  <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: RFValue(10) }}>
-                    <Image
-                      style={{
-                        width: RFValue(40),
-                        height: RFValue(40),
-                        borderRadius: RFValue(50),
-                        borderWidth: 1,
-                        borderColor: '#aaa'
-                      }}
-                    />
-                    <View style={{ marginLeft: RFValue(10) }}>
-                      <Text style={{ fontSize: RFValue(12), fontWeight: 'normal', color: '#000' }}>{email}</Text>
-                      <Text style={{ fontSize: RFValue(10), color: '#aaa' }}>{dateCreated}</Text>
-                    </View>
-                  </View>
-                  <Text style={{ fontSize: RFValue(13) }}>{review}</Text>
-                </View>
-              )}
-            /> */}
+                  <Icon name={icon} size={RFValue(40)} />
+                  <Text>{title}</Text>
+                </Ripple>
+              ))}
+            </View>
+
+            <View style={{}}>
+              <Text
+                style={{
+                  fontSize: RFValue(20),
+                  fontWeight: 'bold',
+                  margin: RFValue(10),
+                  marginTop: RFValue(20),
+                  borderBottomWidth: 0.5,
+                  borderBottomColor: '#ccc',
+                  paddingBottom: RFValue(10)
+                }}
+              >
+                Recent Activity :
+              </Text>
+
+              <FlatList
+                showsVerticalScrollIndicator={false}
+                style={{ backgroundColor: '#eeeeee90' }}
+                data={events}
+                keyExtractor={() => HelperFunctions.keyGenerator()}
+                renderItem={({ item, index }) => (
+                  <SingleEvent header={false} last={index + 1 === events.length} {...item} navigation={navigation} />
+                )}
+              />
+            </View>
+
+            <View>
+              {/* <Text style={{ fontSize: RFValue(16), fontWeight: 'bold', marginVertical: RFValue(10) }}>Latest Blogs</Text> */}
+
+              <FlatList
+                showsVerticalScrollIndicator={false}
+                style={{ backgroundColor: '#eeeeee90' }}
+                data={blogs}
+                keyExtractor={() => HelperFunctions.keyGenerator()}
+                renderItem={({ item, index }) => (
+                  <SingleBlog
+                    header={false}
+                    {...item}
+                    navigation={navigation}
+                    last={index + 1 === blogs.length}
+                    marginBottom={0}
+                  />
+                )}
+              />
+            </View>
           </View>
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+        </ScrollView>
+      </SafeAreaView>
+    </React.Fragment>
   );
 };
 
 export default Account;
-
-const reviews = [
-  {
-    email: 'musanje2010@gmail.com',
-    dateCreated: '20 hours ago',
-    review:
-      'I have been really wondering what we could just have this comin weekened, I really liked the sessionswe had for chemotherapy laasat time I have been really wondering what we could just have this comin weekened, I really liked the sessionswe had for chemotherapy laasat time '
-  },
-  {
-    email: 'nekesa@gmail.com',
-    dateCreated: '20 hours ago',
-    review:
-      'I have been really wondering what we could just have this comin weekened, I really liked the sessionswe had for chemotherapy laasat time I have been really wondering what we could just have this comin weekened, I really liked the sessionswe had for chemotherapy laasat time '
-  },
-  {
-    email: 'trudy_fire@gmail.com',
-    dateCreated: '20 hours ago',
-    review:
-      'I have been really wondering what we could just have this comin weekened, I really liked the sessionswe had for chemotherapy laasat time I have been really wondering what we could just have this comin weekened, I really liked the sessionswe had for chemotherapy laasat time '
-  },
-  {
-    email: 'stuartkal@gmail.com',
-    dateCreated: '20 hours ago',
-    review:
-      'I have been really wondering what we could just have this comin weekened, I really liked the sessionswe had for chemotherapy laasat time I have been really wondering what we could just have this comin weekened, I really liked the sessionswe had for chemotherapy laasat time '
-  },
-  {
-    email: 'legendary20@gmail.com',
-    dateCreated: '20 hours ago',
-    review:
-      'I have been really wondering what we could just have this comin weekened, I really liked the sessionswe had for chemotherapy laasat time I have been really wondering what we could just have this comin weekened, I really liked the sessionswe had for chemotherapy laasat time '
-  },
-  {
-    email: 'mikey_tolls@gmail.com',
-    dateCreated: '20 hours ago',
-    review:
-      'I have been really wondering what we could just have this comin weekened, I really liked the sessionswe had for chemotherapy laasat time'
-  }
-];

@@ -89,45 +89,61 @@ export default {
       }
     },
 
-    // async participateInEvent ({ eventId, payload, callback }, state) {
-    //   try {
-    //     await AxiosClient.patch(`/events/participate/${eventId}`, payload).then(({ data }) => {
-    //       if (data.success) {
-    //         const events = [ ...state.Events.events ].map(
-    //           (event) =>
-    //             event._id === eventId ? { ...event, participating: [ ...event.participating, ...payload ] } : event
-    //         );
-    //         dispatch.Events.setEvents(events);
-    //         callback(data);
-    //       }
-    //       callback(data);
-    //     });
-    //   } catch (error) {
-    //     return callback({ success: false, result: error.message });
-    //   }
-    // },
-
     async attendParticipate ({ action, payload, eventId, callback }, state) {
       try {
-        // const newest = [ ...state.Events.events ].map(
-        //   (event) =>
-        //     event._id === eventId && console.log('HERE', { ...event, attending: [ ...event.attending, ...payload ] })
-        // );
-
         const uid = state.Account.user.uid;
+        console.log('STATE EVENTS', state.Events.events);
         await AxiosClient.patch(`/events/${action}/${eventId}/${uid}`, payload).then(({ data }) => {
-          console.log('++++Reseponse attend id++++', data);
+          let newEvents;
           if (data.success) {
-            const events = [ ...state.Events.events ].map((event) => {
-              console.log('EVENT ID', event);
-              // if (event._id === eventId && action === 'attend')
-              //   return { ...event, attending: [ ...event.attending, payload ] };
-              // if (event._id === eventId && action === 'participate')
-              //   return { ...event, participating: [ ...event.participating, payload ] };
-            });
-            dispatch.Events.setEvents(events);
+            const eventCopy = [ ...state.Events.events ];
+            if (action === 'attend') {
+              newEvents = state.Events.events.map(
+                (event) => event._id === eventId && { ...event, attending: [ ...event.attending, payload ] }
+              );
+            }
+            if (action === 'participate') {
+              newEvents = state.Events.events.map(
+                (event) => event._id === eventId && { ...event, participating: [ ...event.participating, payload ] }
+              );
+            }
+            dispatch.Events.setEvents(newEvents);
+            callback({ ...data });
           }
-          callback(data);
+        });
+      } catch (error) {
+        return callback({ success: false, result: error.message });
+      }
+    },
+
+    async unattendUnparticipate ({ action, payload, eventId, callback }, state) {
+      try {
+        const uid = state.Account.user.uid;
+        console.log('STATE EVENTS', state.Events.events);
+        await AxiosClient.patch(`/events/${action}/${eventId}/${uid}`, payload).then(({ data }) => {
+          let newEvents;
+          if (data.success) {
+            if (action === 'unattend') {
+              newEvents = state.Events.events.map(
+                (event) =>
+                  event._id === eventId && {
+                    ...event,
+                    attending: [ ...event.attending.filter((part) => part.uid !== uid) ]
+                  }
+              );
+            }
+            if (action === 'unparticipate') {
+              newEvents = state.Events.events.map(
+                (event) =>
+                  event._id === eventId && {
+                    ...event,
+                    participating: [ ...event.participating.filter((part) => part.uid !== uid) ]
+                  }
+              );
+            }
+            dispatch.Events.setEvents(newEvents);
+            callback({ ...data });
+          }
         });
       } catch (error) {
         return callback({ success: false, result: error.message });

@@ -10,16 +10,19 @@ const Input = ({
   placeholder,
   filled = true,
   onSubmitEditing,
+  multiline,
   inputStyles
 }) => {
   return (
     <View style={[ { marginBottom: RFValue(10), width: '100%' }, extStyles ]}>
       {title ? <Text style={{ marginBottom: RFValue(5), fontSize: RFValue(12) }}>{title}</Text> : null}
       <TextInput
+        multiline={multiline}
         autoCapitalize="none"
         autoCorrect={false}
         autoCompleteType="off"
         onSubmitEditing={onSubmitEditing}
+        textAlignVertical={multiline && 'top'}
         style={[
           {
             height: RFValue(50),

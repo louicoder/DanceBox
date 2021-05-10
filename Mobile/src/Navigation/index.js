@@ -23,7 +23,10 @@ import {
   NewEvent,
   BlogProfile,
   NewBlogComment,
-  NewEventComment
+  NewEventComment,
+  UserBlogs,
+  UserEvents,
+  EditAccount
 } from '../Screens';
 import IconComp from '../Components/Icon';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -41,6 +44,7 @@ const HomeStack = createStackNavigator();
 const EventStack = createStackNavigator();
 const BlogStack = createStackNavigator();
 const SearchStack = createStackNavigator();
+const AccountStack = createStackNavigator();
 const DrawerStack = createDrawerNavigator();
 
 const BottomStack = createMaterialBottomTabNavigator();
@@ -146,6 +150,27 @@ const EventScreens = () => (
   </EventStack.Navigator>
 );
 
+const AccountScreens = () => (
+  <AccountStack.Navigator screenOptions={{ header: (props) => null }} headerMode="screen">
+    <AccountStack.Screen name="Account" component={Account} />
+    <AccountStack.Screen
+      name="UserBlogs"
+      component={UserBlogs}
+      options={{ header: (props) => <Header title="Your blogs" {...props} /> }}
+    />
+    <AccountStack.Screen
+      name="UserEvents"
+      component={UserEvents}
+      options={{ header: (props) => <Header {...props} title="Your events" /> }}
+    />
+    <AccountStack.Screen
+      name="EditAccount"
+      component={EditAccount}
+      options={{ header: (props) => <Header title="Edit account details" iconName="pencil" {...props} /> }}
+    />
+  </AccountStack.Navigator>
+);
+
 const BottomStackScreens = ({}) => (
   // <SafeAreaView style={{ flex: 1 }}>
   <BottomStack.Navigator
@@ -189,7 +214,7 @@ const BottomStackScreens = ({}) => (
     />
     <BottomStack.Screen
       name="Account"
-      component={Account}
+      component={AccountScreens}
       options={() => ({
         tabBarIcon: ({ color }) => <FeatherIcons color={color} name="user" size={RFValue(20)} />
       })}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, SafeAreaView, Pressable, ActivityIndicator, FlatList, Alert } from 'react-native';
+import { View, Text, SafeAreaView, Pressable, ActivityIndicator, FlatList, Alert, Keyboard } from 'react-native';
 import Ripple from 'react-native-material-ripple';
 import { RFValue } from 'react-native-responsive-fontsize';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -15,8 +15,8 @@ const Search = ({ navigation, ...props }) => {
     filterShowing: false,
     category: '',
     subCategory: '',
-    mode: 'blogs',
-    search: 'musa',
+    mode: 'events',
+    search: '',
     currentPage: 1,
     nextPage: 1,
     totalPages: 1,
@@ -35,7 +35,7 @@ const Search = ({ navigation, ...props }) => {
     () => {
       const sub = navigation.addListener('focus', () => {
         // setState({ ...state, search: '' });
-        searchHandler();
+        // searchHandler();
       });
 
       return () => sub;
@@ -44,6 +44,7 @@ const Search = ({ navigation, ...props }) => {
   );
 
   const searchHandler = () => {
+    Keyboard.dismiss();
     setState({ ...state, filterShowing: false });
 
     const { search, mode } = state;
@@ -95,7 +96,10 @@ const Search = ({ navigation, ...props }) => {
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <View style={{ paddingHorizontal: RFValue(10), flexDirection: 'row', marginTop: RFValue(10) }}>
+      <View
+        style={{ paddingHorizontal: RFValue(10), flexDirection: 'row', marginTop: RFValue(10) }}
+        keyboardShouldPersistTaps="handled"
+      >
         <Input
           onSubmitEditing={searchHandler}
           placeholder="Enter your search"

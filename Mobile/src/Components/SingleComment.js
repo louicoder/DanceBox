@@ -20,7 +20,7 @@ const SingleComment = ({
   // console.log('OWNER', rest);
 
   return (
-    <View style={{ borderBottomColor: '#eee', paddingVertical: RFValue(0) }}>
+    <View style={{ paddingVertical: RFValue(0) }}>
       <View
         style={{
           width: '100%',

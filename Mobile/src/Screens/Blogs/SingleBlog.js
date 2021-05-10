@@ -21,6 +21,7 @@ const SingleBlog = ({
   navigation: { navigate },
   last = false,
   children,
+  header = true,
   ...rest
 }) => {
   // console.log('LIKES::', rest);
@@ -37,33 +38,35 @@ const SingleBlog = ({
     _id
   };
 
-  console.log('Lkes', likes.length);
+  // console.log('Lkes', likes.length);
   // const test = `sdfsdfsd {'\n'} new line created `;
   return (
     <View style={{ marginBottom: last ? RFValue(marginBottom) : RFValue(15), backgroundColor: '#fff' }}>
-      <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          // height: RFValue(50),
-          padding: RFValue(10),
+      {header && (
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            // height: RFValue(50),
+            padding: RFValue(10),
 
-          width: '100%'
-        }}
-      >
-        <Image
-          source={{ uri: owner.imageUrl || CONSTANTS.DEFAULT_PROFILE }}
-          style={{ height: RFValue(40), width: RFValue(40), borderRadius: RFValue(50) }}
-        />
-        <View style={{ flexGrow: 1, flexDirection: 'row', justifyContent: 'space-between' }}>
-          <View style={{ paddingLeft: RFValue(10) }}>
-            <Text style={{ fontSize: RFValue(14) }}>{owner.name || owner.email}</Text>
-            <Text style={{ fontSize: RFValue(12), color: '#aaa' }}>{moment(dateCreated).fromNow()}</Text>
+            width: '100%'
+          }}
+        >
+          <Image
+            source={{ uri: owner.imageUrl || CONSTANTS.DEFAULT_PROFILE }}
+            style={{ height: RFValue(40), width: RFValue(40), borderRadius: RFValue(50) }}
+          />
+          <View style={{ flexGrow: 1, flexDirection: 'row', justifyContent: 'space-between' }}>
+            <View style={{ paddingLeft: RFValue(10) }}>
+              <Text style={{ fontSize: RFValue(14) }}>{owner.name || owner.email}</Text>
+              <Text style={{ fontSize: RFValue(12), color: '#aaa' }}>{moment(dateCreated).fromNow()}</Text>
+            </View>
+            <MaterialCommunityIcons name="dots-vertical" size={RFValue(20)} style={{}} />
           </View>
-          <MaterialCommunityIcons name="dots-vertical" size={RFValue(20)} style={{}} />
         </View>
-      </View>
+      )}
       <Pressable style={{ width: '100%', padding: RFValue(10) }} onPress={() => navigate('BlogProfile', payload)}>
         <Text style={{ fontSize: RFValue(18) }}>
           {title && title.trim().slice(0, 18)}
@@ -96,7 +99,7 @@ const SingleBlog = ({
           </ImageBackground>
         </Pressable>
       ) : null}
-      <CommentsLikeButtons comments={comments} likes={likes} type="blog" id={_id} />
+      {header && <CommentsLikeButtons comments={comments} likes={likes} type="blog" id={_id} />}
     </View>
   );
 };
