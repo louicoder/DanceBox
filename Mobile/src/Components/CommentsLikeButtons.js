@@ -38,17 +38,17 @@ const CommentsLikeButtons = ({ comments, likes, type, id, extStyles, likeHandler
   //   });
   // };
 
-  const blogHandler = () => {
-    dispatch.Blogs.likeBlog({
-      blogId: id,
-      payload,
-      callback: (res) => {
-        // console.log('REs from likgin  blog', res);
-        if (!res.success) return HelperFunctions.Notify('Error', res.result);
-        // setLikes([ ..._likes, userPayload ]);
-      }
-    });
-  };
+  // const blogHandler = () => {
+  //   dispatch.Blogs.likeBlog({
+  //     blogId: id,
+  //     payload,
+  //     callback: (res) => {
+  //       // console.log('REs from likgin  blog', res);
+  //       if (!res.success) return HelperFunctions.Notify('Error', res.result);
+  //       // setLikes([ ..._likes, userPayload ]);
+  //     }
+  //   });
+  // };
 
   // const liked = () => {
   //   if (type === 'blog') {

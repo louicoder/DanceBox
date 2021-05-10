@@ -74,7 +74,9 @@ const EventProfile = ({ navigation, route, ...props }) => {
       keyboardVerticalOffset={Platform.OS === 'ios' ? RFValue(90) : 0}
       style={{ flex: 1 }}
     >
-      <LoadingModal isVisible={loading.likeEvent || loading.attendParticipate || loading.getEvent} />
+      <LoadingModal
+        isVisible={loading.likeEvent || loading.attendParticipate || loading.getEvent || loading.unattendUnparticipate}
+      />
       {event && (
         <View style={{ flex: 1 }}>
           <View style={{ flex: 1 }}>

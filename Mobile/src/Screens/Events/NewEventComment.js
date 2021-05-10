@@ -10,9 +10,7 @@ import { HelperFunctions } from '../../Utils';
 const { height } = Dimensions.get('window');
 
 const NewBlogComment = ({ navigation, route: { params: { eventId } } }) => {
-  const [ comment, setComment ] = React.useState(
-    'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quid ei reliquisti, nisi te, quoquo modo loqueretur, intellegere, quid diceret? Non minor, inquit, voluptas percipitur ex vilissimis rebus quam ex pretiosissimis '
-  );
+  const [ comment, setComment ] = React.useState('');
   const { user } = useSelector((state) => state.Account);
   const { events } = useSelector((state) => state.Events);
   const loading = useSelector((state) => state.loading.effects.Events);
@@ -51,10 +49,11 @@ const NewBlogComment = ({ navigation, route: { params: { eventId } } }) => {
           multiline
           style={{
             backgroundColor: '#eee',
+            fontSize: RFValue(14),
             // flexGrow: 1,
             marginVertical: RFValue(20),
             padding: RFValue(10),
-            height: RFValue(2 / 3 * height)
+            height: RFValue(1 / 3 * height)
           }}
           onChangeText={(comment) => setComment(comment)}
         />

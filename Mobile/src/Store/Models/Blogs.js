@@ -1,5 +1,5 @@
-import { QUERIES } from '../../Firebase';
 import AxiosClient from '../Axios';
+import auth from '@react-native-firebase/auth';
 
 export default {
   state: { blogs: [] },
@@ -68,16 +68,22 @@ export default {
       }
     },
 
-    async likeBlog ({ blogId, payload, callback }, state) {
+    async likeBlog ({ blogId, callback }, state) {
       try {
-        await AxiosClient.put(`/blogs/like/${blogId}`, payload).then(({ data }) => {
+        const uid = state.Account.user.uid || auth().currentUser.uid;
+        await AxiosClient.patch(`/blogs/like/${blogId}/${uid}`).then(({ data }) => {
           if (data.success) {
-            const update = state.Blogs.blogs.map(
-              (blog) => (blog._id === blogId ? { ...blog, likes: [ ...blog.likes, payload ] } : blog)
-            );
-            dispatch.Blogs.setBlogs(update);
             callback(data);
           }
+        });
+      } catch (error) {
+        return callback({ success: false, result: error.message });
+      }
+    },
+
+    async getBlog ({ blogId, callback }, state) {
+      try {
+        await AxiosClient.get(`/blogs/single/${blogId}`).then(({ data }) => {
           callback(data);
         });
       } catch (error) {

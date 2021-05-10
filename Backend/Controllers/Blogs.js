@@ -18,7 +18,7 @@ const getBlog = async (req, res) => {
   if (!req.params.blogId) return res.json({ success: false, result: 'Blog id is required but missing' });
   const { blogId: _id } = req.params;
   try {
-    await BlogsModel.findOne({ _id }).then((result) => res.json({ success: false, result }));
+    await BlogsModel.findOne({ _id }).then((result) => res.json({ success: true, result }));
   } catch (error) {
     return res.json({ success: false, result: error.message });
   }

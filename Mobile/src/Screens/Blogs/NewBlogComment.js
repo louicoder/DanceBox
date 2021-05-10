@@ -10,9 +10,7 @@ import { HelperFunctions } from '../../Utils';
 const { height } = Dimensions.get('window');
 
 const NewBlogComment = ({ navigation, route: { params: { blogId, blog } } }) => {
-  const [ comment, setComment ] = React.useState(
-    'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Virtutibus igitur rectissime mihi videris et ad consuetudinem nostrae orationis vitia posuisse contraria. Eam stabilem appellas.'
-  );
+  const [ comment, setComment ] = React.useState('');
   const { user } = useSelector((state) => state.Account);
   const { blogs } = useSelector((state) => state.Blogs);
   const loading = useSelector((state) => state.loading.effects.Blogs);
@@ -51,7 +49,9 @@ const NewBlogComment = ({ navigation, route: { params: { blogId, blog } } }) => 
             backgroundColor: '#eee',
             // flexGrow: 1,
             marginVertical: RFValue(20),
-            height: RFValue(2 / 3 * height),
+            // height: RFValue(2 / 3 * height),
+            height: RFValue(1 / 3 * height),
+            fontSize: RFValue(14),
             padding: RFValue(10)
             // height: RFValue(200)
           }}
