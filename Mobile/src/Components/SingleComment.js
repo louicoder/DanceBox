@@ -20,11 +20,11 @@ const SingleComment = ({
   // console.log('OWNER', rest);
 
   return (
-    <View style={{ borderBottomWidth: 1, borderBottomColor: '#eee' }}>
+    <View style={{ borderBottomColor: '#eee', paddingVertical: RFValue(0) }}>
       <View
         style={{
           width: '100%',
-          paddingVertical: RFValue(10),
+          paddingVertical: RFValue(15),
           flexDirection: 'row',
           paddingHorizontal: RFValue(10),
           backgroundColor: '#fff'
@@ -42,7 +42,7 @@ const SingleComment = ({
         <View style={{ width: '80%' }}>
           {owner && <Text style={{ fontWeight: 'bold' }}>{owner.name || owner.email}</Text>}
           <Text style={{ color: '#aaaaaa80' }}>{moment(dateCreated).fromNow()}</Text>
-          <Text style={{ paddingVertical: RFValue(5) }}>{comment}</Text>
+          <Text style={{ paddingVertical: RFValue(0), color: '#00000090' }}>{comment}</Text>
         </View>
       </View>
       {last && (

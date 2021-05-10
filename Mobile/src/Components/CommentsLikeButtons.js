@@ -57,7 +57,7 @@ const CommentsLikeButtons = ({ comments, likes, type, id, extStyles }) => {
       // console.log('BLOGLIKES', blogLikes);
       return blogLikes.likes.findIndex((bl) => bl.uid === user.uid) !== -1;
     } else {
-      const eventLikes = events.find((event) => event._id === id);
+      const eventLikes = events && events.find((event) => event._id === id);
       return eventLikes.likes.findIndex((el) => el.uid === user.uid) !== -1;
     }
   };

@@ -13,7 +13,7 @@ const Splash = ({ navigation: { navigate } }) => {
   const dispatch = useDispatch();
   const loading = useSelector((state) => state.loading.effects.Account);
   useEffect(() => {
-    if (AUTH.currentUser) {
+    if (AUTH.currentUser.uid) {
       const { uid } = AUTH.currentUser;
       getUserDetails(uid);
     } else {
@@ -27,10 +27,9 @@ const Splash = ({ navigation: { navigate } }) => {
     dispatch.Account.getUserDetails({
       uid,
       callback: ({ error, doc }) => {
-        // console.log('DOC SININ', doc);s
+        console.log('DOC SININ', error);
         if (error) return navigate('Login');
         dispatch.Account.setUserDetails(doc);
-        checkPermissions();
       }
     });
 

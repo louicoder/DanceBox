@@ -40,6 +40,7 @@ const LoginStack = createStackNavigator();
 const HomeStack = createStackNavigator();
 const EventStack = createStackNavigator();
 const BlogStack = createStackNavigator();
+const SearchStack = createStackNavigator();
 const DrawerStack = createDrawerNavigator();
 
 const BottomStack = createMaterialBottomTabNavigator();
@@ -97,6 +98,33 @@ const BlogScreens = () => (
   </BlogStack.Navigator>
 );
 
+const SearchScreens = () => (
+  <SearchStack.Navigator screenOptions={{ header: (props) => null }} headerMode="screen">
+    <SearchStack.Screen name="Search" component={Search} />
+
+    <SearchStack.Screen
+      name="NewBlogComment"
+      component={NewBlogComment}
+      options={{ header: (props) => <Header title="Add Blog Comment" iconName="pencil" {...props} /> }}
+    />
+    <SearchStack.Screen
+      name="BlogProfile"
+      component={BlogProfile}
+      options={{ header: (props) => <Header {...props} title="Blog details" /> }}
+    />
+    <SearchStack.Screen
+      name="EventProfile"
+      component={EventProfile}
+      options={{ header: (props) => <Header {...props} title="Event details" /> }}
+    />
+    <SearchStack.Screen
+      name="NewEventComment"
+      component={NewEventComment}
+      options={{ header: (props) => <Header title="Add Event Comment" iconName="pencil" {...props} /> }}
+    />
+  </SearchStack.Navigator>
+);
+
 const EventScreens = () => (
   <EventStack.Navigator screenOptions={{ header: (props) => null }} headerMode="screen">
     <EventStack.Screen name="Events" component={Events} />
@@ -146,7 +174,7 @@ const BottomStackScreens = ({}) => (
     />
     <BottomStack.Screen
       name="Search"
-      component={Search}
+      component={SearchScreens}
       options={() => ({
         tabBarIcon: ({ color }) => <Ionicons color={color} name="search-outline" size={RFValue(20)} />
       })}

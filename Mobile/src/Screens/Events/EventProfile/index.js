@@ -29,34 +29,20 @@ const EventProfile = ({ navigation, route, ...props }) => {
     [ navigation, route.params ]
   );
 
-  const payload = { owner: { uid: user.uid, email: user.email, name: user.name || '', imageUrl: user.imageUrl || '' } };
+  const requestPayload = (action) => ({
+    action,
+    eventId: state._id,
+    payload: { uid: user.uid, email: user.email, name: user.name || '', imageUrl: user.imageUrl || '' },
+    callback: (resp) => {
+      console.log(`REsp from ${action}`, resp);
+      if (!resp.success) return HelperFunctions.Notify('Error', resp.result);
+      return HelperFunctions.Notify('Success', 'Successfully added you to the waiting list');
+    }
+  });
 
-  const participate = () => {
-    //
-    dispatch.Events.participateInEvent({
-      eventId: state._id,
-      payload,
-      callback: (resp) => {
-        if (!resp.success) return HelperFunctions.Notify('Error', resp.result);
-        return HelperFunctions.Notify('Success', 'Successfully sent request to event organiser');
-      }
-    });
-  };
+  const attendParticipate = (action) => dispatch.Events.attendParticipate(requestPayload(action));
 
-  const attend = () => {
-    //
-    dispatch.Events.attendEvent({
-      eventId: state._id,
-      payload,
-      callback: (resp) => {
-        // console.log('REsp from particpating', resp);
-        if (!resp.success) return HelperFunctions.Notify('Error', resp.result);
-        return HelperFunctions.Notify('Success', 'Successfully added you to the waiting list');
-      }
-    });
-  };
-
-  // console.log('Header id', state);
+  const unattendUnparticipate = (action) => dispatch.Events.attendParticipate(requestPayload(action));
 
   return (
     <KeyboardAvoidingView
@@ -64,13 +50,22 @@ const EventProfile = ({ navigation, route, ...props }) => {
       keyboardVerticalOffset={Platform.OS === 'ios' ? RFValue(90) : 0}
       style={{ flex: 1 }}
     >
-      <LoadingModal isVisible={loading.likeEvent} />
+      <LoadingModal isVisible={loading.likeEvent || loading.attendParticipate} />
       <View style={{ flex: 1 }}>
         <View style={{ flex: 1 }}>
           <FlatList
             style={{ flex: 1, backgroundColor: '#aaaaaa80' }}
             ListHeaderComponent={
-              <Header {...state} participate={participate} attend={attend} navigation={navigation} />
+              <Header
+                {...state}
+                // participate={participate}
+                // unParticipate={unParticipate}
+                // attend={attend}
+                // unAttend={unAttend}
+                navigation={navigation}
+                attendParticipate={attendParticipate}
+                unattendUnparticipate={unattendUnparticipate}
+              />
             }
             data={state.comments}
             key={() => HelperFunctions.keyGenerator()}

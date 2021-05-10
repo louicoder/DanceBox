@@ -29,6 +29,7 @@ const SingleEvent = ({
   _id,
   navigation: { navigate },
   children,
+  last,
   ...rest
 }) => {
   // console.log('EVent owner');
@@ -58,30 +59,32 @@ const SingleEvent = ({
   };
 
   return (
-    <View style={{ marginBottom: RFValue(15), backgroundColor: '#fff' }}>
-      <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          // height: RFValue(50),
-          padding: RFValue(10),
+    <View style={{ marginBottom: !last ? RFValue(15) : 0, backgroundColor: '#fff' }}>
+      {owner && (
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            // height: RFValue(50),
+            padding: RFValue(10),
 
-          width: '100%'
-        }}
-      >
-        <Image
-          source={{ uri: owner.imageUrl || CONSTANTS.DEFAULT_PROFILE }}
-          style={{ height: RFValue(40), width: RFValue(40), borderRadius: RFValue(50) }}
-        />
-        <View style={{ flexGrow: 1, flexDirection: 'row', justifyContent: 'space-between' }}>
-          <View style={{ paddingLeft: RFValue(10) }}>
-            <Text style={{ fontSize: RFValue(14) }}>{owner.name || owner.email}</Text>
-            <Text style={{ fontSize: RFValue(12), color: '#aaa' }}>{moment(dateCreated).fromNow()}</Text>
+            width: '100%'
+          }}
+        >
+          <Image
+            source={{ uri: owner.imageUrl || CONSTANTS.DEFAULT_PROFILE }}
+            style={{ height: RFValue(40), width: RFValue(40), borderRadius: RFValue(50) }}
+          />
+          <View style={{ flexGrow: 1, flexDirection: 'row', justifyContent: 'space-between' }}>
+            <View style={{ paddingLeft: RFValue(10) }}>
+              <Text style={{ fontSize: RFValue(14) }}>{owner.name || owner.email}</Text>
+              <Text style={{ fontSize: RFValue(12), color: '#aaa' }}>{moment(dateCreated).fromNow()}</Text>
+            </View>
+            <MaterialCommunityIcons name="dots-vertical" size={RFValue(20)} style={{}} />
           </View>
-          <MaterialCommunityIcons name="dots-vertical" size={RFValue(20)} style={{}} />
         </View>
-      </View>
+      )}
 
       <Pressable style={{ width: '100%', padding: RFValue(10) }} onPress={() => navigate('EventProfile', payload)}>
         <Text style={{ fontSize: RFValue(18) }}>

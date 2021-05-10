@@ -119,6 +119,35 @@ const deleteBlog = async (req, res) => {
   }
 };
 
+const searchBlogs = async (req, res) => {
+  if (!req.query.title) return res.json({ success: false, result: 'Event title is required but missing' });
+
+  try {
+    const { page = 1, limit = 1 } = req.query;
+    const titleString = { title: { $regex: '.*' + req.query.title + '.*', $options: 'i' } };
+    const nameString = { 'owner.name': { $regex: '.*' + req.query.title + '.*', $options: 'i' } };
+    const count = await BlogsModel.find({ $or: [ titleString, nameString ] }).countDocuments();
+    const totalPages = Math.ceil(count / limit);
+    await BlogsModel.find({ $or: [ titleString, nameString ] })
+      .limit(limit * 1)
+      .skip((page - 1) * limit)
+      .then((result) => {
+        return res.json({
+          success: true,
+          result,
+          count,
+          currentPage: parseInt(page),
+          totalPages,
+          nextPage: parseInt(page) + 1,
+          lastPage: parseInt(page) === totalPages,
+          previousPage: page - 1 === 0 ? 1 : parseInt(page) - 1
+        });
+      });
+  } catch (error) {
+    return res.json({ success: false, result: error.message });
+  }
+};
+
 module.exports = {
   createBlog,
   getBlog,
@@ -128,5 +157,6 @@ module.exports = {
   deleteBlog,
   allBlogs,
   createBlogComment,
-  likeBlog
+  likeBlog,
+  searchBlogs
 };

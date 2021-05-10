@@ -32,6 +32,7 @@ export default {
     async getUserDetails ({ uid, callback }) {
       try {
         await QUERIES.getDoc('Users', uid, (res) => {
+          console.log('ERRR GET DET', res);
           callback({ ...res, doc: { ...res.doc, uid } });
         });
       } catch (error) {

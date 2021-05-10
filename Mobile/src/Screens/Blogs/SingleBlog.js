@@ -10,6 +10,7 @@ import { CONSTANTS } from '../../Utils';
 const SingleBlog = ({
   imageUrl,
   caption,
+  marginBottom = 60,
   dateCreated,
   description,
   comments,
@@ -39,7 +40,7 @@ const SingleBlog = ({
   console.log('Lkes', likes.length);
   // const test = `sdfsdfsd {'\n'} new line created `;
   return (
-    <View style={{ marginBottom: last ? RFValue(60) : RFValue(15), backgroundColor: '#fff' }}>
+    <View style={{ marginBottom: last ? RFValue(marginBottom) : RFValue(15), backgroundColor: '#fff' }}>
       <View
         style={{
           flexDirection: 'row',

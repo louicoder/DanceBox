@@ -2,7 +2,16 @@ import React from 'react';
 import { View, Text, TextInput } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 
-const Input = ({ title = '', value, onChangeText, extStyles, placeholder, filled = true, inputStyles }) => {
+const Input = ({
+  title = '',
+  value,
+  onChangeText,
+  extStyles,
+  placeholder,
+  filled = true,
+  onSubmitEditing,
+  inputStyles
+}) => {
   return (
     <View style={[ { marginBottom: RFValue(10), width: '100%' }, extStyles ]}>
       {title ? <Text style={{ marginBottom: RFValue(5), fontSize: RFValue(12) }}>{title}</Text> : null}
@@ -10,6 +19,7 @@ const Input = ({ title = '', value, onChangeText, extStyles, placeholder, filled
         autoCapitalize="none"
         autoCorrect={false}
         autoCompleteType="off"
+        onSubmitEditing={onSubmitEditing}
         style={[
           {
             height: RFValue(50),

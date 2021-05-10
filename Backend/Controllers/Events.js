@@ -81,9 +81,9 @@ const getRandomEvents = async (req, res) => {
 // participate
 const participateInEvent = (req, res) => {
   if (!req.params.eventId) return res.json({ success: false, result: 'Blog id is required but missing' });
-  if (!req.body.owner) return res.json({ success: false, result: 'Owner details are required but missing' });
-  if (!req.body.owner.email) return res.json({ success: false, result: 'Owner email is required but missing' });
-  if (!req.body.owner.uid) return res.json({ success: false, result: 'Owner uid is required but missing' });
+  if (!req.body) return res.json({ success: false, result: 'Owner details are required but missing' });
+  if (!req.body.email) return res.json({ success: false, result: 'Owner email is required but missing' });
+  if (!req.body.uid) return res.json({ success: false, result: 'Owner uid is required but missing' });
 
   // const { comment, owner } = req.body;
   // const payload = {comment, owner}
@@ -94,9 +94,27 @@ const participateInEvent = (req, res) => {
       { $push: { participating: { ...req.body, dateCreated: new Date().toISOString() } } },
       (err) => {
         if (err) return res.json({ success: false, result: error.message });
-        return res.json({ success: true, result: 'Successfully added you to participants list for this event' });
+        return res.json({ success: true, result: 'Successfully added you participants list' });
       }
     );
+  } catch (error) {
+    return res.json({ success: false, result: error.message });
+  }
+};
+
+// unparticipate
+const unparticipateInEvent = (req, res) => {
+  if (!req.params.eventId) return res.json({ success: false, result: 'Blog id is required but missing' });
+  if (!req.params.uid) return res.json({ success: false, result: "User's id  required but missing" });
+
+  // const { comment, owner } = req.body;
+  // const payload = {comment, owner}
+  const { eventId: _id } = req.params;
+  try {
+    EventsModel.updateOne({ _id }, { $pull: { participating: { uid: req.params.uid } } }, (err) => {
+      if (err) return res.json({ success: false, result: err.message });
+      return res.json({ success: true, result: 'Successfully removed you from participating list' });
+    });
   } catch (error) {
     return res.json({ success: false, result: error.message });
   }
@@ -105,9 +123,9 @@ const participateInEvent = (req, res) => {
 // Attend
 const attendEvent = (req, res) => {
   if (!req.params.eventId) return res.json({ success: false, result: 'Blog id is required but missing' });
-  if (!req.body.owner) return res.json({ success: false, result: 'Owner details are required but missing' });
-  if (!req.body.owner.email) return res.json({ success: false, result: 'Owner email is required but missing' });
-  if (!req.body.owner.uid) return res.json({ success: false, result: 'Owner uid is required but missing' });
+  if (!req.body) return res.json({ success: false, result: 'Owner details are required but missing' });
+  if (!req.body.email) return res.json({ success: false, result: 'Owner email is required but missing' });
+  if (!req.body.uid) return res.json({ success: false, result: 'Owner uid is required but missing' });
 
   // const { comment, owner } = req.body;
   // const payload = {comment, owner}
@@ -121,6 +139,23 @@ const attendEvent = (req, res) => {
         return res.json({ success: true, result: 'Successfully added you attedance list' });
       }
     );
+  } catch (error) {
+    return res.json({ success: false, result: error.message });
+  }
+};
+
+const unattendEvent = (req, res) => {
+  if (!req.params.eventId) return res.json({ success: false, result: 'Blog id is required but missing' });
+  if (!req.params.uid) return res.json({ success: false, result: "User's id  required but missing" });
+
+  // const { comment, owner } = req.body;
+  // const payload = {comment, owner}
+  const { eventId: _id } = req.params;
+  try {
+    EventsModel.updateOne({ _id }, { $pull: { attending: { uid: req.params.uid } } }, (err) => {
+      if (err) return res.json({ success: false, result: err.message });
+      return res.json({ success: true, result: 'Successfully removed you from attedance list' });
+    });
   } catch (error) {
     return res.json({ success: false, result: error.message });
   }
@@ -211,6 +246,36 @@ const deleteEvent = async (req, res) => {
   }
 };
 
+const searchEvent = async (req, res) => {
+  if (!req.query.title) return res.json({ success: false, result: 'Event title is required but missing' });
+
+  try {
+    const { page = 1, limit = 1 } = req.query;
+    const nameString = { title: { $regex: '.*' + req.query.title + '.*', $options: 'i' } };
+    const titleString = { 'owner.name': { $regex: '.*' + req.query.title + '.*', $options: 'i' } };
+    // const emailString = { 'owner.email': { $regex: '.*' + req.query.title + '.*', $options: 'i' } };
+    const count = await EventsModel.find({ $or: [ titleString, nameString ] }).countDocuments();
+    const totalPages = Math.ceil(count / limit);
+    await EventsModel.find({ $or: [ titleString, nameString ] })
+      .limit(limit * 1)
+      .skip((page - 1) * limit)
+      .then((result) => {
+        return res.json({
+          success: true,
+          result,
+          count,
+          currentPage: parseInt(page),
+          totalPages,
+          nextPage: parseInt(page) + 1,
+          lastPage: parseInt(page) === totalPages,
+          previousPage: page - 1 === 0 ? 1 : parseInt(page) - 1
+        });
+      });
+  } catch (error) {
+    return res.json({ success: false, result: error.message });
+  }
+};
+
 module.exports = {
   createEvent,
   getEvent,
@@ -222,5 +287,8 @@ module.exports = {
   participateInEvent,
   attendEvent,
   likeEvent,
-  createEventComment
+  createEventComment,
+  unattendEvent,
+  unparticipateInEvent,
+  searchEvent
 };

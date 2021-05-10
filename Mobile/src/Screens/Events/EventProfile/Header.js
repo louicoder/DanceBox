@@ -12,7 +12,7 @@ const Header = ({
   imageUrl,
   title,
   description,
-  // likes,
+  likes,
   comments,
   _id,
   venue,
@@ -26,8 +26,12 @@ const Header = ({
   judgingNotes,
   startDate,
   endDate,
-  participate,
-  attend,
+  // participate,
+  // unParticipate,
+  // attend,
+  // unAttend,
+  attendParticipate,
+  unattendUnparticipate,
   navigation,
   eventId,
   ...rest
@@ -37,16 +41,18 @@ const Header = ({
   const [ visible, setVisible ] = React.useState(false);
 
   const isParticipant = () => {
-    const part = events.find((event) => event._id === _id);
+    const part = events && events.find((event) => event._id === _id);
     return part && part.participating.findIndex((el) => el.uid === user.uid) !== -1;
   };
 
   const isAttending = () => {
-    const attend = events.find((event) => event._id === _id);
+    const attend = events && events.find((event) => event._id === _id);
     return attend && attend.attending.findIndex((el) => el.uid === user.uid) !== -1;
   };
 
-  const likes = events.find((event) => event._id === _id).likes;
+  // const likes = events && events.find((event) => event._id === _id).likes;
+
+  // console.log(isAttending())
 
   return (
     <View style={{ width: '100%', backgroundColor: '#fff', marginBottom: RFValue(15) }}>
@@ -75,7 +81,7 @@ const Header = ({
 
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '100%', marginTop: RFValue(10) }}>
           <Pressable
-            onPress={() => (isAttending() ? null : attend())}
+            onPress={() => (isAttending() ? unattendUnparticipate('unattend') : attendParticipate('attend'))}
             style={{
               height: RFValue(50),
               width: '49%',
@@ -86,27 +92,27 @@ const Header = ({
               flexDirection: 'row'
             }}
           >
-            <Icon name="map-marker" size={RFValue(30)} color="#fff" />
+            {/* <Icon name="map-marker" size={RFValue(30)} color="#fff" /> */}
             <Text style={{ fontSize: RFValue(14), color: '#fff', textAlign: 'center', marginLeft: RFValue(5) }}>
-              {' '}
-              Attend Event
+              {isParticipant() ? 'Cancel Attendance' : '+ Attend'}
             </Text>
           </Pressable>
           <Pressable
-            onPress={() => (isParticipant() ? null : participate())}
+            onPress={() =>
+              isParticipant() ? unattendUnparticipate('unparticipate') : attendParticipate('participate')}
             style={{
               height: RFValue(50),
               width: '49%',
-              backgroundColor: events && isParticipant() ? '#aaa' : '#010203',
+              // backgroundColor: events && isParticipant() ? '#aaa' : '#010203',
               alignItems: 'center',
               justifyContent: 'center',
 
               flexDirection: 'row'
             }}
           >
-            <Icon name="account-plus" size={RFValue(30)} color="#fff" />
+            {/* <Icon name="account-plus" size={RFValue(30)} color="#fff" /> */}
             <Text style={{ fontSize: RFValue(14), color: '#fff', textAlign: 'center', marginLeft: RFValue(5) }}>
-              Participate
+              {isParticipant() ? 'Cancel Participation' : '+ Participate'}
             </Text>
           </Pressable>
         </View>
