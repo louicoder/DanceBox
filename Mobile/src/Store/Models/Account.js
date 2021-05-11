@@ -25,8 +25,7 @@ export default {
       try {
         await QUERIES.signIn(email, password, (res) => {
           // console.log('USRID', res.doc);
-          dispatch.Account.setUserDetails(res.doc);
-          callback(res);
+          dispatch.Account.getUserDetails({ uid: res.doc, callback });
         });
       } catch (error) {
         return callback({ success: false, result: error.message });
@@ -36,8 +35,10 @@ export default {
     async getUserDetails ({ uid, callback }) {
       try {
         await QUERIES.getDoc('Users', uid, (res) => {
-          console.log('ERRR GET DET', res);
+          // console.log('ERRR GET DET', res);
+          dispatch.Account.setUserDetails({ ...res.doc, uid });
           callback({ ...res, doc: { ...res.doc, uid } });
+          // callback(res);
         });
       } catch (error) {
         return callback({ success: false, result: error.message });

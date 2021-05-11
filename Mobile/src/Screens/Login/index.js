@@ -32,21 +32,20 @@ const Login = ({ navigation }) => {
 
   const loginHandler = () => {
     // console.log('login here');
+    Keyboard.dismiss();
     const { email, password, docId } = state;
     dispatch.Account.signIn({
       payload: { email, password },
       callback: ({ error, doc }) => {
-        if (error) return Alert.alert('Error signing in', error);
+        // if (error) return Alert.alert('Error signing in', error);
         setState({ ...state });
-        // console.log('Response from login', doc);
-        dispatch.Account.setUserDetails(doc);
         return state.justCreated ? checkPermissions() : navigation.navigate('Home');
       }
     });
   };
 
   React.useEffect(() => {
-    checkPermissions();
+    // checkPermissions();
   }, []);
 
   const checkPermissions = async () => {

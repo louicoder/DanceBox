@@ -48,7 +48,7 @@ const Search = ({ navigation, ...props }) => {
     setState({ ...state, filterShowing: false });
 
     const { search, mode } = state;
-    console.log('Searching first time', mode);
+    // console.log('Searching first time', mode);
     if (!search)
       return Alert.alert(
         'Warning',

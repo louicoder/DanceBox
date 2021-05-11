@@ -70,7 +70,7 @@ const NewEvent = ({ navigation }) => {
 
   const selectImage = async () =>
     await HelperFunctions.CHECK_GALLERY_PERMISSIONS(async (res) => {
-      console.log('rESult', res);
+      // console.log('rESult', res);
       if (!res.success) {
         return HelperFunctions.Notify('Error accessing gallery', res.result);
         // selectImage();
@@ -112,7 +112,7 @@ const NewEvent = ({ navigation }) => {
           eventId,
           payload: { imageUrl },
           callback: (resp) => {
-            console.log('REsp from update image', resp);
+            // console.log('REsp from update image', resp);
             setImageLoading(false);
 
             if (!resp.success) return HelperFunctions.Notify('Error adding event photo', resp.result);
@@ -342,7 +342,8 @@ const NewEvent = ({ navigation }) => {
             defaultValue="Judges"
           />
           <OptionsSelector
-            setItem={(noOfJudges) => setState({ ...state, noOfJudges: parseInt(noOfJudges.split(' ')[0]) })}
+            setItem={(noOfJudges) =>
+              setState({ ...state, noOfJudges: noOfJudges && parseInt(noOfJudges.split(' ')[0]) })}
             items={[ '3 judges', '5 judges' ]}
             header="Select how many judges on panel"
             defaultValue="3 judges"

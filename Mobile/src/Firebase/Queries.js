@@ -9,10 +9,11 @@ export const signIn = async (email, password, callback) => {
     const account = await AUTH.signInWithEmailAndPassword(email, password);
     if (account.user) {
       // console.log('DOC user', account.user.uid);
-      await DB.collection('Users')
-        .doc(doc)
-        .get()
-        .then((snapshot) => callback({ doc: { ...snapshot.data(), uid: account.user.uid }, error: undefined }));
+      callback({ success: true, doc: account.user.uid });
+      // await DB.collection('Users')
+      //   .doc(account.user.uid)
+      //   .get()
+      //   .then((snapshot) => callback({ doc: { ...snapshot.data(), uid: account.user.uid }, error: undefined }));
     }
     return callback({ doc: account, error: undefined });
   } catch (error) {
@@ -76,7 +77,7 @@ export const updateDoc = async (collection, docId, payload, callback) => {
   await DB.doc(`${collection}/${docId}`)
     .set(payload, { merge: true })
     .then(async (resp) => {
-      console.log('REsp from update', resp);
+      // console.log('REsp from update', resp);
       await DB.doc(`${collection}/${docId}`)
         .get()
         .then((snapshot) => callback({ error: undefined, doc: snapshot.data() }));

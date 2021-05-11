@@ -6,7 +6,7 @@ import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
 import { HelperFunctions } from '../../Utils';
 
 const Listing = ({ title = 'Sample Topic', data }) => {
-  console.log('Data', data);
+  // console.log('Data', data);
   return (
     <View style={{ height: RFPercentage(30) }}>
       <HeaderLinker title={title} extStyles={{ paddingHorizontal: RFValue(10) }} />

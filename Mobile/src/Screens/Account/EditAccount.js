@@ -48,7 +48,7 @@ const EditAccount = () => {
       uid: user.uid || auth().currentUser.uid,
       payload,
       callback: (resp) => {
-        console.log('Response after updatin', resp);
+        // console.log('Response after updatin', resp);
       }
     });
   };

@@ -31,7 +31,7 @@ const EventProfile = ({ navigation, route, ...props }) => {
     dispatch.Events.getEvent({
       eventId: route.params._id,
       callback: (resp) => {
-        console.log('HErrrrrrrr th event', resp.result._id);
+        // console.log('HErrrrrrrr th event', resp.result._id);
         if (!resp.success)
           return Alert.alert(
             'Error getting event',
@@ -46,7 +46,7 @@ const EventProfile = ({ navigation, route, ...props }) => {
     eventId: state._id,
     payload: { uid: user.uid, email: user.email, name: user.name || '', imageUrl: user.imageUrl || '' },
     callback: ({ success, result }) => {
-      console.log(`REsp from ${action}`, result);
+      // console.log(`REsp from ${action}`, result);
       if (!success) return HelperFunctions.Notify('Error', result);
       setState({ ...state, ...result });
       return HelperFunctions.Notify('Success', 'Successfully added you to the waiting list');

@@ -27,13 +27,13 @@ const Account = ({ navigation }) => {
     dispatch.Account.getUserEventsAndBlogs({
       uid: user.uid,
       callback: (res) => {
-        console.log('REsponses', res);
+        // console.log('REsponses', res);
       }
     });
 
   const selectImage = async () =>
     await HelperFunctions.CHECK_GALLERY_PERMISSIONS(async (res) => {
-      console.log('rESult', res);
+      // console.log('rESult', res);
       if (!res.success) {
         return HelperFunctions.Notify('Error accessing gallery', res.result);
       }
@@ -62,7 +62,7 @@ const Account = ({ navigation }) => {
             uid: user.uid || auth().currentUser.uid,
             payload: { imageUrl },
             callback: (resp) => {
-              console.log('REsp from update image', resp);
+              // console.log('REsp from update image', resp);
               setImageLoading(false);
               if (resp.error) return HelperFunctions.Notify('Error updating profile photo', resp.result);
               return HelperFunctions.Notify('Success', 'Your profile photo has been updated successfully');

@@ -13,7 +13,7 @@ const Splash = ({ navigation: { navigate } }) => {
   const dispatch = useDispatch();
   const loading = useSelector((state) => state.loading.effects.Account);
   useEffect(() => {
-    if (AUTH.currentUser.uid) {
+    if (AUTH.currentUser && AUTH.currentUser.uid) {
       const { uid } = AUTH.currentUser;
       getUserDetails(uid);
     } else {
@@ -27,14 +27,15 @@ const Splash = ({ navigation: { navigate } }) => {
     dispatch.Account.getUserDetails({
       uid,
       callback: ({ error, doc }) => {
-        console.log('DOC SININ', error);
+        console.log('DOC SININ', doc);
         if (error) return navigate('Login');
         dispatch.Account.setUserDetails(doc);
+        navigate('Home');
       }
     });
 
   React.useEffect(() => {
-    checkPermissions();
+    // checkPermissions();
   }, []);
 
   const checkPermissions = async () => {

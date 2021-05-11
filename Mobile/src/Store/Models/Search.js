@@ -13,7 +13,7 @@ export default {
   },
   effects: (dispatch) => ({
     async searchEventsAndBlogs ({ payload: { search, route, page }, callback }, state) {
-      console.log('Searching ', page, search, route);
+      // console.log('Searching ', page, search, route);
       try {
         await AxiosClient.get(`/${route}/search?title=${search}&&page=${page}&&limit=10`).then(({ data }) => {
           if (data.success) {

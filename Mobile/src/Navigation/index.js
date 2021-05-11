@@ -168,6 +168,26 @@ const AccountScreens = () => (
       component={EditAccount}
       options={{ header: (props) => <Header title="Edit account details" iconName="pencil" {...props} /> }}
     />
+    <AccountStack.Screen
+      name="NewBlogComment"
+      component={NewBlogComment}
+      options={{ header: (props) => <Header title="Add Blog Comment" iconName="pencil" {...props} /> }}
+    />
+    <AccountStack.Screen
+      name="BlogProfile"
+      component={BlogProfile}
+      options={{ header: (props) => <Header {...props} title="Blog details" /> }}
+    />
+    <AccountStack.Screen
+      name="EventProfile"
+      component={EventProfile}
+      options={{ header: (props) => <Header {...props} title="Event details" /> }}
+    />
+    <AccountStack.Screen
+      name="NewEventComment"
+      component={NewEventComment}
+      options={{ header: (props) => <Header title="Add Event Comment" iconName="pencil" {...props} /> }}
+    />
   </AccountStack.Navigator>
 );
 

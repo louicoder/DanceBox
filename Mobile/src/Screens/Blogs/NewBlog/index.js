@@ -43,7 +43,7 @@ const NewBlog = ({ navigation }) => {
   const checkPermissions = async () => {
     try {
       await HelperFunctions.CHECK_GALLERY_PERMISSIONS((res) => {
-        console.log('Gallery prems', res);
+        // console.log('Gallery prems', res);
         if (!res.success)
           return HelperFunctions.Notify(
             'Error',
@@ -59,7 +59,7 @@ const NewBlog = ({ navigation }) => {
     HelperFunctions.CheckPermissions(
       Platform.select({ android: PERMISSIONS.ANDROID.CAMERA, ios: PERMISSIONS.IOS.PHOTO_LIBRARY }),
       HelperFunctions.ImagePicker((image) => {
-        console.log('REsponse', image);
+        // console.log('REsponse', image);
         if (image.uri) setState({ ...state, image });
       })
     );
@@ -105,7 +105,7 @@ const NewBlog = ({ navigation }) => {
             payload: { imageUrl },
             callback: (res) => {
               // updated
-              console.log('updated event', res);
+              // console.log('updated event', res);
               setState({ ...state, loading: false });
               if (!res.success) return HelperFunctions.Notify('Error', res.result);
               return navigation.navigate('Blogs');
@@ -141,7 +141,7 @@ const NewBlog = ({ navigation }) => {
       dispatch.Blogs.createBlog({
         payload,
         callback: (res) => {
-          console.log('Response BLOG Create', res.result);
+          // console.log('Response BLOG Create', res.result);
           if (!res.success) {
             return HelperFunctions.Notify('Error', res.result);
           }

@@ -14,7 +14,7 @@ const TopCategories = ({ navigation: { navigate } }) => {
         paddingHorizontal: RFValue(10),
         backgroundColor: '#fff',
         marginBottom: RFValue(10),
-        paddingBottom: RFValue(15)
+        paddingVertical: RFValue(15)
       }}
     >
       {/* <HeaderLinker title="Top Categories" all={false} /> */}

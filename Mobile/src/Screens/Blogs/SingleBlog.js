@@ -18,7 +18,7 @@ const SingleBlog = ({
   title,
   owner,
   _id,
-  navigation: { navigate },
+  navigation: { navigate, push },
   last = false,
   children,
   header = true,
@@ -42,7 +42,8 @@ const SingleBlog = ({
   // const test = `sdfsdfsd {'\n'} new line created `;
   return (
     <View style={{ marginBottom: last ? RFValue(marginBottom) : RFValue(15), backgroundColor: '#fff' }}>
-      {header && (
+      {header &&
+      owner && (
         <View
           style={{
             flexDirection: 'row',

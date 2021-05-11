@@ -56,7 +56,7 @@ const Home = ({ navigation, ...props }) => {
   const checkPermissions = async () => {
     try {
       await HelperFunctions.CHECK_GALLERY_PERMISSIONS((res) => {
-        console.log('Gallery prems', res);
+        // console.log('Gallery prems', res);
       });
     } catch (error) {
       return HelperFunctions.Notify('Error', error.message);
@@ -65,13 +65,13 @@ const Home = ({ navigation, ...props }) => {
 
   const getRandomEvents = () => {
     dispatch.Events.getRandomEvents((res) => {
-      console.log('REs REANDom', res);
+      // console.log('REs REANDom', res);
     });
   };
 
   const getBlogs = () => {
     dispatch.Blogs.getBlogs((res) => {
-      console.log('REs EVS', res);
+      // console.log('REs EVS', res);
       // setState({...state, blogs})
     });
   };
@@ -169,8 +169,6 @@ const Home = ({ navigation, ...props }) => {
                     width: '100%',
                     position: 'absolute',
                     padding: RFValue(10),
-                    // backgroundColor: '#00000070',
-                    // height: RFValue(50),
                     bottom: 0
                   }}
                 >

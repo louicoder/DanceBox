@@ -24,7 +24,7 @@ const CommentsLikeButtons = ({ comments, likes, type, id, extStyles, likeHandler
   //   }
   // };
 
-  const payload = { email: user.email, uid: user.uid, name: user.name, imageUrl: user.imageUrl };
+  // const payload = { email: user.email, uid: user.uid, name: user.name, imageUrl: user.imageUrl };
 
   // const eventHandler = () => {
   //   // console.log('Calling event');
@@ -61,7 +61,7 @@ const CommentsLikeButtons = ({ comments, likes, type, id, extStyles, likeHandler
   //   }
   // };
 
-  const liked = likes && likes.includes(user.uid);
+  const liked = likes && likes.includes(user && user.uid);
 
   return (
     <View

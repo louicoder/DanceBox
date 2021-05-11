@@ -43,7 +43,7 @@ const BlogProfile = ({ navigation, route, ...props }) => {
       blogId: route.params._id,
       callback: (resp) => {
         setBlog({ ...resp.result });
-        console.log('BLog', JSON.stringify(resp.result.comments));
+        // console.log('BLog', JSON.stringify(resp.result.comments));
       }
     });
 
@@ -85,7 +85,7 @@ const BlogProfile = ({ navigation, route, ...props }) => {
     );
   };
 
-  console.log('ImageURL', blog.imageUrl);
+  // console.log('ImageURL', blog.imageUrl);
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}

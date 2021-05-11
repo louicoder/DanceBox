@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { HelperFunctions } from '../../../Utils';
 
 const OptionsSelector = ({ items, header, extStyles, defaultValue, setItem }) => {
   const [ state, setState ] = React.useState(defaultValue);
@@ -11,6 +12,7 @@ const OptionsSelector = ({ items, header, extStyles, defaultValue, setItem }) =>
       <View style={{ flexDirection: 'row', marginVertical: RFValue(10) }}>
         {items.map((item, index) => (
           <Pressable
+            key={HelperFunctions.keyGenerator()}
             onPress={() => {
               setState(item === state ? '' : item);
               setItem(item.toLowerCase());
