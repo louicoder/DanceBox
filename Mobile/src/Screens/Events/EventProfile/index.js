@@ -13,10 +13,9 @@ import Header from './Header';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
 
-const EventProfile = ({ navigation, route, ...props }) => {
+const EventProfile = ({ navigation, route }) => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.Account);
-  const { events } = useSelector((state) => state.Events);
   const loading = useSelector((state) => state.loading.effects.Events);
   const [ event, setEvent ] = React.useState({});
 
@@ -31,7 +30,6 @@ const EventProfile = ({ navigation, route, ...props }) => {
     dispatch.Events.getEvent({
       eventId: route.params._id,
       callback: (resp) => {
-        // console.log('HErrrrrrrr th event', resp.result._id);
         if (!resp.success)
           return Alert.alert(
             'Error getting event',
@@ -43,13 +41,12 @@ const EventProfile = ({ navigation, route, ...props }) => {
 
   const requestPayload = (action) => ({
     action,
-    eventId: state._id,
+    eventId: event._id,
     payload: { uid: user.uid, email: user.email, name: user.name || '', imageUrl: user.imageUrl || '' },
     callback: ({ success, result }) => {
       // console.log(`REsp from ${action}`, result);
       if (!success) return HelperFunctions.Notify('Error', result);
-      setState({ ...state, ...result });
-      return HelperFunctions.Notify('Success', 'Successfully added you to the waiting list');
+      getEvent();
     }
   });
 

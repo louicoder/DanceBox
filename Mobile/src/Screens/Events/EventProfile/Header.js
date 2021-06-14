@@ -23,6 +23,7 @@ const Header = ({
   dateCreated,
   noOfJudges,
   free,
+  tags,
   price,
   judgingNotes,
   startDate,
@@ -34,7 +35,6 @@ const Header = ({
   ...rest
 }) => {
   const { user } = useSelector((state) => state.Account);
-  const { events } = useSelector((state) => state.Events);
   const [ visible, setVisible ] = React.useState(false);
 
   const isParticipant = () => {
@@ -46,8 +46,6 @@ const Header = ({
     // const attend = events.find((event) => event._id === _id);
     return attending && attending.findIndex((el) => el.uid === user.uid) !== -1;
   };
-
-  // console.log('check likes', likes);
 
   return (
     <View style={{ width: '100%', backgroundColor: '#fff', marginBottom: RFValue(15) }}>
@@ -66,6 +64,27 @@ const Header = ({
           id={_id}
           extStyles={{ paddingHorizontal: 0 }}
         />
+
+        {/* Tags */}
+        <View style={{ flexDirection: 'row', marginVertical: RFValue(0), width: '100%', flexWrap: 'wrap' }}>
+          {tags &&
+            tags.map((tag) => (
+              <View
+                style={{
+                  padding: RFValue(5),
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  backgroundColor: '#eee',
+                  borderRadius: RFValue(10),
+                  marginRight: RFValue(5),
+                  marginBottom: RFValue(5)
+                }}
+              >
+                <Text style={{ color: 'green' }}>#{tag}</Text>
+              </View>
+            ))}
+        </View>
+        {/* End tags */}
 
         <Text style={{ fontSize: RFValue(20), paddingVertical: RFValue(10) }}>
           Entrance Fee: <Text style={{ fontWeight: 'bold' }}>{free ? 'FREE' : price}</Text>
@@ -123,7 +142,7 @@ const Header = ({
         <View
           style={{
             width: '100%',
-            borderWidth: 1,
+            // borderWidth: 1,
             marginTop: RFValue(10),
             borderColor: !visible ? 'transparent' : '#ddd'
           }}
@@ -138,17 +157,19 @@ const Header = ({
               padding: RFValue(10)
             }}
           >
-            <Text style={{ fontSize: RFValue(14), fontWeight: 'bold' }}>JUDGING CRITERIA:</Text>
+            <Text style={{ fontSize: RFValue(14), fontWeight: 'bold' }}>
+              {visible ? 'Close' : 'Tap to view'} judging criteria:
+            </Text>
             <Icon name={!visible ? 'chevron-down' : 'chevron-up'} size={RFValue(25)} color="#aaa" />
           </Pressable>
           {visible ? (
-            <View style={{ padding: RFValue(10) }}>
+            <View style={{ padding: RFValue(10), borderWidth: 1, borderColor: '#eee', borderTopWidth: 0 }}>
               <Text style={{ fontSize: RFValue(14) }}>{judgingNotes}</Text>
-              <Text style={{ fontSize: RFValue(14), marginVertical: RFValue(10), color: '#aaa' }}>
-                Judged by ・ {noOfJudges} Judges
+              <Text style={{ fontSize: RFValue(12), marginVertical: RFValue(10), color: '#000', fontWeight: 'bold' }}>
+                Number of judges ・ {noOfJudges} Judges
               </Text>
-              <Text style={{ fontSize: RFValue(14) }}>
-                Event judged by ・ {judgingCriteria === 'both' ? 'Judges + Audience' : judgingCriteria}
+              <Text style={{ fontSize: RFValue(12), fontWeight: 'bold' }}>
+                Event will be judged by ・ {judgingCriteria === 'both' ? 'Judges and Audience' : judgingCriteria}
               </Text>
             </View>
           ) : null}

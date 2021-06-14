@@ -24,11 +24,12 @@ export default {
     async signIn ({ payload: { email, password }, callback }) {
       try {
         await QUERIES.signIn(email, password, (res) => {
-          // console.log('USRID', res.doc);
-          dispatch.Account.getUserDetails({ uid: res.doc, callback });
+          console.log('USRID', res.error.toString());
+          // dispatch.Account.getUserDetails({ uid: res.doc, callback });
+          callback(res);
         });
       } catch (error) {
-        return callback({ success: false, result: error.message });
+        return callback({ success: false, result: error });
       }
     },
 
@@ -67,6 +68,8 @@ export default {
         if (eventSucess && blogSucess) {
           dispatch.Account.setEventsAndBlogs({ events, blogs });
         }
+        console.log('USER EVENTS', events);
+        console.log('USER BLOGS', blogs);
         callback({ success: eventSucess && blogSucess, result: { events, blogs } });
       } catch (error) {
         return callback({ success: false, result: error.message });

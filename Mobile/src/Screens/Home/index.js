@@ -215,8 +215,8 @@ const Home = ({ navigation, ...props }) => {
           </Text>
         </View>
 
-        {blogs &&
-          blogs.map((blog) => <SingleBlog key={HelperFunctions.keyGenerator()} {...blog} navigation={navigation} />)}
+        {/* {blogs &&
+          blogs.map((blog) => <SingleBlog key={HelperFunctions.keyGenerator()} {...blog} navigation={navigation} />)} */}
       </ScrollView>
     </View>
     // </SafeAreaView>

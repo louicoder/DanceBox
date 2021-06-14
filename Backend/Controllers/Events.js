@@ -217,6 +217,27 @@ const allEvents = async (req, res) => {
   }
 };
 
+const getEventsInMonth = async (req, res) => {
+  if (!req.params.month) return res.json({ success: false, result: 'Month to query is required, try again' });
+  const { month } = req.params;
+  console.log('Checking month', month);
+
+  try {
+    await EventsModel.find(
+      { startDate: { $regex: month, $options: 'i' } },
+      { title: 1, tags: 1, imageUrl: 1, price: 1, startDate: 1, dateCreated: 1 }
+    ).then((result) => {
+      console.log('RESULT', result);
+      res.json({ success: true, result });
+    });
+
+    // const events = await EventsModel.find({ startDate: { $regex: month, $options: 'i' } })
+    //   .project({ title: 1, tags: 1, imageUrl: 1, price: 1 })
+  } catch (error) {
+    return res.json({ success: false, result: error.message });
+  }
+};
+
 const updateEvent = async (req, res) => {
   if (!req.params.eventId) return res.json({ success: false, result: 'Blog id is required but missing' });
   const { eventId: _id } = req.params;
@@ -288,5 +309,6 @@ module.exports = {
   createEventComment,
   unattendEvent,
   unparticipateInEvent,
-  searchEvent
+  searchEvent,
+  getEventsInMonth
 };

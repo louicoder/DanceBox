@@ -26,7 +26,8 @@ import {
   NewEventComment,
   UserBlogs,
   UserEvents,
-  EditAccount
+  EditAccount,
+  Calendar
 } from '../Screens';
 import IconComp from '../Components/Icon';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -37,6 +38,7 @@ import { RFValue } from 'react-native-responsive-fontsize';
 import Drawer from '../Screens/Drawer';
 import FinishRegistration from '../Screens/FinishRegistration';
 import Splash from '../Screens/Splash';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const Stacks = createStackNavigator();
 const LoginStack = createStackNavigator();
@@ -45,6 +47,7 @@ const EventStack = createStackNavigator();
 const BlogStack = createStackNavigator();
 const SearchStack = createStackNavigator();
 const AccountStack = createStackNavigator();
+const CalendarStack = createStackNavigator();
 const DrawerStack = createDrawerNavigator();
 
 const BottomStack = createMaterialBottomTabNavigator();
@@ -53,6 +56,21 @@ const LoginScreen = () => (
   <LoginStack.Navigator>
     <LoginStack.Screen name="Login" component={Login} />
   </LoginStack.Navigator>
+);
+
+const CalendarScreens = () => (
+  <CalendarStack.Navigator headerMode="screen">
+    <CalendarStack.Screen
+      component={Calendar}
+      name="Calendar"
+      options={{
+        header: (props) => (
+          // <View style={{ backgroundColor: 'green', width: '100%', height: 40, top: useSafeAreaInsets().top }} />
+          <Header back {...props} title="Events Calendar" />
+        )
+      }}
+    />
+  </CalendarStack.Navigator>
 );
 
 const HomeScreens = () => (
@@ -247,6 +265,7 @@ const AllStacks = () => (
   <Stacks.Navigator screenOptions={{}} initialRouteName="Splash">
     <Stacks.Screen name="Home" component={DrawerScreens} options={{ header: () => null }} />
     <Stacks.Screen name="Login" component={Login} options={{ header: () => null }} />
+    <Stacks.Screen name="Calendar" component={CalendarScreens} options={{ header: () => null }} />
     <DrawerStack.Screen name="Splash" component={Splash} options={{ header: () => null }} />
     <DrawerStack.Screen name="SinglePost" component={SinglePost} options={{ header: () => null }} />
     <DrawerStack.Screen name="Interests" component={SelectInterests} options={{ header: () => null }} />
@@ -267,6 +286,7 @@ const DrawerScreens = () => (
       }}
     />
     <DrawerStack.Screen name="FinishRegistration" component={FinishRegistration} />
+    <DrawerStack.Screen name="Calendar" component={CalendarScreens} />
   </DrawerStack.Navigator>
 );
 

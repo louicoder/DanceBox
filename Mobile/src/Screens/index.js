@@ -17,6 +17,7 @@ import NewEventComment from './Events/NewEventComment';
 import UserBlogs from './Account/AllBlogs';
 import UserEvents from './Account/AllEvents';
 import EditAccount from './Account/EditAccount';
+import Calendar from './Calendar';
 
 export {
   Home,
@@ -37,5 +38,6 @@ export {
   NewEventComment,
   UserBlogs,
   UserEvents,
-  EditAccount
+  EditAccount,
+  Calendar
 };

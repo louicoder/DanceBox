@@ -92,23 +92,7 @@ export default {
     async attendParticipate ({ action, payload, eventId, callback }, state) {
       try {
         const uid = state.Account.user.uid;
-        await AxiosClient.patch(`/events/${action}/${eventId}/${uid}`, payload).then(({ data }) => {
-          let newEvents;
-          if (data.success) {
-            if (action === 'attend') {
-              newEvents = state.Events.events.map(
-                (event) => event._id === eventId && { ...event, attending: [ ...event.attending, payload ] }
-              );
-            }
-            if (action === 'participate') {
-              newEvents = state.Events.events.map(
-                (event) => event._id === eventId && { ...event, participating: [ ...event.participating, payload ] }
-              );
-            }
-            dispatch.Events.setEvents(newEvents);
-            callback({ ...data });
-          }
-        });
+        await AxiosClient.patch(`/events/${action}/${eventId}/${uid}`, payload).then(({ data }) => callback(data));
       } catch (error) {
         return callback({ success: false, result: error.message });
       }
@@ -117,31 +101,7 @@ export default {
     async unattendUnparticipate ({ action, payload, eventId, callback }, state) {
       try {
         const uid = state.Account.user.uid;
-        await AxiosClient.patch(`/events/${action}/${eventId}/${uid}`, payload).then(({ data }) => {
-          let newEvents;
-          if (data.success) {
-            if (action === 'unattend') {
-              newEvents = state.Events.events.map(
-                (event) =>
-                  event._id === eventId && {
-                    ...event,
-                    attending: [ ...event.attending.filter((part) => part.uid !== uid) ]
-                  }
-              );
-            }
-            if (action === 'unparticipate') {
-              newEvents = state.Events.events.map(
-                (event) =>
-                  event._id === eventId && {
-                    ...event,
-                    participating: [ ...event.participating.filter((part) => part.uid !== uid) ]
-                  }
-              );
-            }
-            dispatch.Events.setEvents(newEvents);
-            callback({ ...data });
-          }
-        });
+        await AxiosClient.patch(`/events/${action}/${eventId}/${uid}`, payload).then(({ data }) => callback(data));
       } catch (error) {
         return callback({ success: false, result: error.message });
       }
@@ -169,6 +129,17 @@ export default {
     async getEvent ({ eventId, callback }, state) {
       try {
         await AxiosClient.get(`/events/single/${eventId}`).then(({ data }) => {
+          callback(data);
+        });
+      } catch (error) {
+        return callback({ success: false, result: error.message });
+      }
+    },
+
+    // Get eevnts in month
+    async getEventsInMonth ({ month, callback }, state) {
+      try {
+        await AxiosClient.get(`/events/month/${month}`).then(({ data }) => {
           callback(data);
         });
       } catch (error) {

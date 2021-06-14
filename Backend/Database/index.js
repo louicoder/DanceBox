@@ -17,7 +17,7 @@ const connectWithRetry = () =>
     })
     .then(() => console.log(':::::::: CONNECTED TO DATBASE :::::::::'))
     .catch((error) => {
-      console.log('Something went wrong during the connection', error.message);
+      console.log('RECONNECTING TO MONGODB DATABASE...');
       setTimeout(connectWithRetry, 5000);
     });
 

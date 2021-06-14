@@ -8,16 +8,12 @@ export const signIn = async (email, password, callback) => {
   try {
     const account = await AUTH.signInWithEmailAndPassword(email, password);
     if (account.user) {
-      // console.log('DOC user', account.user.uid);
       callback({ success: true, doc: account.user.uid });
-      // await DB.collection('Users')
-      //   .doc(account.user.uid)
-      //   .get()
-      //   .then((snapshot) => callback({ doc: { ...snapshot.data(), uid: account.user.uid }, error: undefined }));
     }
-    return callback({ doc: account, error: undefined });
   } catch (error) {
-    return callback({ error: error.message, doc: undefined });
+    // const err = switchError(error.code);
+    // console.log('ERRor', err);
+    return callback({ error: error.code, doc: undefined });
   }
 };
 

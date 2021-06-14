@@ -74,6 +74,7 @@ const EditAccount = () => {
           title="Your full name"
           extStyles={{ marginTop: RFValue(10) }}
           value={state.name}
+          onChangeText={(name) => setState({ ...state, name })}
         />
         <Input
           placeholder="Enter stage name or username or nickname"

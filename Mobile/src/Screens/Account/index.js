@@ -120,7 +120,11 @@ const Account = ({ navigation }) => {
                 paddingLeft: RFValue(15)
               }}
             >
-              {<Text style={{ fontSize: RFValue(16), fontWeight: 'bold' }}>{user.name || user.username || '-'}</Text>}
+              {
+                <Text style={{ fontSize: RFValue(16), fontWeight: 'bold', textTransform: 'capitalize' }}>
+                  {user.name || user.username || '-'}
+                </Text>
+              }
               <Text style={{ fontSize: RFValue(12), color: '#aaa' }}>{user.email}</Text>
               <Pressable
                 onPress={() => navigation.navigate('EditAccount')}
@@ -255,36 +259,52 @@ const Account = ({ navigation }) => {
                 Recent Activity :
               </Text>
 
-              <FlatList
-                showsVerticalScrollIndicator={false}
-                style={{ backgroundColor: '#eeeeee90' }}
-                data={events}
-                keyExtractor={() => HelperFunctions.keyGenerator()}
-                renderItem={({ item, index }) => (
-                  <SingleEvent header={false} last={index + 1 === events.length} {...item} navigation={navigation} />
-                )}
-              />
+              {events && events.length ? (
+                <FlatList
+                  showsVerticalScrollIndicator={false}
+                  style={{ backgroundColor: '#eeeeee90' }}
+                  data={events}
+                  keyExtractor={() => HelperFunctions.keyGenerator()}
+                  renderItem={({ item, index }) => (
+                    <SingleEvent header={false} last={index + 1 === events.length} {...item} navigation={navigation} />
+                  )}
+                />
+              ) : null}
             </View>
 
             <View>
-              {/* <Text style={{ fontSize: RFValue(16), fontWeight: 'bold', marginVertical: RFValue(10) }}>Latest Blogs</Text> */}
-
-              <FlatList
-                showsVerticalScrollIndicator={false}
-                style={{ backgroundColor: '#eeeeee90' }}
-                data={blogs}
-                keyExtractor={() => HelperFunctions.keyGenerator()}
-                renderItem={({ item, index }) => (
-                  <SingleBlog
-                    header={false}
-                    {...item}
-                    navigation={navigation}
-                    last={index + 1 === blogs.length}
-                    marginBottom={0}
-                  />
-                )}
-              />
+              {blogs && blogs.length ? (
+                <FlatList
+                  showsVerticalScrollIndicator={false}
+                  style={{ backgroundColor: '#eeeeee90' }}
+                  data={blogs}
+                  keyExtractor={() => HelperFunctions.keyGenerator()}
+                  renderItem={({ item, index }) => (
+                    <SingleBlog
+                      header={false}
+                      {...item}
+                      navigation={navigation}
+                      last={index + 1 === blogs.length}
+                      marginBottom={0}
+                    />
+                  )}
+                />
+              ) : null}
             </View>
+
+            {events && blogs && !events.length && !blogs.length ? (
+              <View
+                style={{
+                  height: RFValue(300),
+                  width: '100%',
+                  backgroundColor: '#eeeeee90',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+              >
+                <Text style={{ fontSize: RFValue(14), color: '#aaa' }}>You have no recent activity yet...</Text>
+              </View>
+            ) : null}
           </View>
         </ScrollView>
       </SafeAreaView>

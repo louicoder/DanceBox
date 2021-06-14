@@ -5,6 +5,7 @@ router.post('/create', EC.createEvent);
 router.get('/single/:eventId', EC.getEvent);
 router.get('/random', EC.getRandomEvents);
 router.get('/all', EC.allEvents);
+router.get('/month/:month', EC.getEventsInMonth);
 router.get('/search?', EC.searchEvent);
 router.get('/user/:ownerUid', EC.getEventsForSingleUser);
 router.patch('/update/:eventId', EC.updateEvent);

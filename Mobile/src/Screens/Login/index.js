@@ -14,6 +14,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import LoadingModal from '../../Components/LoadingModal';
 import { HelperFunctions } from '../../Utils';
 
+import firestore from '@react-native-firebase/firestore'
+
 const Login = ({ navigation }) => {
   const dispatch = useDispatch();
   const statex = useSelector((state) => state.Account);
@@ -37,32 +39,54 @@ const Login = ({ navigation }) => {
     dispatch.Account.signIn({
       payload: { email, password },
       callback: ({ error, doc }) => {
-        // if (error) return Alert.alert('Error signing in', error);
+        console.log('ERRRR', error);
+        if (error) return Alert.alert('Error signing in', switchError(error));
         setState({ ...state });
-        return state.justCreated ? checkPermissions() : navigation.navigate('Home');
+        return state.justCreated ? navigation.navigate('Interests', { docId }) : navigation.navigate('Home');
       }
     });
   };
 
-  React.useEffect(() => {
-    // checkPermissions();
-  }, []);
-
-  const checkPermissions = async () => {
-    try {
-      await HelperFunctions.CHECK_GALLERY_PERMISSIONS((res) => {
-        // console.log('Gallery prems', res);
-        if (!res.success)
-          return HelperFunctions.Notify(
-            'Error',
-            'You need to grant DAncebox permissions to access your gallery so you can upload images for you blog'
-          );
-        return navigation.navigate('Interests', { docId });
-      });
-    } catch (error) {
-      return HelperFunctions.Notify('Error', error.message);
+  const switchError = (errorCode) => {
+    console.log(errorCode);
+    switch (errorCode) {
+      case 'auth/invalid-email':
+        return 'The email is invalid or badly formatted';
+      case 'auth/user-disabled':
+        return "The user's accont is disabled.";
+      case 'auth/user-not-found':
+        return 'The does not exist on the platform or has been deleted.';
+      case 'auth/wrong-password':
+        return 'The login credentials do not match, try again.';
+      default:
+        return 'An error occured. Try again.';
     }
   };
+
+  React.useEffect(() => {
+    // checkPermissions();
+    getUsersPaginated()
+  }, []);
+
+  const getUsersPaginated = () => {
+    firestore().collection('Users').orderBy('uid', 'desc').limit(4).startAt(8).get().then(users => console.log('USERS HERE', [...users.docs.map(doc => ({ id: doc.data().uid}))], users.docs.length)).catch(error => console.log('Error gettin users', error.message))
+  }
+
+  // const checkPermissions = async () => {
+  //   try {
+  //     await HelperFunctions.CHECK_GALLERY_PERMISSIONS((res) => {
+  //       // console.log('Gallery prems', res);
+  //       if (!res.success)
+  //         return HelperFunctions.Notify(
+  //           'Error',
+  //           'You need to grant DAncebox permissions to access your gallery so you can upload images for you blog'
+  //         );
+  //       return navigation.navigate('Interests', { docId });
+  //     });
+  //   } catch (error) {
+  //     return HelperFunctions.Notify('Error', error.message);
+  //   }
+  // };
 
   const createAccountHandler = () => {
     Keyboard.dismiss();

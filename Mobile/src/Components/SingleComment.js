@@ -40,9 +40,9 @@ const SingleComment = ({
           />
         </View>
         <View style={{ width: '80%' }}>
-          {owner && <Text style={{ fontWeight: 'bold' }}>{owner.name || owner.email}</Text>}
-          <Text style={{ color: '#aaaaaa80', fontSize: RFValue(12) }}>{moment(dateCreated).fromNow()}</Text>
-          <Text style={{ paddingVertical: RFValue(6), color: '#00000090' }}>{comment}</Text>
+          {owner && <Text style={{}}>{owner.name || owner.email}</Text>}
+          <Text style={{ color: '#aaaaaa', fontSize: RFValue(12) }}>{moment(dateCreated).fromNow()}</Text>
+          <Text style={{ paddingVertical: RFValue(6), color: '#000000' }}>{comment}</Text>
         </View>
       </View>
       {last && (
