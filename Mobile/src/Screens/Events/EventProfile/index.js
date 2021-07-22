@@ -11,7 +11,8 @@ import LoadingModal from '../../../Components/LoadingModal';
 import SingleComment from '../../../Components/SingleComment';
 import Header from './Header';
 import { useDispatch, useSelector } from 'react-redux';
-import { KeyboardAwareFlatList } from 'react-native-keyboard-aware-scroll-view';
+import { KeyboardAwareFlatList, KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const EventProfile = ({ navigation, route }) => {
   const dispatch = useDispatch();
@@ -84,12 +85,35 @@ const EventProfile = ({ navigation, route }) => {
     <View
       // behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       // keyboardVerticalOffset={Platform.OS === 'ios' ? RFValue(90) : 0}
-      style={{ flex: 1 }}
+      style={{ flex: 1, backgroundColor: '#eee' }}
     >
       <LoadingModal
         isVisible={loading.likeEvent || loading.attendParticipate || loading.getEvent || loading.unattendUnparticipate}
       />
-      {event && (
+      <KeyboardAwareScrollView style={{}} extraScrollHeight={useSafeAreaInsets().top}>
+        <Header
+          {...event}
+          navigation={navigation}
+          attendParticipate={attendParticipate}
+          unattendUnparticipate={unattendUnparticipate}
+          likeHandler={likeHandler}
+          postComment={(comment) => postComment(comment)}
+        />
+        <View style={{ paddingVertical: RFValue(10), flexGrow: 1, backgroundColor: '#fff' }}>
+          {event &&
+            event.comments &&
+            event.comments.map((item, index) => (
+              <SingleComment
+                first={index === 0}
+                {...item}
+                navigation={navigation}
+                last={index + 1 === event.comments.length}
+                goto={() => navigation.navigate('NewEventComment', { eventId: event._id })}
+              />
+            ))}
+        </View>
+      </KeyboardAwareScrollView>
+      {/* {event && (
         <View style={{ flex: 1 }}>
           <View style={{ flex: 1 }}>
             <KeyboardAwareFlatList
@@ -119,7 +143,7 @@ const EventProfile = ({ navigation, route }) => {
             />
           </View>
         </View>
-      )}
+      )} */}
     </View>
   );
 };

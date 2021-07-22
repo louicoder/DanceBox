@@ -37,9 +37,22 @@ const Header = ({
   postComment,
   ...rest
 }) => {
-  const { user } = useSelector((state) => state.Account);
+  // const { user } = useSelector((state) => state.Account);
+  const stato = useSelector((state) => state);
   const [ visible, setVisible ] = React.useState(false);
+  const [ user, setUser ] = React.useState(false);
   const [ comment, setComment ] = React.useState('posting something else here');
+
+  // console.log(object)
+  React.useEffect(
+    () => {
+      // const sub =
+      const sub = navigation.addListener('focus', () => {
+        HelperFunctions.getAsyncObjectData('user', (res) => setUser(res));
+      });
+    },
+    [ navigation ]
+  );
 
   const isParticipant = () => {
     // const part = events.find((event) => event._id === _id);
@@ -68,6 +81,20 @@ const Header = ({
           id={_id}
           extStyles={{ paddingHorizontal: 0 }}
         />
+        <Text style={{ fontSize: RFValue(20), marginBottom: RFValue(10), fontWeight: 'bold' }}>{title}</Text>
+
+        <Text style={{ fontSize: RFValue(20), paddingVertical: RFValue(10) }}>
+          Entrance Fee: <Text style={{ fontWeight: 'bold' }}>{free ? 'FREE' : price}</Text>
+        </Text>
+        <Text style={{ fontSize: RFValue(14) }}>
+          Date : {moment(startDate).format('DD/MMMM/YYYY')} - {moment(endDate).format('DD/MMMM/YYYY')}
+        </Text>
+        <Text style={{ fontSize: RFValue(14) }}>Venue: {venue}</Text>
+        <Text style={{ fontSize: RFValue(14) }}>
+          {attending && attending.length} going ・ {participating && participating.length} participants
+        </Text>
+        {/* <Text>{participating && participating.length}</Text> */}
+        <Text style={{ fontSize: RFValue(12), color: '#aaa' }}>Added {moment(dateCreated).fromNow()}</Text>
 
         {/* Tags */}
         <View style={{ flexDirection: 'row', marginVertical: RFValue(0), width: '100%', flexWrap: 'wrap' }}>
@@ -90,19 +117,6 @@ const Header = ({
             ))}
         </View>
         {/* End tags */}
-
-        <Text style={{ fontSize: RFValue(20), paddingVertical: RFValue(10) }}>
-          Entrance Fee: <Text style={{ fontWeight: 'bold' }}>{free ? 'FREE' : price}</Text>
-        </Text>
-        <Text style={{ fontSize: RFValue(14) }}>
-          Date : {moment(startDate).format('DD/MMMM/YYYY')} - {moment(endDate).format('DD/MMMM/YYYY')}
-        </Text>
-        <Text style={{ fontSize: RFValue(14) }}>Venue: {venue}</Text>
-        <Text style={{ fontSize: RFValue(14) }}>
-          {attending && attending.length} going ・ {participating && participating.length} participants
-        </Text>
-        {/* <Text>{participating && participating.length}</Text> */}
-        <Text style={{ fontSize: RFValue(12), color: '#aaa' }}>Added {moment(dateCreated).fromNow()}</Text>
 
         <Pressable
           onPress={() => navigation.navigate('Voting')}
@@ -153,7 +167,9 @@ const Header = ({
             </Text>
           </Pressable>
         </View>
-        <Text style={{ fontSize: RFValue(20), marginVertical: RFValue(10) }}>{title}</Text>
+        <Text style={{ fontSize: RFValue(14), marginVertical: RFValue(10), fontWeight: 'bold' }}>
+          About this event:
+        </Text>
         <Text style={{ fontSize: RFValue(14) }}>{description}</Text>
 
         <View
@@ -193,25 +209,41 @@ const Header = ({
         </View>
 
         <Text style={{ fontSize: RFValue(14), marginVertical: RFValue(15) }}>Join the conversation below</Text>
-        <KeyboardAwareScrollView extraScrollHeight={60}>
-          <View style={{ flexDirection: 'row', borderWidth: 1 }}>
+        <View style={{ flexDirection: 'row', marginBottom: RFValue(15), width: '100%' }}>
+          <View style={{ width: '10%' }}>
             <Image
-              src={user && user.imageUrl}
+              source={{ uri: (user && user.imageUrl) || CONSTANTS.DEFAULT_PROFILE }}
               style={{ marginRight: RFValue(10), width: RFValue(30), height: RFValue(30), borderRadius: RFValue(30) }}
             />
-            <View style={{ width: '100%' }}>
-              <TextInput
-                style={{ backgroundColor: '#eee', width: '100%' }}
-                placeholder="Enter your comment..."
-                textAlignVertical="top"
-                multiline
-              />
-              <Pressable onPress={() => postComment(comment)}>
-                <Text>comment</Text>
-              </Pressable>
-            </View>
           </View>
-        </KeyboardAwareScrollView>
+          <View style={{ flexGrow: 1, paddingLeft: RFValue(10), width: '90%' }}>
+            <TextInput
+              style={{
+                fontSize: RFValue(12),
+                backgroundColor: '#eee',
+                padding: RFValue(10),
+                paddingTop: RFValue(10),
+                minHeight: RFValue(200),
+                maxHeight: RFValue(200)
+              }}
+              placeholder="Enter your comment..."
+              textAlignVertical="top"
+              multiline
+              maxLength={300}
+            />
+            <Pressable
+              onPress={() => postComment(comment)}
+              style={{
+                backgroundColor: '#010203',
+                padding: RFValue(10),
+                alignSelf: 'flex-end',
+                marginTop: RFValue(10)
+              }}
+            >
+              <Text style={{ color: '#fff' }}>comment</Text>
+            </Pressable>
+          </View>
+        </View>
       </View>
 
       {comments && !comments.length ? (

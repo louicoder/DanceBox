@@ -12,6 +12,7 @@ const SingleComment = ({
   goto,
   owner,
   last,
+  first,
   navigation: { navigate },
   _id,
   blog,
@@ -20,11 +21,11 @@ const SingleComment = ({
   // console.log('OWNER', rest);
 
   return (
-    <View style={{ paddingVertical: RFValue(0) }}>
+    <View style={{ paddingTop: first ? RFValue(10) : 0 }}>
       <View
         style={{
           width: '100%',
-          paddingVertical: RFValue(15),
+          paddingBottom: RFValue(15),
           flexDirection: 'row',
           paddingHorizontal: RFValue(10),
           backgroundColor: '#fff'
@@ -40,12 +41,12 @@ const SingleComment = ({
           />
         </View>
         <View style={{ width: '80%' }}>
-          {owner && <Text style={{}}>{owner.name || owner.email}</Text>}
-          <Text style={{ color: '#aaaaaa', fontSize: RFValue(12) }}>{moment(dateCreated).fromNow()}</Text>
+          {owner && <Text style={{ fontSize: RFValue(11), fontWeight: 'bold' }}>{owner.name || owner.email}</Text>}
+          <Text style={{ color: '#aaaaaa', fontSize: RFValue(11) }}>{moment(dateCreated).fromNow()}</Text>
           <Text style={{ paddingVertical: RFValue(6), color: '#000000' }}>{comment}</Text>
         </View>
       </View>
-      {last && (
+      {/* {last && (
         <View style={{ width: '100%', backgroundColor: '#fff' }}>
           <Pressable
             onPress={() => (goto ? goto() : navigate('NewBlogComment', { blogId: _id, blog }))}
@@ -62,7 +63,7 @@ const SingleComment = ({
             <Text style={{ fontSize: RFValue(14), color: '#fff' }}>+ Add a comment</Text>
           </Pressable>
         </View>
-      )}
+      )} */}
     </View>
   );
 };

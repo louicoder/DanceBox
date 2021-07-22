@@ -65,7 +65,7 @@ const Home = ({ navigation, ...props }) => {
       // month,
       month: '05',
       callback: ({ result, success }) => {
-        console.log('HERE marked', result);
+        // console.log('HERE marked', result);
         let dates = {};
         if (success) {
           result.map((evnt) => (dates = { ...dates, [evnt.startDate.slice(0, 10)]: { selected: true } }));

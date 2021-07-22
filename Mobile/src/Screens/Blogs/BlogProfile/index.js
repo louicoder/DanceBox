@@ -18,9 +18,11 @@ import { ComingSoon, CommentsLikeButtons, SingleComment } from '../../../Compone
 import Modal from '../../../Components/Modal';
 import { CONSTANTS, HelperFunctions } from '../../../Utils';
 import SingleEvent from '../SingleBlog';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { useDispatch, useSelector } from 'react-redux';
 import LoadingModal from '../../../Components/LoadingModal';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Comments from './Comments';
 
 const BlogProfile = ({ navigation, route, ...props }) => {
   const [ state, setState ] = React.useState({ ...route.params, comment: '' });
@@ -30,14 +32,17 @@ const BlogProfile = ({ navigation, route, ...props }) => {
   const loading = useSelector((state) => state.loading.effects.Blogs);
   const { user } = useSelector((state) => state.Account);
 
-  React.useEffect(() => {
-    const sub = navigation.addListener('focus', () => {
-      // getBlog();
-      getComments();
-    });
+  React.useEffect(
+    () => {
+      const sub = navigation.addListener('focus', () => {
+        getBlog();
+        getComments();
+      });
 
-    return () => sub;
-  }, []);
+      return () => sub;
+    },
+    [ navigation ]
+  );
 
   const getComments = () => {
     // get comments for blog:
@@ -47,8 +52,8 @@ const BlogProfile = ({ navigation, route, ...props }) => {
     dispatch.Blogs.getBlog({
       blogId: route.params._id,
       callback: (resp) => {
+        console.log('BLog', resp.result);
         setBlog({ ...resp.result });
-        // console.log('BLog', JSON.stringify(resp.result.comments));
       }
     });
 
@@ -64,6 +69,7 @@ const BlogProfile = ({ navigation, route, ...props }) => {
   };
 
   const Blog = ({ imageUrl, title, description, comments, likes, _id, ...rest }) => {
+    console.log('Title', title);
     return (
       <View style={{ backgroundColor: '#fff', marginBottom: RFValue(15) }}>
         {imageUrl ? (
@@ -92,15 +98,18 @@ const BlogProfile = ({ navigation, route, ...props }) => {
 
   // console.log('ImageURL', blog.imageUrl);
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? RFValue(90) : 0}
-      style={{ flex: 1 }}
+    <KeyboardAwareScrollView
+      // behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      // keyboardVerticalOffset={Platform.OS === 'ios' ? RFValue(90) : 0}
+      extraScrollHeight={useSafeAreaInsets().top}
+      style={{ flex: 1, backgroundColor: '#eee' }}
     >
       <LoadingModal isVisible={loading.getBlog || loading.likeBlog} />
       {blog && (
         <View style={{ flex: 1 }}>
-          <View style={{ flexGrow: 1 }}>
+          <Blog {...blog} />
+          <Comments comments={blog.comments} navigation={navigation} />
+          {/* <View style={{ flexGrow: 1 }}>
             {state.comments && state.comments.length ? (
               <FlatList
                 style={{ flex: 1, backgroundColor: '#aaaaaa80' }}
@@ -133,10 +142,10 @@ const BlogProfile = ({ navigation, route, ...props }) => {
                 </Pressable>
               </ComingSoon>
             ) : null}
-          </View>
+          </View> */}
         </View>
       )}
-    </KeyboardAvoidingView>
+    </KeyboardAwareScrollView>
   );
 };
 

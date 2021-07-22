@@ -41,7 +41,7 @@ const CalendarComponent = () => {
         let dates = {};
         if (success) {
           result.map((evnt) => (dates = { ...dates, [evnt.startDate.slice(0, 10)]: { selected: true } }));
-          console.log('HERE marked', result);
+          // console.log('HERE marked', result);
           setState({ ...state, markedDates: dates, events: result });
         }
       }
