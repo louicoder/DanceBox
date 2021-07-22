@@ -1,10 +1,10 @@
 import moment from 'moment';
 import React from 'react';
-import { View, Text, SafeAreaView, Dimensions, FlatList, Image, Pressable } from 'react-native';
+import { View, Text, SafeAreaView, Dimensions, FlatList, Image, Pressable, ActivityIndicator } from 'react-native';
 import { Calendar, CalendarList, Agenda } from 'react-native-calendars';
 import { RFValue } from 'react-native-responsive-fontsize';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 // import LoadingModal from '../../Components/LoadingModal';
 
 const { width } = Dimensions.get('window');
@@ -13,6 +13,7 @@ const CalendarComponent = () => {
   const massage = { key: 'massage', color: 'blue', selectedDotColor: 'light-blue' };
   const workout = { key: 'workout', color: 'green' };
   const dispatch = useDispatch();
+  const loading = useSelector((state) => state.loading.effects.Events);
 
   const [ state, setState ] = React.useState({ calendarVisible: true, activeDate: '', markedDates: {}, events: [] });
 
@@ -33,7 +34,7 @@ const CalendarComponent = () => {
       month = `${yr}-${mnth}`;
     }
 
-    console.log('Motnh here', month);
+    // console.log('Motnh here', month);
     dispatch.Events.getEventsInMonth({
       month,
       callback: ({ result, success }) => {
@@ -62,9 +63,7 @@ const CalendarComponent = () => {
           alignItems: 'center'
         }}
       >
-        <Text style={{ fontSize: RFValue(16) }}>
-          {state.calendarVisible ? 'Hide Events Calendar:' : 'Show Events Calendar:'}
-        </Text>
+        <Text style={{ fontSize: RFValue(16) }}>{state.calendarVisible ? 'Hide Calendar:' : 'Show Calendar:'}</Text>
         <Icon
           name={state.calendarVisible ? 'chevron-up' : 'chevron-down'}
           size={RFValue(20)}
@@ -85,37 +84,77 @@ const CalendarComponent = () => {
         />
       )}
 
-      <FlatList
-        ListHeaderComponent={() => null}
-        style={{ paddingHorizontal: RFValue(0), marginTop: RFValue(10), flexGrow: 1, backgroundColor: '#eee' }}
-        data={state.events}
-        keyExtractor={() => Math.random().toString(36).slice(2)}
-        renderItem={({ item: { imageUrl: uri, title, price, startDate, dateCreated }, index }) => (
-          <View
-            style={{
-              width: '100%',
-              height: RFValue(100),
-              marginBottom: RFValue(10),
-              backgroundColor: '#fff',
-              flexDirection: 'row',
-              justifyContent: 'space-between'
-            }}
-          >
-            <Image
-              source={{ uri: uri || 'https://complianz.io/wp-content/uploads/2019/03/placeholder-300x202.jpg' }}
-              style={{ width: RFValue(100), height: RFValue(100) }}
-            />
-            <View style={{ marginLeft: RFValue(10), flexGrow: 1, paddingVertical: RFValue(10) }}>
-              <Text style={{ fontSize: RFValue(16), fontWeight: 'bold' }}>{title}</Text>
-              <Text style={{ fontSize: RFValue(14), color: '#aaa', paddingVertical: RFValue(0) }}>
-                Date: {startDate}
-              </Text>
-              <Text style={{ fontSize: RFValue(14) }}>Fee ・ {price ? price : '0'}/=</Text>
-              <Text style={{ fontSize: RFValue(12), color: '#aaa' }}>Created ・ {moment(dateCreated).fromNow()}</Text>
+      {!loading.getEventsInMonth && state.events && state.events.length ? (
+        <FlatList
+          showsVerticalScrollIndicator={false}
+          ListHeaderComponent={() => (
+            <View
+              style={{
+                width: '100%',
+                padding: RFValue(10),
+                backgroundColor: '#fff',
+                borderTopWidth: 1,
+                borderTopColor: '#eeeeee80'
+              }}
+            >
+              <Text style={{ fontSize: RFValue(16), fontWeight: 'bold' }}>All events in this month:</Text>
             </View>
-          </View>
-        )}
-      />
+          )}
+          style={{ paddingHorizontal: RFValue(0), marginTop: RFValue(10), flexGrow: 1, backgroundColor: '#fff' }}
+          data={state.events}
+          keyExtractor={() => Math.random().toString(36).slice(2)}
+          renderItem={({ item: { imageUrl: uri, title, price, startDate, dateCreated }, index }) => (
+            <View
+              style={{
+                width: '100%',
+                height: RFValue(100),
+                marginBottom: index + 1 === state.events.length ? 0 : RFValue(10),
+                backgroundColor: '#eeeeee50',
+                flexDirection: 'row',
+                justifyContent: 'space-between'
+              }}
+            >
+              <Image
+                resizeMode="cover"
+                source={{ uri: uri || 'https://complianz.io/wp-content/uploads/2019/03/placeholder-300x202.jpg' }}
+                style={{ width: RFValue(100), height: RFValue(100) }}
+              />
+              <View
+                style={{ marginLeft: RFValue(10), flexGrow: 1, paddingVertical: RFValue(10), justifyContent: 'center' }}
+              >
+                <Text style={{ fontSize: RFValue(16), fontWeight: 'bold' }}>
+                  {title && title.slice(0, 18)}
+                  {title && title.length > 18 && '...'}
+                </Text>
+                <Text style={{ fontSize: RFValue(14) }}>Fee ・ {price ? price : '0'}/=</Text>
+                {/* <Text style={{ fontSize: RFValue(12), color: '#aaa', paddingVertical: RFValue(0) }}>
+                Date: {startDate}
+              </Text> */}
+                <Text style={{ fontSize: RFValue(12), color: '#aaa' }}>Created ・ {moment(dateCreated).fromNow()}</Text>
+                <View
+                  style={{
+                    position: 'absolute',
+                    right: RFValue(5),
+                    bottom: RFValue(30),
+                    backgroundColor: '#010203',
+                    padding: RFValue(15),
+                    borderRadius: 30
+                  }}
+                >
+                  <Text style={{ color: '#fff', fontSize: RFValue(18), fontWeight: 'bold' }}>
+                    {startDate.split('-')[2]}
+                  </Text>
+                </View>
+              </View>
+            </View>
+          )}
+        />
+      ) : null}
+      {loading.getEventsInMonth ? (
+        <View style={{ flexGrow: 1, alignItems: 'center', justifyContent: 'center' }}>
+          <ActivityIndicator size={RFValue(20)} />
+        </View>
+      ) : null}
     </SafeAreaView>
   );
 };

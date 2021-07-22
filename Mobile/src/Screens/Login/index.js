@@ -1,20 +1,16 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, SafeAreaView, StatusBar, Image, Alert, Keyboard } from 'react-native';
+import { View, Text, TouchableOpacity, SafeAreaView, StatusBar, Image, Alert, Keyboard, Pressable } from 'react-native';
 import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Button from '../../Components/Button';
-import IconComp from '../../Components/Icon';
 import Input from '../../Components/Input';
-import Option from '../../Components/Option';
 import PasswordInput from '../../Components/PasswordInput';
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import LOGO from '../../assets/dancebox-logo.jpg';
 import { useSelector, useDispatch } from 'react-redux';
 import LoadingModal from '../../Components/LoadingModal';
 import { HelperFunctions } from '../../Utils';
 
-import firestore from '@react-native-firebase/firestore'
+import firestore from '@react-native-firebase/firestore';
 
 const Login = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -23,26 +19,25 @@ const Login = ({ navigation }) => {
   const [ state, setState ] = React.useState({
     loginMode: true,
     activeLogin: null,
-    email: '',
-    password: '',
+    email: 'musanje2010@gmail.com',
+    password: 'password',
     passwordVisible: true,
     justCreated: false,
     docId: ''
   });
 
-  // console.log('loading', loading);
-
   const loginHandler = () => {
-    // console.log('login here');
     Keyboard.dismiss();
     const { email, password, docId } = state;
     dispatch.Account.signIn({
       payload: { email, password },
       callback: ({ error, doc }) => {
-        console.log('ERRRR', error);
-        if (error) return Alert.alert('Error signing in', switchError(error));
-        setState({ ...state });
-        return state.justCreated ? navigation.navigate('Interests', { docId }) : navigation.navigate('Home');
+        dispatch.Account.setUserDetails({ ...doc, password });
+        if (error) return Alert.alert('Error signing in', HelperFunctions.switchLoginError(error));
+        HelperFunctions.storeAsyncObjectData('user', doc, ({ error }) => {
+          if (error) return HelperFunctions.Notify('Error', error);
+          return state.justCreated ? navigation.navigate('Interests', { docId }) : navigation.navigate('Home');
+        });
       }
     });
   };
@@ -63,30 +58,16 @@ const Login = ({ navigation }) => {
     }
   };
 
-  React.useEffect(() => {
-    // checkPermissions();
-    getUsersPaginated()
-  }, []);
+  // React.useEffect(() => {
+  //   HelperFunctions.getAsyncObjectData('user', (res) => {
+  //     console.log('RESult', res);
+  //     // if (res && res.uid) {
+  //     //   dispatch.Account.setUserDetails(res);
+  //     // }
+  //   });
 
-  const getUsersPaginated = () => {
-    firestore().collection('Users').orderBy('uid', 'desc').limit(4).startAt(8).get().then(users => console.log('USERS HERE', [...users.docs.map(doc => ({ id: doc.data().uid}))], users.docs.length)).catch(error => console.log('Error gettin users', error.message))
-  }
-
-  // const checkPermissions = async () => {
-  //   try {
-  //     await HelperFunctions.CHECK_GALLERY_PERMISSIONS((res) => {
-  //       // console.log('Gallery prems', res);
-  //       if (!res.success)
-  //         return HelperFunctions.Notify(
-  //           'Error',
-  //           'You need to grant DAncebox permissions to access your gallery so you can upload images for you blog'
-  //         );
-  //       return navigation.navigate('Interests', { docId });
-  //     });
-  //   } catch (error) {
-  //     return HelperFunctions.Notify('Error', error.message);
-  //   }
-  // };
+  //   // console.log('USER===', statex.user);
+  // }, []);
 
   const createAccountHandler = () => {
     Keyboard.dismiss();
@@ -108,7 +89,8 @@ const Login = ({ navigation }) => {
       whatsapp: '',
       instagram: '',
       interests: [],
-      accountType: state.activeLogin,
+      // accountType: state.activeLogin,
+      accountType: 'individual',
       imageUrl: '',
       uid: docId
     };
@@ -148,13 +130,13 @@ const Login = ({ navigation }) => {
 
             <Text style={{ fontSize: RFValue(14), marginVertical: 10 }}>
               {state.loginMode ? (
-                'Select an account that you would like to log into.'
+                'Enter the details below to login into your Dancebox account.'
               ) : (
-                'Enter the details below to create your new account with Mildmay'
+                'Enter the details below to create your new account with Dancebox'
               )}
             </Text>
 
-            {state.loginMode ? null : (
+            {/* {state.loginMode ? null : (
               <View
                 style={{
                   marginVertical: RFValue(10),
@@ -173,7 +155,7 @@ const Login = ({ navigation }) => {
                   />
                 ))}
               </View>
-            )}
+            )} */}
             <Input
               placeholder="Enter your email address"
               value={state.email}
@@ -194,7 +176,7 @@ const Login = ({ navigation }) => {
               onPress={() => (state.loginMode ? loginHandler() : createAccountHandler())}
               textStyles={{ color: '#fff', borderWidth: 0 }}
             />
-            <TouchableWithoutFeedback
+            <Pressable
               onPress={() => setState({ ...state, loginMode: !state.loginMode })}
               style={{
                 paddingVertical: RFValue(10),
@@ -207,7 +189,7 @@ const Login = ({ navigation }) => {
                 {state.loginMode ? 'Not registered?' : 'Already registered?'}{' '}
                 <Text style={{ color: 'rgb(0,0,255)' }}>{state.loginMode ? 'Register' : 'Login'}</Text>
               </Text>
-            </TouchableWithoutFeedback>
+            </Pressable>
           </View>
         </KeyboardAwareScrollView>
       </SafeAreaView>

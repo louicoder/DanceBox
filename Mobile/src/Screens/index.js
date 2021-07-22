@@ -18,6 +18,9 @@ import UserBlogs from './Account/AllBlogs';
 import UserEvents from './Account/AllEvents';
 import EditAccount from './Account/EditAccount';
 import Calendar from './Calendar';
+import OrganiserProfile from './OrganiserProfile';
+import AllOrganisers from './AllOrganisers';
+import Voting from './Voting';
 
 export {
   Home,
@@ -39,5 +42,8 @@ export {
   UserBlogs,
   UserEvents,
   EditAccount,
-  Calendar
+  Calendar,
+  OrganiserProfile,
+  AllOrganisers,
+  Voting
 };

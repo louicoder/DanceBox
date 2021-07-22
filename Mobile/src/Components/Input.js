@@ -11,7 +11,7 @@ const Input = ({
   placeholder,
   filled = true,
   onSubmitEditing,
-  multiline,
+  multiline = false,
   inputStyles
 }) => {
   return (

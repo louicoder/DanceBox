@@ -2,7 +2,7 @@
   "mongoRunner": {
     "connection": {
       "name": "DanceBox DEv",
-      "activeOnStartUp": true,
+      // "activeOnStartUp": true,
       "url": "mongodb+srv://admin:personDancebox45@danceboxdev.njhgi.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
     }
   }

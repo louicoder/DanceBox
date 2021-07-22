@@ -10,8 +10,8 @@ import CommentsLikeButtons from '../../../Components/CommentsLikeButtons';
 import LoadingModal from '../../../Components/LoadingModal';
 import SingleComment from '../../../Components/SingleComment';
 import Header from './Header';
-import { useDispatch } from 'react-redux';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { KeyboardAwareFlatList } from 'react-native-keyboard-aware-scroll-view';
 
 const EventProfile = ({ navigation, route }) => {
   const dispatch = useDispatch();
@@ -44,7 +44,6 @@ const EventProfile = ({ navigation, route }) => {
     eventId: event._id,
     payload: { uid: user.uid, email: user.email, name: user.name || '', imageUrl: user.imageUrl || '' },
     callback: ({ success, result }) => {
-      // console.log(`REsp from ${action}`, result);
       if (!success) return HelperFunctions.Notify('Error', result);
       getEvent();
     }
@@ -65,10 +64,26 @@ const EventProfile = ({ navigation, route }) => {
     });
   };
 
+  const postComment = (comment) => {
+    // Keyboard.dismiss();
+    const { email, name = '', imageUrl = '', uid } = user;
+    const owner = { email, name, imageUrl, uid };
+    dispatch.Events.createEventComment({
+      eventId: event._id,
+      payload: { comment, owner },
+      callback: (res) => {
+        // console.log('Rvent when going back==', res);
+        if (!res.success) return HelperFunctions.Notify('Error', res.result);
+        const event = events.find((event) => event._id === eventId);
+        return navigation.navigate('EventProfile', { ...event, comments: [ ...event.comments, { comment, owner } ] });
+      }
+    });
+  };
+
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? RFValue(90) : 0}
+    <View
+      // behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      // keyboardVerticalOffset={Platform.OS === 'ios' ? RFValue(90) : 0}
       style={{ flex: 1 }}
     >
       <LoadingModal
@@ -77,7 +92,7 @@ const EventProfile = ({ navigation, route }) => {
       {event && (
         <View style={{ flex: 1 }}>
           <View style={{ flex: 1 }}>
-            <FlatList
+            <KeyboardAwareFlatList
               style={{ flex: 1, backgroundColor: '#aaaaaa80' }}
               ListHeaderComponent={
                 <Header
@@ -86,12 +101,13 @@ const EventProfile = ({ navigation, route }) => {
                   attendParticipate={attendParticipate}
                   unattendUnparticipate={unattendUnparticipate}
                   likeHandler={likeHandler}
+                  postComment={(comment) => postComment(comment)}
                 />
               }
               data={event.comments}
               key={() => HelperFunctions.keyGenerator()}
               showsVerticalScrollIndicator={false}
-              keyExtractor={(item) => HelperFunctions.keyGenerator()}
+              keyExtractor={() => HelperFunctions.keyGenerator()}
               renderItem={({ item, index }) => (
                 <SingleComment
                   {...item}
@@ -104,7 +120,7 @@ const EventProfile = ({ navigation, route }) => {
           </View>
         </View>
       )}
-    </KeyboardAvoidingView>
+    </View>
   );
 };
 

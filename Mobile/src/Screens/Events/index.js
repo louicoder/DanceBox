@@ -16,6 +16,7 @@ const Events = ({ navigation, ...props }) => {
   const dispatch = useDispatch();
   const [ state, setState ] = React.useState({ period: null });
   const { events } = useSelector((state) => state.Events);
+  const { user } = useSelector((state) => state.Account);
   const loading = useSelector((state) => state.loading.effects.Events);
 
   React.useEffect(
@@ -30,7 +31,7 @@ const Events = ({ navigation, ...props }) => {
   );
 
   React.useEffect(() => {
-    checkPermissions();
+    // checkPermissions();
   }, []);
 
   const getEvents = () => {
@@ -38,6 +39,8 @@ const Events = ({ navigation, ...props }) => {
       // console.log('Events', response);
     });
   };
+
+  // console.log('ACCount type', user);
 
   const checkPermissions = async () => {
     try {
@@ -60,7 +63,6 @@ const Events = ({ navigation, ...props }) => {
   return (
     <React.Fragment>
       <LoadingModal isVisible={loading.getEvents} />
-
       <SafeAreaView style={{ flex: 1 }}>
         <View style={{ flex: 1 }}>
           <View
@@ -73,20 +75,23 @@ const Events = ({ navigation, ...props }) => {
             }}
           >
             <Text style={{ fontSize: RFValue(30), fontWeight: '700' }}>Events</Text>
-            <Pressable
-              onPress={() => navigation.navigate('NewEvent')}
-              // onPress={() => Alert.alert('Coming soon', 'This feature is fully coming soon, look out for more updates')}
-              style={{
-                backgroundColor: '#000',
-                width: RFValue(40),
-                height: RFValue(40),
-                borderRadius: RFValue(50),
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}
-            >
-              <Icon name="plus" color="#fff" size={RFValue(20)} />
-            </Pressable>
+            {user &&
+            user.accountType === 'company' && (
+              <Pressable
+                onPress={() => navigation.navigate('NewEvent')}
+                // onPress={() => Alert.alert('Coming soon', 'This feature is fully coming soon, look out for more updates')}
+                style={{
+                  backgroundColor: '#000',
+                  width: RFValue(40),
+                  height: RFValue(40),
+                  borderRadius: RFValue(50),
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+              >
+                <Icon name="plus" color="#fff" size={RFValue(20)} />
+              </Pressable>
+            )}
           </View>
           <View style={{ height: RFValue(40), marginVertical: RFValue(10) }}>
             <Filters />

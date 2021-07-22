@@ -1,12 +1,14 @@
 import moment from 'moment';
 import React from 'react';
-import { View, Text, Pressable, Image } from 'react-native';
+import { View, Text, Pressable, Image, TextInput, KeyboardAvoidingView, Platform } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useSelector } from 'react-redux';
 import ComingSoon from '../../../Components/ComingSoon';
 import CommentsLikeButtons from '../../../Components/CommentsLikeButtons';
-import { CONSTANTS } from '../../../Utils';
+import { CONSTANTS, HelperFunctions } from '../../../Utils';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const Header = ({
   likeHandler,
@@ -32,10 +34,12 @@ const Header = ({
   unattendUnparticipate,
   navigation,
   eventId,
+  postComment,
   ...rest
 }) => {
   const { user } = useSelector((state) => state.Account);
   const [ visible, setVisible ] = React.useState(false);
+  const [ comment, setComment ] = React.useState('posting something else here');
 
   const isParticipant = () => {
     // const part = events.find((event) => event._id === _id);
@@ -70,6 +74,7 @@ const Header = ({
           {tags &&
             tags.map((tag) => (
               <View
+                key={HelperFunctions.keyGenerator()}
                 style={{
                   padding: RFValue(5),
                   alignItems: 'center',
@@ -99,6 +104,19 @@ const Header = ({
         {/* <Text>{participating && participating.length}</Text> */}
         <Text style={{ fontSize: RFValue(12), color: '#aaa' }}>Added {moment(dateCreated).fromNow()}</Text>
 
+        <Pressable
+          onPress={() => navigation.navigate('Voting')}
+          style={{
+            width: '100%',
+            backgroundColor: '#eee',
+            height: RFValue(50),
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginTop: RFValue(10)
+          }}
+        >
+          <Text style={{ fontSize: RFValue(16) }}>Go to Voting</Text>
+        </Pressable>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '100%', marginTop: RFValue(10) }}>
           <Pressable
             onPress={() => (isAttending() ? unattendUnparticipate('unattend') : attendParticipate('attend'))}
@@ -126,7 +144,6 @@ const Header = ({
               backgroundColor: '#000',
               alignItems: 'center',
               justifyContent: 'center',
-
               flexDirection: 'row'
             }}
           >
@@ -176,6 +193,25 @@ const Header = ({
         </View>
 
         <Text style={{ fontSize: RFValue(14), marginVertical: RFValue(15) }}>Join the conversation below</Text>
+        <KeyboardAwareScrollView extraScrollHeight={60}>
+          <View style={{ flexDirection: 'row', borderWidth: 1 }}>
+            <Image
+              src={user && user.imageUrl}
+              style={{ marginRight: RFValue(10), width: RFValue(30), height: RFValue(30), borderRadius: RFValue(30) }}
+            />
+            <View style={{ width: '100%' }}>
+              <TextInput
+                style={{ backgroundColor: '#eee', width: '100%' }}
+                placeholder="Enter your comment..."
+                textAlignVertical="top"
+                multiline
+              />
+              <Pressable onPress={() => postComment(comment)}>
+                <Text>comment</Text>
+              </Pressable>
+            </View>
+          </View>
+        </KeyboardAwareScrollView>
       </View>
 
       {comments && !comments.length ? (

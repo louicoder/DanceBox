@@ -177,8 +177,9 @@ const NewEvent = ({ navigation }) => {
         <View style={{ width: '100%', height: RFValue(200), position: 'absolute', bottom: 0 }} />
       </Modal> */}
       {/* <View style={{ flex: 1 }}> */}
-      <ScrollView
+      <KeyboardAwareScrollView
         style={{ flex1: 1 }}
+        // scrollEnabled={false}
         automaticallyAdjustContentInsets={false}
         keyboardShouldPersistTaps="handled"
         // showsVerticalScrollIndicator={false}
@@ -238,7 +239,7 @@ const NewEvent = ({ navigation }) => {
             value={state.title}
             onChangeText={(title) => setState({ ...state, title })}
             placeholder="Enter event title"
-            multiline
+            // multiline
             style={{
               backgroundColor: '#eee',
               height: RFValue(50),
@@ -355,7 +356,7 @@ const NewEvent = ({ navigation }) => {
             value={state.venue}
             onChangeText={(venue) => setState({ ...state, venue })}
             placeholder="Enter event venue"
-            multiline
+            // multiline
             style={{
               backgroundColor: '#eee',
               minHeight: RFValue(50),
@@ -376,7 +377,7 @@ const NewEvent = ({ navigation }) => {
             multiline
             style={{
               backgroundColor: '#eee',
-              minHeight: RFValue(50),
+              minHeight: RFValue(200),
               maxHeight: RFValue(200),
               marginVertical: RFValue(10),
               fontSize: RFValue(14),
@@ -394,7 +395,7 @@ const NewEvent = ({ navigation }) => {
             multiline
             style={{
               backgroundColor: '#eee',
-              minHeight: RFValue(50),
+              minHeight: RFValue(200),
               maxHeight: RFValue(200),
               marginVertical: RFValue(10),
               fontSize: RFValue(14),
@@ -417,7 +418,7 @@ const NewEvent = ({ navigation }) => {
           </Pressable>
         </View>
         {/* end freee */}
-      </ScrollView>
+      </KeyboardAwareScrollView>
       {/* </View> */}
     </View>
   );

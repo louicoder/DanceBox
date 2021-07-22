@@ -200,7 +200,6 @@ const createEventComment = (req, res) => {
 
 const getEventsForSingleUser = async (req, res) => {
   if (!req.params.ownerUid) return res.json({ success: false, result: 'Owner uid is required but missing' });
-  console.log('RE params', req.params);
   const { ownerUid } = req.params;
   try {
     await EventsModel.find({ 'owner.uid': ownerUid }).then((result) => res.json({ success: true, result }));
@@ -220,14 +219,14 @@ const allEvents = async (req, res) => {
 const getEventsInMonth = async (req, res) => {
   if (!req.params.month) return res.json({ success: false, result: 'Month to query is required, try again' });
   const { month } = req.params;
-  console.log('Checking month', month);
+  // console.log('Checking month', month);
 
   try {
     await EventsModel.find(
       { startDate: { $regex: month, $options: 'i' } },
-      { title: 1, tags: 1, imageUrl: 1, price: 1, startDate: 1, dateCreated: 1 }
+      { title: 1, tags: 1, imageUrl: 1, price: 1, startDate: 1, dateCreated: 1, endDate: 1 }
     ).then((result) => {
-      console.log('RESULT', result);
+      // console.log('RESULT', result);
       res.json({ success: true, result });
     });
 
@@ -239,7 +238,7 @@ const getEventsInMonth = async (req, res) => {
 };
 
 const updateEvent = async (req, res) => {
-  if (!req.params.eventId) return res.json({ success: false, result: 'Blog id is required but missing' });
+  if (!req.params.eventId) return res.json({ success: false, result: 'Event id is required but missing' });
   const { eventId: _id } = req.params;
   try {
     await EventsModel.updateOne({ _id }, req.body).then((result) => {

@@ -1,7 +1,8 @@
-import { Alert, Platform } from 'react-native';
+import { Alert, Linking, Platform } from 'react-native';
 import { launchImageLibrary } from 'react-native-image-picker';
 import { request, check, PERMISSIONS } from 'react-native-permissions';
 import Storage from '@react-native-firebase/storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // const Storage = storage();
 export const keyGenerator = () => Math.random().toString(36).slice(2);
@@ -126,4 +127,96 @@ export const CHECK_GALLERY_PERMISSIONS = async (callback) => {
   } catch (error) {
     return callback({ success: false, error: error.message });
   }
+};
+
+export const getRandomArrayItems = (arr, n) => {
+  var result = new Array(n),
+    len = arr.length,
+    taken = new Array(len);
+  if (n > len) throw new RangeError('getRandom: more elements taken than available');
+  while (n--) {
+    var x = Math.floor(Math.random() * len);
+    result[n] = arr[x in taken ? taken[x] : x];
+    taken[x] = --len in taken ? taken[len] : len;
+  }
+  return result;
+};
+
+export const openLink = (url) => {
+  if (!url) return Alert.alert('Error opening link', 'The passed link is empty and therfore cannot be opened');
+  try {
+    Linking.canOpenURL(url).then((supported) => {
+      if (supported) {
+        Linking.openURL(url);
+      }
+    });
+  } catch (error) {
+    return Alert.alert('Error opening link', "Don't know how to open URI: " + error.message);
+  }
+};
+
+export const getAsyncObjectData = async (key, callback) => {
+  try {
+    const jsonValue = await AsyncStorage.getItem(key);
+    // return callback ? callback(JSON.parse(jsonValue)) : jsonValue != null ? JSON.parse(jsonValue) : null;
+    return callback({ error: undefined, result: JSON.parse(jsonValue) });
+  } catch (error) {
+    // console.log('ERROR get storage', e);
+    return callback({ error, result: undefined });
+  }
+};
+
+export const storeAsyncObjectData = async (key, value, callback) => {
+  try {
+    if (typeof key !== 'string') return callback({ error: 'Unsupported data type, Only string allowed' });
+    const jsonValue = JSON.stringify(value);
+    await AsyncStorage.setItem(key, jsonValue);
+    callback({ error: undefined });
+  } catch (e) {
+    callback({ error: e.message });
+    // saving error
+  }
+};
+
+export const removeAsyncObjectData = async (key, callback) => {
+  try {
+    if (typeof key !== 'string') return callback({ error: 'Unsupported data type, Only string allowed' });
+    await AsyncStorage.removeItem(key);
+    callback({ error: undefined });
+  } catch (e) {
+    callback({ error: e.message });
+  }
+};
+
+export const switchLoginError = (errorCode) => {
+  console.log(errorCode);
+  switch (errorCode) {
+    case 'auth/invalid-email':
+      return 'The email is invalid or badly formatted';
+    case 'auth/user-disabled':
+      return "The user's accont is disabled.";
+    case 'auth/user-not-found':
+      return 'The does not exist on the platform or has been deleted.';
+    case 'auth/wrong-password':
+      return 'The login credentials do not match, try again.';
+    default:
+      return 'An error occured. Try again.';
+  }
+};
+
+export const shuffleArray = (array) => {
+  var currentIndex = array.length,
+    randomIndex;
+
+  // While there remain elements to shuffle...
+  while (0 !== currentIndex) {
+    // Pick a remaining element...
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex--;
+
+    // And swap it with the current element.
+    [ array[currentIndex], array[randomIndex] ] = [ array[randomIndex], array[currentIndex] ];
+  }
+
+  return array;
 };

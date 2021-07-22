@@ -16,6 +16,7 @@ import LoadingModal from '../../Components/LoadingModal';
 const Account = ({ navigation }) => {
   const dispatch = useDispatch();
   const { user, events, blogs } = useSelector((state) => state.Account);
+  const xx = useSelector((state) => state);
   const [ state, setState ] = React.useState({ image: {}, progress: 0, ...user });
   const [ imageLoading, setImageLoading ] = React.useState(false);
 

@@ -5,59 +5,59 @@ import { RFValue } from 'react-native-responsive-fontsize';
 import LOGO from '../../assets/dancebox-logo.jpg';
 import { useDispatch, useSelector } from 'react-redux';
 import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 import { HelperFunctions } from '../../Utils';
+import axios from 'axios';
 
 const AUTH = auth();
 let sub;
 const Splash = ({ navigation: { navigate } }) => {
   const dispatch = useDispatch();
   const loading = useSelector((state) => state.loading.effects.Account);
+  const state = useSelector((state) => state.Account);
+
   useEffect(() => {
     if (AUTH.currentUser && AUTH.currentUser.uid) {
       const { uid } = AUTH.currentUser;
-      getUserDetails(uid);
+      // getUserDetails(uid);
+      HelperFunctions.getAsyncObjectData('user', ({ error, result }) => {
+        if (error) return HelperFunctions.Notify('Error', error);
+        if (!result) return navigate('Login');
+        else {
+          console.log('Result ----++++', result);
+          dispatch.Account.setUserDetails(result);
+          navigate('Home');
+        }
+      });
     } else {
       navigate('Login');
     }
-
-    return () => clearTimeout(sub);
   }, []);
 
-  const getUserDetails = (uid) =>
-    dispatch.Account.getUserDetails({
-      uid,
+  const signIn = (email, password) => {
+    dispatch.Account.signIn({
+      payload: { email, password },
       callback: ({ error, doc }) => {
-        console.log('DOC SININ', doc);
-        if (error) return navigate('Login');
-        dispatch.Account.setUserDetails(doc);
-        navigate('Home');
+        // console.log('USER SIGNED IN', doc);
+        dispatch.Account.setUserDetails({ ...doc, password });
+        if (error) return Alert.alert('Error signing in', HelperFunctions.switchLoginError(error));
+        HelperFunctions.storeAsyncObjectData('user', doc, ({ error }) => {
+          if (error) return HelperFunctions.Notify('Error', error);
+          return navigation.navigate('Home');
+        });
       }
     });
-
-  React.useEffect(() => {
-    // checkPermissions();
-  }, []);
-
-  const checkPermissions = async () => {
-    try {
-      await HelperFunctions.CHECK_GALLERY_PERMISSIONS((res) => {
-        // console.log('Gallery prems', res);
-        if (!res.success) {
-          HelperFunctions.Notify(
-            'Error',
-            'You need to grant DAncebox permissions to access your gallery so you can upload images '
-          );
-          return navigate('Home');
-        }
-        return navigate('Home');
-      });
-    } catch (error) {
-      return HelperFunctions.Notify('Error', error.message);
-    }
   };
 
-  // const navigateoLogin = () => {
-  //   return navigate('Interests');
+  // // zzL8SUJf7DXv8enu5ALyVfwbks02
+  // const getAcc = async () => {
+  //   try {
+  //     await axios.get('http://localhost:3001/api/accounts/zzL8SUJf7DXv8enu5ALyVfwbks02').then((resp) => {
+  //       console.log('RESSSSS', resp.data);
+  //     });
+  //   } catch (error) {
+  //     console.log('ERror', error);
+  //   }
   // };
 
   return (

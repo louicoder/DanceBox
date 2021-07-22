@@ -28,51 +28,50 @@ import { PERMISSIONS } from 'react-native-permissions';
 import { useDispatch, useSelector } from 'react-redux';
 import SingleBlog from '../Blogs/SingleBlog';
 import moment from 'moment';
+import { QUERIES } from '../../Firebase';
+import firestore from '@react-native-firebase/firestore';
 
 const { width } = Dimensions.get('window');
 
 const Home = ({ navigation, ...props }) => {
+  // console.log('PROPS HOME', props);
   const dispatch = useDispatch();
-  const { randomEvents } = useSelector((state) => state.Events);
+  const [ state, setState ] = React.useState({ period: null, organisers: [], eventsInMonth: [] });
+  const { randomOrganisers } = useSelector((state) => state.Account);
   const { blogs } = useSelector((state) => state.Blogs);
 
-  // React.useEffect(() => {
-  //   getEvents();
-  // }, []);
-
   React.useEffect(() => {
-    const sub = navigation.addListener('focus', () => {
-      getRandomEvents();
-      getBlogs();
-    });
-
-    return () => sub;
+    getRandomOrganisers();
+    getEventsInMonth();
   }, []);
 
-  React.useEffect(() => {
-    // checkPermissions();
-  }, []);
-
-  const checkPermissions = async () => {
-    try {
-      await HelperFunctions.CHECK_GALLERY_PERMISSIONS((res) => {
-        // console.log('Gallery prems', res);
-      });
-    } catch (error) {
-      return HelperFunctions.Notify('Error', error.message);
-    }
-  };
-
-  const getRandomEvents = () => {
-    dispatch.Events.getRandomEvents((res) => {
-      // console.log('REs REANDom', res);
+  const getRandomOrganisers = () => {
+    dispatch.Account.getRandomOrganisers(({ error, doc: randomOrganisers }) => {
+      // console.log('RES----DOC', res.doc);
+      if (error) return Alert.alert('Error', error);
+      // setState({ ...state, randomOrganisers });
     });
   };
 
-  const getBlogs = () => {
-    dispatch.Blogs.getBlogs((res) => {
-      // console.log('REs EVS', res);
-      // setState({...state, blogs})
+  const getEventsInMonth = (det) => {
+    let dt, mnth, yr, month;
+
+    dt = new Date().toLocaleDateString('en-us').split('/');
+    mnth = dt[0].length === 1 ? `0${dt[0]}` : dt[0];
+    yr = dt[2];
+    month = `${yr}-${mnth}`;
+
+    dispatch.Events.getEventsInMonth({
+      // month,
+      month: '05',
+      callback: ({ result, success }) => {
+        console.log('HERE marked', result);
+        let dates = {};
+        if (success) {
+          result.map((evnt) => (dates = { ...dates, [evnt.startDate.slice(0, 10)]: { selected: true } }));
+          setState({ ...state, eventsInMonth: result });
+        }
+      }
     });
   };
 
@@ -111,18 +110,97 @@ const Home = ({ navigation, ...props }) => {
         </Ripple>
       </View>
 
-      {/* <ComingSoon
-          extStyles={{
-            marginHorizontal: RFValue(10),
-            width: '95%',
-            alignSelf: 'center',
-            height: RFValue(300),
-            marginVertical: RFValue(10)
-          }}
-        /> */}
       <ScrollView style={{ flex: 1, width: '100%', backgroundColor: '#aaaaaa80' }}>
         <TopCategories navigation={navigation} />
-        <View style={{ backgroundColor: '#fff' }}>
+
+        <View
+          style={{
+            backgroundColor: '#fff',
+            marginTop: RFValue(0),
+            paddingVertical: RFValue(15),
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between'
+          }}
+        >
+          <Text
+            style={{
+              marginHorizontal: RFValue(10),
+              fontSize: RFValue(16),
+              fontWeight: 'bold'
+            }}
+          >
+            Events Companies:
+          </Text>
+          <Pressable
+            // onPress={() => Alert.alert('Pending feature', 'This feature is Coming soon')}
+            onPress={() => navigation.navigate('AllOrganisers')}
+          >
+            <Text
+              style={{
+                marginHorizontal: RFValue(10),
+                fontSize: RFValue(14),
+                color: 'blue'
+                // fontWeight: 'bold'
+              }}
+            >
+              View All
+            </Text>
+          </Pressable>
+        </View>
+
+        <View
+          style={{
+            width: '100%',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            flexWrap: 'wrap',
+            backgroundColor: '#fff',
+            paddingBottom: RFValue(10)
+          }}
+        >
+          {randomOrganisers &&
+            randomOrganisers.map(({ companyName, ...rest }, index) => (
+              // state.organisers.slice(0, 4).map(({ companyName, ...rest }, index) => (
+              <ImageBackground
+                key={HelperFunctions.keyGenerator()}
+                source={{ uri: rest.imageUrl }}
+                style={{ height: RFValue(150), width: '49%', marginBottom: RFValue(6) }}
+                imageStyle={{ width: '100%', backgroundColor: '#eeee' }}
+                resizeMode="cover"
+              >
+                <Pressable
+                  onPress={() => navigation.navigate('OrganiserProfile', { ...rest, companyName })}
+                  style={{ width: '100%', height: RFValue(150) }}
+                >
+                  <View
+                    style={{
+                      width: '100%',
+                      backgroundColor: '#010203',
+                      height: RFValue(30),
+                      position: 'absolute',
+                      bottom: 0,
+                      justifyContent: 'center'
+                    }}
+                  >
+                    <Text
+                      style={{
+                        color: '#fff',
+                        fontSize: RFValue(13),
+                        paddingHorizontal: RFValue(5),
+                        fontWeight: 'bold'
+                      }}
+                    >
+                      {companyName && companyName.slice(0, 18)}
+                      {companyName && companyName.length > 18 && '...'}
+                    </Text>
+                  </View>
+                </Pressable>
+              </ImageBackground>
+            ))}
+        </View>
+
+        <View style={{ backgroundColor: '#fff', marginTop: RFValue(10) }}>
           <Text
             style={{
               marginHorizontal: RFValue(10),
@@ -132,7 +210,7 @@ const Home = ({ navigation, ...props }) => {
               backgroundColor: '#fff'
             }}
           >
-            Events you might like:
+            Events this month:
           </Text>
         </View>
         <View
@@ -147,76 +225,49 @@ const Home = ({ navigation, ...props }) => {
             paddingBottom: RFValue(15)
           }}
         >
-          {randomEvents.slice(0, 4).map((item) => (
-            <Pressable
-              key={HelperFunctions.keyGenerator()}
-              // onPress={() => navigation.navigate('Events', { screen: 'EventProfile', eventId: item._id })}
-              style={{
-                width: '49.5%',
-                height: 49 / 100 * width,
-                marginBottom: '1%'
-                // height: RFValue(250)
-                // marginRight: index + 1 === randomEvents.length ? 0 : RFValue(5)
-              }}
-            >
-              <ImageBackground
-                style={{ width: null, height: null, flex: 1 }}
-                resizeMode="cover"
-                source={{ uri: item.imageUrl || CONSTANTS.EVENTS_PIC }}
+          {state.eventsInMonth &&
+            state.eventsInMonth.map((item) => (
+              <Pressable
+                key={HelperFunctions.keyGenerator()}
+                onPress={() => navigation.navigate('Events', { screen: 'EventProfile', params: { _id: item._id } })}
+                style={{
+                  flexDirection: 'row',
+                  width: '100%',
+                  paddingHorizontal: RFValue(10)
+                }}
               >
-                <View
-                  style={{
-                    width: '100%',
-                    position: 'absolute',
-                    padding: RFValue(10),
-                    bottom: 0
-                  }}
-                >
-                  <Text style={{ color: '#ffffff90', fontSize: RFValue(14) }}>
-                    {item.title.slice(0, 20)}
-                    {item.title && item.title.length > 20 && '...'}
+                <Image
+                  source={{ uri: item.imageUrl || CONSTANTS.EVENTS_PIC }}
+                  style={{ width: RFValue(80), height: RFValue(80) }}
+                />
+                <View style={{ flexGrow: 1, paddingHorizontal: RFValue(10) }}>
+                  <Text style={{ fontSize: RFValue(16), fontWeight: 'bold' }}>{item.title}</Text>
+                  <Text style={{ fontSize: RFValue(12), marginVertical: RFValue(5) }}>Date ・ {item.startDate}</Text>
+                  <Text style={{ fontSize: RFValue(12), marginBottom: RFValue(5), fontWeight: 'bold' }}>
+                    Fee ・ {item.price ? item.price : 'FREE'}
                   </Text>
-                  {/* <Text style={{ color: '#fff' }}>{item.startDate}</Text> */}
-                  {/* <Text style={{ color: '#fff' }}>{item.endDate}</Text> */}
+
+                  <View style={{ width: '100%', flexDirection: 'row' }}>
+                    {item.tags &&
+                      item.tags.map((tg) => (
+                        <Text
+                          key={HelperFunctions.keyGenerator()}
+                          style={{
+                            padding: RFValue(3),
+                            backgroundColor: '#01020320',
+                            marginRight: RFValue(10),
+                            borderRadius: 20
+                          }}
+                        >
+                          #{tg}
+                        </Text>
+                      ))}
+                  </View>
                 </View>
-              </ImageBackground>
-            </Pressable>
-          ))}
-          {[ ...Array(4 - randomEvents.slice(0, 4).length) ].map(() => (
-            <View
-              key={HelperFunctions.keyGenerator()}
-              style={{
-                width: '49.5%',
-                height: 49 / 100 * width,
-                marginBottom: '1%',
-                backgroundColor: '#eee',
-                justifyContent: 'center',
-                paddingHorizontal: RFValue(10)
-                // height: RFValue(250)
-                // marginRight: index + 1 === randomEvents.length ? 0 : RFValue(5)
-              }}
-            >
-              <Text style={{ color: '#aaaa', fontSize: RFValue(12), textAlign: 'center' }}>
-                More events coming soon, keep checking...
-              </Text>
-            </View>
-          ))}
+                <View />
+              </Pressable>
+            ))}
         </View>
-
-        <View style={{ backgroundColor: '#fff', marginTop: RFValue(15), paddingVertical: RFValue(15) }}>
-          <Text
-            style={{
-              marginHorizontal: RFValue(10),
-              fontSize: RFValue(16),
-              fontWeight: 'bold'
-            }}
-          >
-            Blogs posts you might like:
-          </Text>
-        </View>
-
-        {/* {blogs &&
-          blogs.map((blog) => <SingleBlog key={HelperFunctions.keyGenerator()} {...blog} navigation={navigation} />)} */}
       </ScrollView>
     </View>
     // </SafeAreaView>

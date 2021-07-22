@@ -31,12 +31,12 @@ const SingleComment = ({
         }}
         // key={() => HelperFunctions.keyGenerator()}
       >
-        <View style={{ width: '20%' }}>
+        <View style={{ width: '15%' }}>
           <Image
             source={{
               uri: imageUrl || CONSTANTS.DEFAULT_PROFILE
             }}
-            style={{ width: RFValue(40), height: RFValue(40), borderRadius: RFValue(100) }}
+            style={{ width: RFValue(30), height: RFValue(30), borderRadius: RFValue(100) }}
           />
         </View>
         <View style={{ width: '80%' }}>

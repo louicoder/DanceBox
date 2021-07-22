@@ -32,11 +32,16 @@ const BlogProfile = ({ navigation, route, ...props }) => {
 
   React.useEffect(() => {
     const sub = navigation.addListener('focus', () => {
-      getBlog();
+      // getBlog();
+      getComments();
     });
 
     return () => sub;
   }, []);
+
+  const getComments = () => {
+    // get comments for blog:
+  };
 
   const getBlog = () =>
     dispatch.Blogs.getBlog({

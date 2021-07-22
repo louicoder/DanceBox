@@ -27,7 +27,10 @@ import {
   UserBlogs,
   UserEvents,
   EditAccount,
-  Calendar
+  Calendar,
+  OrganiserProfile,
+  AllOrganisers,
+  Voting
 } from '../Screens';
 import IconComp from '../Components/Icon';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -73,9 +76,9 @@ const CalendarScreens = () => (
   </CalendarStack.Navigator>
 );
 
-const HomeScreens = () => (
+const HomeScreens = ({ socket }) => (
   <HomeStack.Navigator screenOptions={{ header: (props) => null }}>
-    <HomeStack.Screen name="Home" component={Home} />
+    <HomeStack.Screen name="Home" component={Home} socket={socket} />
     <HomeStack.Screen
       name="BlogProfile"
       component={BlogProfile}
@@ -95,6 +98,16 @@ const HomeScreens = () => (
       name="NewEventComment"
       component={NewEventComment}
       options={{ header: (props) => <Header title="Add Event Comment" iconName="pencil" {...props} /> }}
+    />
+    <HomeStack.Screen
+      name="OrganiserProfile"
+      component={OrganiserProfile}
+      options={{ header: (props) => <Header title="Organiser Profile" iconName="pencil" {...props} /> }}
+    />
+    <HomeStack.Screen
+      name="AllOrganisers"
+      component={AllOrganisers}
+      options={{ header: (props) => <Header title="Event Organisers" iconName="pencil" {...props} /> }}
     />
   </HomeStack.Navigator>
 );
@@ -165,6 +178,11 @@ const EventScreens = () => (
       component={NewEventComment}
       options={{ header: (props) => <Header title="Add Event Comment" iconName="pencil" {...props} /> }}
     />
+    <EventStack.Screen
+      name="Voting"
+      component={Voting}
+      options={{ header: (props) => <Header title="Event Voting" iconName="pencil" {...props} /> }}
+    />
   </EventStack.Navigator>
 );
 
@@ -209,7 +227,7 @@ const AccountScreens = () => (
   </AccountStack.Navigator>
 );
 
-const BottomStackScreens = ({}) => (
+const BottomStackScreens = ({ socket }) => (
   // <SafeAreaView style={{ flex: 1 }}>
   <BottomStack.Navigator
     shifting={false}
@@ -222,6 +240,7 @@ const BottomStackScreens = ({}) => (
   >
     <BottomStack.Screen
       name="Home"
+      socket={socket}
       component={HomeScreens}
       options={() => ({
         tabBarIcon: ({ color }) => <Ionicons color={color} name="home-outline" size={RFValue(20)} />
@@ -230,6 +249,7 @@ const BottomStackScreens = ({}) => (
 
     <BottomStack.Screen
       name="Events"
+      socket={socket}
       component={EventScreens}
       options={() => ({
         tabBarIcon: ({ color }) => <Ionicons color={color} name="calendar-outline" size={RFValue(20)} />
@@ -261,14 +281,15 @@ const BottomStackScreens = ({}) => (
   // </SafeAreaView>
 );
 
-const AllStacks = () => (
+const AllStacks = (props) => (
   <Stacks.Navigator screenOptions={{}} initialRouteName="Splash">
-    <Stacks.Screen name="Home" component={DrawerScreens} options={{ header: () => null }} />
-    <Stacks.Screen name="Login" component={Login} options={{ header: () => null }} />
-    <Stacks.Screen name="Calendar" component={CalendarScreens} options={{ header: () => null }} />
-    <DrawerStack.Screen name="Splash" component={Splash} options={{ header: () => null }} />
-    <DrawerStack.Screen name="SinglePost" component={SinglePost} options={{ header: () => null }} />
-    <DrawerStack.Screen name="Interests" component={SelectInterests} options={{ header: () => null }} />
+    {/* <Stacks.Screen name="Home" component={DrawerScreens} options={{ header: () => null }} {...props} /> */}
+    <Stacks.Screen name="Home" component={BottomStackScreens} options={{ header: () => null }} {...props} />
+    <Stacks.Screen name="Login" component={Login} options={{ header: () => null }} {...props} />
+    <Stacks.Screen name="Calendar" component={CalendarScreens} options={{ header: () => null }} {...props} />
+    <DrawerStack.Screen name="Splash" component={Splash} options={{ header: () => null }} {...props} />
+    <DrawerStack.Screen name="SinglePost" component={SinglePost} options={{ header: () => null }} {...props} />
+    <DrawerStack.Screen name="Interests" component={SelectInterests} options={{ header: () => null }} {...props} />
   </Stacks.Navigator>
 );
 const DrawerScreens = () => (
@@ -290,8 +311,10 @@ const DrawerScreens = () => (
   </DrawerStack.Navigator>
 );
 
-export default () => (
-  <NavigationContainer theme={{ colors: { background: '#fff' } }}>
-    <AllStacks />
-  </NavigationContainer>
-);
+export default (props) => {
+  return (
+    <NavigationContainer theme={{ colors: { background: '#fff' } }}>
+      <AllStacks socket={props.socket} />
+    </NavigationContainer>
+  );
+};

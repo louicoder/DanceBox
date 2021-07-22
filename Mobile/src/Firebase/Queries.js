@@ -8,12 +8,10 @@ export const signIn = async (email, password, callback) => {
   try {
     const account = await AUTH.signInWithEmailAndPassword(email, password);
     if (account.user) {
-      callback({ success: true, doc: account.user.uid });
+      callback({ success: true, uid: account.user.uid });
     }
   } catch (error) {
-    // const err = switchError(error.code);
-    // console.log('ERRor', err);
-    return callback({ error: error.code, doc: undefined });
+    callback({ error: error.code, doc: undefined });
   }
 };
 

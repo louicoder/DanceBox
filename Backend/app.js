@@ -1,5 +1,25 @@
-const App = require('express')();
 const express = require('express');
+// const express = require('express');
+const app = express();
+const server = require('http').createServer(app);
+const io = require('socket.io')(server, {
+  cors: {
+    origin: '*'
+    // Headers: []
+  }
+});
+
+io.on('connection', (socket) => {
+  console.log('Socket connected', socket.id);
+
+  socket.on('disconnect', () => {
+    console.log('Socket disconnected');
+  });
+
+  socket.on('message', (msg) => {
+    console.log('Socket message', msg);
+  });
+});
 // const path = require('path');
 const cors = require('cors');
 // const logger = require('morgan');
@@ -8,12 +28,12 @@ require('dotenv').config();
 // DATABASE CONNECTION.
 require('./Database')();
 
-// App.use(logger('dev'));
-App.use(express.urlencoded({ extended: true }));
-App.use(express.json());
-App.use(cors());
+// app.use(logger('dev'));
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(cors());
 
-// App.use(function (req, res, next) {
+// app.use(function (req, res, next) {
 //   res.header('Access-Control-Allow-Origin', '*');
 //   res.header('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE, PATCH');
 //   res.header('Access-Control-Allow-Headers', '*');
@@ -21,11 +41,12 @@ App.use(cors());
 // });
 
 // ROUTES IMPORTS
-const { BlogsRoute, EventsRoute, ReviewsRoute } = require('./Routes');
+const { BlogsRoute, EventsRoute, ReviewsRoute, AccountsRoute } = require('./Routes');
 
 // ROUTES MIDDLEWARE CONNECTORS
-App.use('/api/blogs', BlogsRoute);
-App.use('/api/events', EventsRoute);
-App.use('/api/reviews', ReviewsRoute);
+app.use('/api/blogs', BlogsRoute);
+app.use('/api/events', EventsRoute);
+app.use('/api/reviews', ReviewsRoute);
+app.use('/api/accounts', AccountsRoute);
 
-module.exports = App;
+module.exports = server;

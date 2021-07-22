@@ -8,61 +8,90 @@ import { CONSTANTS, HelperFunctions } from '../../Utils';
 import { useSelector } from 'react-redux';
 import auth from '@react-native-firebase/auth';
 
-const Drawer = (props) => {
-  const { user } = useSelector((state) => state.Account);
+const Drawer = ({ navigation, ...props }) => {
+  // const { user, ...rest } = useSelector((state) => state.Account);
+  const [ state, setstate ] = React.useState({});
+
+  const signOut = () => {
+    // signout user, clear storage, and redux state
+    auth()
+      .signOut()
+      .then(() =>
+        HelperFunctions.removeAsyncObjectData('user', ({ error }) => {
+          if (error) return HelperFunctions.Notify('Error', error);
+          return navigation.navigate('Login');
+        })
+      )
+      .catch((error) => HelperFunctions.Notify('', error.message));
+  };
+
+  React.useEffect(
+    () => {
+      const sub = navigation.addListener('focus', () => {
+        // getEventsInMonth();
+        // setstate({ ...user });
+        HelperFunctions.getAsyncObjectData('user', ({ result }) => {
+          setstate(result);
+        });
+      });
+      return () => sub;
+    },
+    [ navigation ]
+  );
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      {user && (
-        <View
+      {/* {user && ( */}
+      <View
+        style={{
+          width: '100%',
+          alignSelf: 'center',
+          marginVertical: RFValue(20),
+          marginBottom: 0,
+          paddingHorizontal: RFValue(15),
+          borderBottomWidth: 1,
+          borderBottomColor: '#eeeeee90'
+        }}
+      >
+        <Image
+          source={{ uri: state.imageUrl || CONSTANTS.DEFAULT_PROFILE }}
           style={{
-            width: '100%',
-            alignSelf: 'center',
-            // backgroundColor: 'purple',
-            alignItems: 'center',
-            marginVertical: RFValue(20),
-            marginBottom: 0
-            // borderWidth: 1
-            // flexDirection: 'row'
+            width: RFValue(50),
+            height: RFValue(50),
+            borderRadius: 150,
+            marginBottom: RFValue(10),
+            alignSelf: 'center'
           }}
-        >
-          <Image
-            source={{ uri: user.imageUrl || CONSTANTS.DEFAULT_PROFILE }}
-            style={{ width: RFValue(100), height: RFValue(100), borderRadius: 150 }}
-            resizeMode="cover"
-          />
-          {user.name || user.username ? (
-            <Text style={{ fontSize: RFValue(16), fontWeight: 'bold' }}>{user.name || user.username}</Text>
-          ) : null}
-          <Text style={{ fontSize: RFValue(12), color: '#aaa', marginBottom: RFValue(15) }}>{user.email}</Text>
-        </View>
-      )}
-      {user && (
+          resizeMode="cover"
+        />
+        {state.name || state.username ? (
+          <Text style={{ fontSize: RFValue(16), fontWeight: 'bold' }}>{state.name || state.username}</Text>
+        ) : null}
+        <Text style={{ fontSize: RFValue(12), color: '#aaa', marginBottom: RFValue(15) }}>{state.email}</Text>
+      </View>
+
+      {state && (
         <ScrollView style={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
           {[
             {
               title: 'Finish Registration',
               icon: 'information',
-              // func: () => props.navigation.navigate('FinishRegistration')
+              // func: () => navigation.navigate('FinishRegistration')
               func: () => null
             },
             { title: 'Settings', icon: 'cog' },
-            { title: 'Profile', icon: 'account-cowboy-hat', func: () => props.navigation.navigate('Account') },
+            { title: 'Profile', icon: 'account-cowboy-hat', func: () => navigation.navigate('Account') },
             { title: 'Reviews', icon: 'comment-edit' },
             { title: 'All Events', icon: 'calendar' },
-            { title: 'Events Calendar', icon: 'calendar-clock', func: () => props.navigation.navigate('Calendar') },
+            { title: 'Events Calendar', icon: 'calendar-clock', func: () => navigation.navigate('Calendar') },
             { title: 'Favorites', icon: 'heart' },
             { title: 'Edit Profile', icon: 'account-edit' },
             { title: 'Notifications', icon: 'bell' },
-            { title: 'Blog Posts', icon: 'equal-box' },
+            // { title: 'Blog Posts', icon: 'equal-box' },
             {
               title: 'Logout',
               icon: 'lock',
-              func: () =>
-                auth()
-                  .signOut()
-                  .then(() => props.navigation.navigate('Login'))
-                  .catch((error) => HelperFunctions.Notify('', error.message))
+              func: () => signOut()
             }
           ].map(({ title, icon, func }) => (
             <Ripple

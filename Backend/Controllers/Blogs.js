@@ -1,7 +1,6 @@
 const { BlogsModel } = require('../Models');
 
 const createBlog = async (req, res) => {
-  console.log('Hit create');
   try {
     const { title = '', description, owner, imageUrl = '', tags, owner: {} } = req.body;
     const payload = { title, description, owner, imageUrl, tags, dateCreated: new Date().toISOString() };
@@ -13,8 +12,6 @@ const createBlog = async (req, res) => {
 };
 
 const getBlog = async (req, res) => {
-  console.log('Hit getblog');
-
   if (!req.params.blogId) return res.json({ success: false, result: 'Blog id is required but missing' });
   const { blogId: _id } = req.params;
   try {
@@ -52,8 +49,6 @@ const allBlogs = async (req, res) => {
 };
 
 const updateBlog = (req, res) => {
-  console.log('Hit updateblog');
-
   if (!req.params.blogId) return res.json({ success: false, result: 'Blog id is required but missing' });
   const { blogId: _id } = req.params;
   try {
