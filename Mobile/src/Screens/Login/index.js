@@ -31,10 +31,10 @@ const Login = ({ navigation }) => {
     const { email, password, docId } = state;
     dispatch.Account.signIn({
       payload: { email, password },
-      callback: ({ error, doc }) => {
-        dispatch.Account.setUserDetails({ ...doc, password });
-        if (error) return Alert.alert('Error signing in', HelperFunctions.switchLoginError(error));
-        HelperFunctions.storeAsyncObjectData('user', doc, ({ error }) => {
+      callback: ({ success, result }) => {
+        if (!success) return HelperFunctions.switchLoginError(result);
+        dispatch.Account.setUserDetails({ ...result, password });
+        HelperFunctions.storeAsyncObjectData('user', { ...result, password }, ({ error }) => {
           if (error) return HelperFunctions.Notify('Error', error);
           return state.justCreated ? navigation.navigate('Interests', { docId }) : navigation.navigate('Home');
         });

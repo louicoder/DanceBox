@@ -1,9 +1,9 @@
 import Axios from 'axios';
 // const baseURL = 'https://dancebox-309908.uc.r.appspot.com/api'; // app engine
-const baseURL = 'http://localhost:3001/api'; // app engine
+export const baseURL = 'http://192.168.24.163:3001'; // app engine
 
 const AxiosClient = Axios.create({
-  baseURL,
+  baseURL: `${baseURL}/api`,
   headers: {
     'Content-Type': 'application/json',
     Accept: 'application/json',

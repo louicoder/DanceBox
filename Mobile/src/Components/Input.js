@@ -24,7 +24,7 @@ const Input = ({
         autoCorrect={false}
         autoCompleteType="off"
         onSubmitEditing={onSubmitEditing}
-        textAlignVertical={multiline && 'top'}
+        textAlignVertical={multiline ? 'top' : 'center'}
         style={[
           {
             height: RFValue(50),
@@ -33,7 +33,7 @@ const Input = ({
             borderColor: '#ccc',
             width: '100%',
             fontSize: RFValue(14),
-            borderRadius: RFValue(5),
+            // borderRadius: RFValue(5),
             paddingHorizontal: RFValue(10)
           },
           inputStyles

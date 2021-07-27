@@ -6,14 +6,14 @@ export default {
   state: { user: {}, events: [], blogs: [], randomOrganisers: [], allOrganisers: [] },
   reducers: {
     setUserDetails (state, user) {
+      console.log('Setting user details', state);
       return { ...state, user };
     },
     setEventsAndBlogs (state, { events, blogs }) {
       return { ...state, events, blogs };
     },
     setRandomOrganisers (state, organisers) {
-      console.log('LXXXXXX', organisers.length);
-      const randomOrganisers = HelperFunctions.shuffleArray(organisers);
+      const randomOrganisers = [ ...HelperFunctions.shuffleArray(organisers) ].slice(0, 4);
       return { ...state, randomOrganisers };
     },
     setAllOrganisers (state, allOrganisers) {
@@ -33,12 +33,10 @@ export default {
     async signIn ({ payload: { email, password }, callback }) {
       try {
         await QUERIES.signIn(email, password, async ({ uid, error }) => {
-          if (uid) {
-            dispatch.Account.getUserDetails({ uid, callback });
-          }
           if (error) {
-            callback({ error, doc: undefined });
+            return callback({ error, doc: undefined });
           }
+          return dispatch.Account.getUserDetails({ uid, callback });
         });
       } catch (error) {
         return callback({ success: false, result: error });
@@ -48,7 +46,6 @@ export default {
     async getRandomOrganisers (callback) {
       try {
         await AxiosClient.get(`/accounts/organisers`).then((res) => {
-          console.log('RES>DATA', res.data.result.length);
           dispatch.Account.setRandomOrganisers(res.data.result);
           callback({ error: undefined, doc: [ ...res.data.result ] });
         });
@@ -68,10 +65,21 @@ export default {
       }
     },
 
+    async getOrganisers ({ oid, callback }) {
+      try {
+        await AxiosClient.get(`/accounts/organiser/${iod}`).then(({ data }) => {
+          callback(data);
+        });
+      } catch (error) {
+        return callback({ success: false, result: error });
+      }
+    },
+
     async getUserDetails ({ uid, callback }) {
       try {
-        await AxiosClient.get(`/accounts/${uid}`).then((res) => {
-          callback({ error, doc: { ...res.data.result } });
+        await AxiosClient.get(`/accounts/${uid}`).then(({ data: { success, result } }) => {
+          if (success) return callback({ result, success });
+          callback({ success, result });
         });
       } catch (error) {
         return callback({ success: false, result: error.message });

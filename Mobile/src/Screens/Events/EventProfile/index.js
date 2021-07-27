@@ -17,6 +17,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 const EventProfile = ({ navigation, route }) => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.Account);
+  const stato = useSelector((state) => state);
   const loading = useSelector((state) => state.loading.effects.Events);
   const [ event, setEvent ] = React.useState({});
 
@@ -26,6 +27,8 @@ const EventProfile = ({ navigation, route }) => {
     },
     [ route.params ]
   );
+
+  // console.log('----USER---', stato);
 
   const getEvent = () =>
     dispatch.Events.getEvent({

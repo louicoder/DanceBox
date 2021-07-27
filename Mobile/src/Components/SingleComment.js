@@ -43,7 +43,7 @@ const SingleComment = ({
         <View style={{ width: '80%' }}>
           {owner && <Text style={{ fontSize: RFValue(11), fontWeight: 'bold' }}>{owner.name || owner.email}</Text>}
           <Text style={{ color: '#aaaaaa', fontSize: RFValue(11) }}>{moment(dateCreated).fromNow()}</Text>
-          <Text style={{ paddingVertical: RFValue(6), color: '#000000' }}>{comment}</Text>
+          <Text style={{ paddingVertical: RFValue(6), color: '#00000090', fontSize: RFValue(12) }}>{comment}</Text>
         </View>
       </View>
       {/* {last && (

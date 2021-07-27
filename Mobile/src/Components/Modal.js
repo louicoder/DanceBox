@@ -1,6 +1,8 @@
 import React from 'react';
 import { View, Text, KeyboardAvoidingView, Platform } from 'react-native';
 import Modal from 'react-native-modal';
+import { RFValue } from 'react-native-responsive-fontsize';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import styles from './Styles';
 
 export default ({
@@ -12,6 +14,7 @@ export default ({
   backdropPress = true,
   animationIn = 'slideInUp',
   animationOut = 'fadeOut',
+  children,
   ...rest
 }) => {
   return (
@@ -31,16 +34,25 @@ export default ({
       swipeThreshold={20}
       onSwipeComplete={closeModal}
       hideModalContentWhileAnimating
-      // onswi
       onBackButtonPress={closeModal}
       onModalHide={hideModal}
       // hasBackdrop={false}
       useNativeDriver
     >
-      {/* <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'position' : undefined}> */}
-      {/* {rest.children} */}
-      <View style={{ position: 'absolute', bottom: 0, width: '100%' }}>{children}</View>
-      {/* </KeyboardAvoidingView> */}
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' && 'padding'}>
+        <View
+          style={{
+            position: 'absolute',
+            bottom: 0,
+            width: '100%',
+            backgroundColor: '#fff',
+            padding: RFValue(10),
+            paddingVertical: useSafeAreaInsets().bottom
+          }}
+        >
+          {children}
+        </View>
+      </KeyboardAvoidingView>
     </Modal>
   );
 };

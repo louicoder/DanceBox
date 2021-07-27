@@ -18,47 +18,44 @@ const Splash = ({ navigation: { navigate } }) => {
 
   useEffect(() => {
     if (AUTH.currentUser && AUTH.currentUser.uid) {
-      const { uid } = AUTH.currentUser;
-      // getUserDetails(uid);
-      HelperFunctions.getAsyncObjectData('user', ({ error, result }) => {
-        if (error) return HelperFunctions.Notify('Error', error);
-        if (!result) return navigate('Login');
-        else {
-          console.log('Result ----++++', result);
-          dispatch.Account.setUserDetails(result);
-          navigate('Home');
-        }
-      });
+      const { uid, ...rest } = AUTH.currentUser;
+      if (uid) getUser(uid);
+      else navigate('Login');
     } else {
       navigate('Login');
     }
   }, []);
 
-  const signIn = (email, password) => {
-    dispatch.Account.signIn({
-      payload: { email, password },
-      callback: ({ error, doc }) => {
-        // console.log('USER SIGNED IN', doc);
-        dispatch.Account.setUserDetails({ ...doc, password });
-        if (error) return Alert.alert('Error signing in', HelperFunctions.switchLoginError(error));
-        HelperFunctions.storeAsyncObjectData('user', doc, ({ error }) => {
-          if (error) return HelperFunctions.Notify('Error', error);
-          return navigation.navigate('Home');
-        });
+  const getUser = (uid) => {
+    HelperFunctions.getAsyncObjectData('user', ({ error, result }) => {
+      if (error) {
+        return HelperFunctions.Notify('Error', error);
       }
+      if (!result) return navigate('Login');
+      dispatch.Account.setUserDetails(result);
+      return navigate('Home');
     });
   };
 
-  // // zzL8SUJf7DXv8enu5ALyVfwbks02
-  // const getAcc = async () => {
-  //   try {
-  //     await axios.get('http://localhost:3001/api/accounts/zzL8SUJf7DXv8enu5ALyVfwbks02').then((resp) => {
-  //       console.log('RESSSSS', resp.data);
-  //     });
-  //   } catch (error) {
-  //     console.log('ERror', error);
-  //   }
+  // const signIn = (email, password) => {
+  //   dispatch.Account.signIn({
+  //     payload: { email, password },
+  //     callback: async ({ error, doc }) => {
+  //       // console.log('USER SIGNED IN', doc);
+  //       dispatch.Account.setUserDetails({ ...doc, password });
+  //       // if (error) return Alert.alert('Error signing in', HelperFunctions.switchLoginError(error));
+  //       await HelperFunctions.storeAsyncObjectData('user', doc, ({ error }) => {
+  //         if (error) return HelperFunctions.Notify('Error', error);
+  //         return navigate('Home');
+  //       });
+  //     }
+  //   });
   // };
+
+  const logout = () => {
+    // navigate('Login');
+    // AUTH.signOut().then(() => navigation.navigate('Login')).catch((error) => console.log('Error', error.message));
+  };
 
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#fff' }}>

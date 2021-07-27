@@ -24,7 +24,7 @@ const Button = ({
           borderWidth: noBg ? RFValue(1) : 0,
           borderColor: '#48cae4',
           width: '100%',
-          borderRadius: RFValue(5),
+          // borderRadius: RFValue(5),
           alignItems: 'center',
           justifyContent: 'center',
           paddingHorizontal: RFValue(10)

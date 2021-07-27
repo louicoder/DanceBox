@@ -10,7 +10,7 @@ target 'DanceBox' do
   permissions_path = '../node_modules/react-native-permissions/ios'
 
   pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
-  pod 'Permission-Camera', :path => "#{permissions_path}/Camera"
+  pod 'Permission-PhotoLibrary', :path => "#{permissions_path}/PhotoLibrary"
 
   target 'DanceBoxTests' do
     inherit! :complete

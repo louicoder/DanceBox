@@ -31,6 +31,7 @@ const BlogProfile = ({ navigation, route, ...props }) => {
   const [ blog, setBlog ] = React.useState({});
   const loading = useSelector((state) => state.loading.effects.Blogs);
   const { user } = useSelector((state) => state.Account);
+  const { activeBlog } = useSelector((state) => state.Blogs);
 
   React.useEffect(
     () => {
@@ -68,29 +69,44 @@ const BlogProfile = ({ navigation, route, ...props }) => {
     });
   };
 
+  // const postComment = () => {
+  //   // posting comment
+  //   Keyboard.dismiss();
+  //   const { email, name, imageUrl, uid } = user;
+  //   const owner = { email, name, imageUrl, uid };
+  //   dispatch.Blogs.createBlogComment({
+  //     blogId,
+  //     payload: { comment, owner },
+  //     callback: (res) => {
+  //       const blog = blogs.find((blog) => blog._id === blogId);
+  //       // console.log('REsp from adding comment==', blog);
+  //       if (!res.success) return HelperFunctions.Notify('Error', res.result);
+  //       return navigation.navigate('BlogProfile', { ...blog, comments: [ ...blog.comments, { owner, comment } ] });
+  //     }
+  //   });
+  // };
+
+  console.log('ACtive blog', activeBlog);
+
   const Blog = ({ imageUrl, title, description, comments, likes, _id, ...rest }) => {
-    console.log('Title', title);
+    // console.log('Title', title);
     return (
       <View style={{ backgroundColor: '#fff', marginBottom: RFValue(15) }}>
         {imageUrl ? (
           <Image source={{ uri: imageUrl }} style={{ width: '100%', height: RFValue(350) }} resizeMode="cover" />
         ) : null}
 
-        <CommentsLikeButtons
-          likes={likes}
-          comments={comments}
-          id={_id}
-          type="blog"
-          blogId={_id}
-          likeHandler={likeHandler}
-        />
-
         <View style={{ margin: RFValue(10) }}>
           <Text style={{ fontSize: RFValue(18), fontWeight: 'bold' }}>{title}</Text>
           <Text style={{ fontSize: RFValue(14), marginVertical: RFValue(10) }}>{description}</Text>
-          <Text style={{ marginVertical: RFValue(10), fontSize: RFValue(14), color: '#aaa' }}>
-            Join the conversation below
-          </Text>
+          <CommentsLikeButtons
+            likes={likes}
+            comments={comments}
+            id={_id}
+            type="blog"
+            blogId={_id}
+            likeHandler={likeHandler}
+          />
         </View>
       </View>
     );

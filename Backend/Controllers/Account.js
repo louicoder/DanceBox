@@ -38,12 +38,17 @@ const updateAccount = async (req, res) => {
 
 const getOrganisers = async (req, res) => {
   try {
-    await AccountModel.aggregate([
-      { $sample: { size: 4 } },
-      { $match: { accountType: 'company' } }
-    ]).then((result) => {
-      res.json({ success: true, result });
-    });
+    await AccountModel.find({ accountType: 'company' }).then((result) => res.json({ success: true, result }));
+  } catch (error) {
+    return res.json({ success: false, result: error.message });
+  }
+};
+
+const getUser = async (req, res) => {
+  if (!req.params) return res.json({ success: false, result: 'Organiser id is required and not passed' });
+  const { id: _id } = req.params;
+  try {
+    await AccountModel.findOne({ accountType: 'company', _id }).then((result) => res.json({ success: true, result }));
   } catch (error) {
     return res.json({ success: false, result: error.message });
   }
@@ -62,5 +67,6 @@ module.exports = {
   updateAccount,
   getAccount,
   getOrganisers,
-  getAllOrganisers
+  getAllOrganisers,
+  getUser
 };

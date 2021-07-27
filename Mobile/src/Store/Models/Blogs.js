@@ -2,10 +2,13 @@ import AxiosClient from '../Axios';
 import auth from '@react-native-firebase/auth';
 
 export default {
-  state: { blogs: [] },
+  state: { blogs: [], activeBlog: {} },
   reducers: {
     setBlogs (state, blogs) {
       return { ...state, blogs };
+    },
+    setActiveBlog (state, activeBlog) {
+      return { ...state, activeBlog };
     }
   },
   effects: (dispatch) => ({
@@ -84,6 +87,7 @@ export default {
     async getBlog ({ blogId, callback }, state) {
       try {
         await AxiosClient.get(`/blogs/single/${blogId}`).then(({ data }) => {
+          if (data.success) dispatch.Blogs.setActiveBlog(data.result);
           callback(data);
         });
       } catch (error) {

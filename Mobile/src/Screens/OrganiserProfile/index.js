@@ -1,11 +1,23 @@
 import React from 'react';
-import { View, Text, ScrollView, SafeAreaView, Image, Pressable, ActivityIndicator, Alert } from 'react-native';
+import {
+  View,
+  Text,
+  ScrollView,
+  SafeAreaView,
+  Image,
+  Pressable,
+  ActivityIndicator,
+  Alert,
+  ImageBackground
+} from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import firestore from '@react-native-firebase/firestore';
 import LoadingModal from '../../Components/LoadingModal';
 import { useSelector } from 'react-redux';
 import { HelperFunctions } from '../../Utils';
+import { DesignIcon, IconWithText } from '../../Components';
+import moment from 'moment';
 
 const OrganiserProfile = ({ navigation, route: { params } }) => {
   const [ state, setState ] = React.useState({ ...params, loading: false, fLoading: false });
@@ -22,37 +34,26 @@ const OrganiserProfile = ({ navigation, route: { params } }) => {
   );
 
   const getOrganiserEvents = () => {
-    // problem is coming home soon.
+    //
   };
 
-  // console.log('USER', user);
+  const getOrganiserBlogs = () => {
+    //
+  };
 
   const getOrganiser = () => {
-    setState({ ...state, loading: true });
-    firestore()
-      .collection('Users')
-      .doc(params.id) // .onSnapshot()
-      .onSnapshot(
-        (resp) => {
-          console.log('Resp data', resp.data().companyName);
-          setState({ ...state, ...resp.data(), loading: false });
-        },
-        (error) => Alert.alert('Error fetching organiser profile', error)
-      );
-    // .catch((error) => console.log('ERrror getting organiser', error.message));
+    //
   };
 
-  const followUnfollow = async () => {
-    const update = state.followers.includes(user.uid)
-      ? { followers: firestore.FieldValue.arrayRemove(user.uid) }
-      : { followers: firestore.FieldValue.arrayUnion(user.uid) };
-    await firestore()
-      .collection('Users')
-      .doc(state.id)
-      .update(update)
-      .then()
-      .catch((error) => Alert.alert('Error updating', error.message));
+  const followUser = async () => {
+    //
   };
+
+  const unfollowUser = async () => {
+    //
+  };
+
+  const followed = state.followers && !state.followers.includes(user.uid);
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -62,73 +63,80 @@ const OrganiserProfile = ({ navigation, route: { params } }) => {
           style={{ flex: 1, backgroundColor: '#eee', paddingHorizontal: RFValue(0), marginTop: RFValue(0) }}
           showsVerticalScrollIndicator={false}
         >
-          <Image
+          <ImageBackground
             source={{
               uri: state.imageUrl
             }}
             style={{ width: '100%', height: RFValue(300) }}
             resizeMode="cover"
-          />
+          >
+            <Pressable
+              onPress={followUnfollow}
+              style={{
+                paddingHorizontal: RFValue(20),
+                paddingVertical: RFValue(10),
+                backgroundColor: '#010203',
+                flexDirection: 'row',
+                alignItems: 'center',
+                position: 'absolute',
+                bottom: RFValue(10),
+                right: RFValue(10)
+              }}
+            >
+              <DesignIcon pkg="ad" name={followed ? 'deleteuser' : 'adduser'} color="#fff" size={RFValue(20)} />
+              <Text style={{ color: '#fff', fontSize: RFValue(14), fontWeight: 'bold', marginLeft: RFValue(5) }}>
+                {followed ? 'Unfollow' : 'Follow'}
+              </Text>
+            </Pressable>
+          </ImageBackground>
           <View
             style={{
-              // height: RFValue(300),
-              marginTop: RFValue(10),
+              marginBottom: RFValue(10),
               width: '100%',
               backgroundColor: '#fff',
               padding: RFValue(10),
               paddingVertical: RFValue(15)
             }}
           >
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                width: '100%',
-                marginBottom: RFValue(10)
-              }}
-            >
-              <Text
-                style={{
-                  fontSize: RFValue(18),
-                  marginBottom: RFValue(10),
-                  fontWeight: 'bold',
-                  flexShrink: 1,
-                  marginRight: RFValue(10)
-                }}
-              >
-                {state.companyName}:
-              </Text>
-              <Pressable
-                onPress={followUnfollow}
-                style={{
-                  paddingHorizontal: RFValue(20),
-                  paddingVertical: RFValue(10),
-                  backgroundColor: '#010203',
-                  flexDirection: 'row'
-                }}
-              >
-                {state.fLoading && <ActivityIndicator color="#fff" />}
-                <Text style={{ color: '#fff', fontSize: RFValue(14), fontWeight: 'bold', marginLeft: RFValue(5) }}>
-                  {user && state.followers && state.followers.includes(user.uid) ? 'Unfollow' : 'Follow'}
-                </Text>
-              </Pressable>
-            </View>
-
-            {/* followers */}
             <Text
               style={{
-                fontSize: RFValue(16),
-                marginBottom: RFValue(10),
-                color: '#aaa',
-                paddingBottom: RFValue(10),
-                borderBottomWidth: 1
+                fontSize: RFValue(18),
+                fontWeight: 'bold'
               }}
             >
-              {state.followers && state.followers.length} ・ followers
+              {state.companyName}
             </Text>
+          </View>
 
-            <Text style={{ fontSize: RFValue(14) }}>{state.companyDescription}</Text>
+          <View
+            style={{
+              marginTop: RFValue(0),
+              width: '100%',
+              backgroundColor: '#fff',
+              paddingVertical: RFValue(15),
+              paddingHorizontal: RFValue(10)
+            }}
+          >
+            <Text style={{ fontSize: RFValue(18), fontWeight: 'bold', color: '#aaa' }}>Account Information:</Text>
+            <IconWithText
+              extStyles={{ marginTop: RFValue(20) }}
+              name="addusergroup"
+              pkg="ad"
+              text={`${state.followers && state.followers.length} followers ・ ${state.following &&
+                state.following.length} following`}
+            />
+            <IconWithText name="pin" text={`Located ・ ${state.companyAddress}`} />
+            <IconWithText name="team" pkg="ad" text={state.companyType} />
+
+            <IconWithText name="equal" text={state.companyDescription} />
+
+            <IconWithText name="tago" pkg="ad" text={state.eventCategories && state.eventCategories.join(', ')} />
+            <IconWithText
+              name="clockcircleo"
+              pkg="ad"
+              text={`Created ・ ${moment(state.dateCreated).fromNow()}`}
+              size={RFValue(23)}
+            />
           </View>
 
           <View
@@ -141,22 +149,20 @@ const OrganiserProfile = ({ navigation, route: { params } }) => {
               paddingVertical: RFValue(15)
             }}
           >
-            {[ 'facebook', 'instagram', 'youtube', 'whatsapp', 'linkedin', 'twitter' ].map((social) => (
-              <Pressable
-                onPress={() => (social && social.length ? HelperFunctions.openLink(state[social]) : null)}
-                style={{ flexDirection: 'row', justifyContent: '', alignItems: 'center', marginVertical: RFValue(8) }}
-              >
-                <Icon
-                  name={social}
-                  size={RFValue(22)}
-                  style={{ marginRight: RFValue(10) }}
-                  color={state[social] ? '#010203' : '#00000030'}
-                />
-                <Text style={{ fontSize: RFValue(14), color: state[social] ? '#010203' : '#00000030' }}>
-                  {state[social] || `Organiser has no ${social} added yet.`}
-                </Text>
-              </Pressable>
-            ))}
+            <Text style={{ fontSize: RFValue(18), fontWeight: 'bold', color: '#aaa', marginBottom: RFValue(20) }}>
+              Social media platforms:
+            </Text>
+            {[ 'facebook', 'instagram', 'youtube', 'whatsapp', 'linkedin', 'twitter' ].map(
+              (social, index) =>
+                state[social] ? (
+                  <IconWithText
+                    extStyles={{ marginBottom: RFValue(15) }}
+                    name={social}
+                    pkg="fa"
+                    text={`Visit ${social} profile`}
+                  />
+                ) : null
+            )}
           </View>
         </ScrollView>
       </View>

@@ -1,35 +1,13 @@
 import React from 'react';
-import {
-  View,
-  Dimensions,
-  FlatList,
-  ScrollView,
-  Image,
-  Text,
-  Linking,
-  Alert,
-  Platform,
-  ImageBackground,
-  Pressable
-} from 'react-native';
+import { View, Dimensions, ScrollView, Image, Text, Alert, ImageBackground, Pressable } from 'react-native';
 import Ripple from 'react-native-material-ripple';
 import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Button, ComingSoon, Text as TextComp } from '../../Components';
-import Header from '../../Components/Header';
-import Listing from './Listing';
 import TopCategories from './TopCategories';
-import LOGO from '../../assets/dancebox-logo.jpg';
-import BlogPost from '../../Components/BlogPost';
-import { keyGenerator } from '../../Utils/HelperFunctions';
 import { CONSTANTS, HelperFunctions } from '../../Utils';
-import { PERMISSIONS } from 'react-native-permissions';
 import { useDispatch, useSelector } from 'react-redux';
-import SingleBlog from '../Blogs/SingleBlog';
-import moment from 'moment';
-import { QUERIES } from '../../Firebase';
-import firestore from '@react-native-firebase/firestore';
 
 const { width } = Dimensions.get('window');
 
@@ -37,12 +15,14 @@ const Home = ({ navigation, ...props }) => {
   // console.log('PROPS HOME', props);
   const dispatch = useDispatch();
   const [ state, setState ] = React.useState({ period: null, organisers: [], eventsInMonth: [] });
-  const { randomOrganisers } = useSelector((state) => state.Account);
+  const { randomOrganisers, user } = useSelector((state) => state.Account);
+  const { profile } = useSelector((state) => state.User);
   const { blogs } = useSelector((state) => state.Blogs);
 
+  console.log('PROFILE', user);
   React.useEffect(() => {
-    getRandomOrganisers();
-    getEventsInMonth();
+    // getRandomOrganisers();
+    // getEventsInMonth();
   }, []);
 
   const getRandomOrganisers = () => {

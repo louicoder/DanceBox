@@ -72,7 +72,7 @@ const CommentsLikeButtons = ({ comments, likes, type, id, extStyles, likeHandler
           width: '100%',
           alignItems: 'center',
           // borderWidth: 1,
-          paddingHorizontal: RFValue(10),
+          // paddingHorizontal: RFValue(10),
           marginVertical: RFValue(10)
         },
         extStyles

@@ -102,7 +102,7 @@ const HomeScreens = ({ socket }) => (
     <HomeStack.Screen
       name="OrganiserProfile"
       component={OrganiserProfile}
-      options={{ header: (props) => <Header title="Organiser Profile" iconName="pencil" {...props} /> }}
+      options={{ header: (props) => <Header title="Organiser" iconName="pencil" {...props} /> }}
     />
     <HomeStack.Screen
       name="AllOrganisers"

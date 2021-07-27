@@ -35,9 +35,9 @@ const PasswordInput = ({
           borderColor: '#ccc',
           flexGrow: 1,
           fontSize: RFValue(14),
-          paddingHorizontal: RFValue(10),
-          borderTopLeftRadius: RFValue(5),
-          borderBottomLeftRadius: RFValue(5)
+          paddingHorizontal: RFValue(10)
+          // borderTopLeftRadius: RFValue(5),
+          // borderBottomLeftRadius: RFValue(5)
         }}
         value={value}
         onChangeText={onChangeText}
@@ -49,9 +49,9 @@ const PasswordInput = ({
           width: RFValue(50),
           backgroundColor: '#ddd',
           alignItems: 'center',
-          justifyContent: 'center',
-          borderTopRightRadius: RFValue(5),
-          borderBottomRightRadius: RFValue(5)
+          justifyContent: 'center'
+          // borderTopRightRadius: RFValue(5),
+          // borderBottomRightRadius: RFValue(5)
         }}
         onPressIn={switchPasswordVisibility}
         rippleCentered

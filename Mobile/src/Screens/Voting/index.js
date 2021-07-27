@@ -1,14 +1,15 @@
 import React from 'react';
 import { View, Text, FlatList } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
+import { baseURL } from '../../Store/Axios';
 import io from 'socket.io-client';
 
 let socket;
 const Voting = ({ navigation }) => {
-  const {} = useSelector((state) => state.Account);
+  // const {} = useSelector((state) => state.Account);
   React.useEffect(
     () => {
-      socket = io('http://localhost:3001');
+      socket = io(baseURL);
 
       socket.emit('message', 'hi there');
 

@@ -12,6 +12,11 @@ const Comments = ({ user, comments, navigation }) => {
         backgroundColor: '#fff'
       }}
     >
+      <Text
+        style={{ marginVertical: RFValue(10), fontSize: RFValue(14), color: '#aaa', marginHorizontal: RFValue(10) }}
+      >
+        Join the conversation below
+      </Text>
       <View
         style={{
           flexDirection: 'row',

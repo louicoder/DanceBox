@@ -10,6 +10,7 @@ export const keyGenerator = () => Math.random().toString(36).slice(2);
 export const CheckPermissions = async (permission, callback) => {
   await check(permission)
     .then(async (result) => {
+      console.log('Permisision result', result);
       switchPermissionResult(result, permission, callback);
     })
     .catch((error) => {
@@ -122,7 +123,7 @@ export const CHECK_GALLERY_PERMISSIONS = async (callback) => {
                 android: PERMISSIONS.ANDROID.CAMERA,
                 ios: PERMISSIONS.IOS.PHOTO_LIBRARY
               })
-            ).then((resp) => callback({ success: resp === 'granted' ? true : false }))
+            ).then((resp) => callback({ success: resp === 'granted' ? true : false, resp }))
     );
   } catch (error) {
     return callback({ success: false, error: error.message });
@@ -159,10 +160,10 @@ export const getAsyncObjectData = async (key, callback) => {
   try {
     const jsonValue = await AsyncStorage.getItem(key);
     // return callback ? callback(JSON.parse(jsonValue)) : jsonValue != null ? JSON.parse(jsonValue) : null;
-    return callback({ error: undefined, result: JSON.parse(jsonValue) });
+    return callback({ error: null, result: JSON.parse(jsonValue) });
   } catch (error) {
     // console.log('ERROR get storage', e);
-    return callback({ error, result: undefined });
+    return callback({ error, result: null });
   }
 };
 
