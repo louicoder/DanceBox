@@ -8,6 +8,7 @@ import SingleComment from './SingleComment';
 import Filters from './Filters';
 import DesignIcon from './DesignIcon';
 import IconWithText from './IconWithText';
+import OrganiserPreview from './OrganiserPreview';
 
 export {
   IconComp,
@@ -19,5 +20,6 @@ export {
   SingleComment,
   Filters,
   DesignIcon,
-  IconWithText
+  IconWithText,
+  OrganiserPreview
 };

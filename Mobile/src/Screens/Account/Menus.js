@@ -12,7 +12,7 @@ const Company = ({ accountType }) => {
           Account information:
         </Text>
 
-        <IconWithText name="user" pkg="ad" text={`20k followers ・ 30 following`} />
+        <IconWithText name="users" pkg="ft" text={`20k followers ・ 30 following`} />
         <IconWithText name="pin" text="Located ・ Adress, kireka plot 2A coming soon" />
         <IconWithText name="team" text="Community organisation" pkg="ad" />
 
@@ -22,7 +22,7 @@ const Company = ({ accountType }) => {
           text="description Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quos nisi redarguimus, omnis virtus, omne decus, omnis vera laus deserenda est. Tenent mordicus. Egone quaeris, inquit, quid sentiam? Quid ergo attinet dicere"
         />
         <IconWithText name="tago" pkg="ad" text="Dance classes, Photo shoots" />
-        <IconWithText name="clockcircleo" pkg="ad" text="Created 20 hours ago" size={RFValue(23)} />
+        <IconWithText name="clockcircleo" pkg="ad" text="Created ・ 20 hours ago" size={RFValue(23)} />
       </View>
       <View style={{ marginTop: RFValue(10), backgroundColor: '#fff', padding: RFValue(10) }}>
         <Text style={{ fontWeight: 'bold', marginVertical: RFValue(10), fontSize: RFValue(17), color: '#aaa' }}>

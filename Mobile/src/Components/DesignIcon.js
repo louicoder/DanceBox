@@ -6,6 +6,7 @@ import IO from 'react-native-vector-icons/Ionicons';
 import AD from 'react-native-vector-icons/AntDesign';
 import FOT from 'react-native-vector-icons/Fontisto';
 import FO from 'react-native-vector-icons/FontAwesome';
+import FT from 'react-native-vector-icons/Feather';
 import { RFValue } from 'react-native-responsive-fontsize';
 
 const DesignIcon = ({ pkg, name, size = 25, color, extStyles, onPress }) => {
@@ -13,6 +14,8 @@ const DesignIcon = ({ pkg, name, size = 25, color, extStyles, onPress }) => {
     switch (pkg) {
       case 'mc':
         return <MC name={name} size={RFValue(size)} color={color} style={extStyles} onPress={onPress} />;
+      case 'ft':
+        return <FT name={name} size={RFValue(size)} color={color} style={extStyles} onPress={onPress} />;
       case 'mt':
         return <MT name={name} size={RFValue(size)} color={color} style={extStyles} onPress={onPress} />;
       case 'io':

@@ -65,9 +65,9 @@ export default {
       }
     },
 
-    async getOrganisers ({ oid, callback }) {
+    async getOrganiser ({ uid, callback }) {
       try {
-        await AxiosClient.get(`/accounts/organiser/${iod}`).then(({ data }) => {
+        await AxiosClient.get(`/accounts/${uid}`).then(({ data }) => {
           callback(data);
         });
       } catch (error) {

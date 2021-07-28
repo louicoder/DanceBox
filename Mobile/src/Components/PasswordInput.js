@@ -47,7 +47,7 @@ const PasswordInput = ({
       <Ripple
         style={{
           width: RFValue(50),
-          backgroundColor: '#ddd',
+          backgroundColor: '#eee',
           alignItems: 'center',
           justifyContent: 'center'
           // borderTopRightRadius: RFValue(5),

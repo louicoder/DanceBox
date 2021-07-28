@@ -12,29 +12,31 @@ const IconWithText = ({
   color = '#aaa',
   onPress,
   rightIcon = false,
+  textCntStyles,
   extStyles
 }) => {
+  const textExists = text && text.trim() && text.length;
   return (
     <Pressable
       onPress={onPress ? onPress : null}
       style={{
         width: '100%',
         flexDirection: 'row',
-        justifyContent: 'flex-start',
+        // justifyContent: 'flex-start',
         alignItems: text && text.length > 40 ? 'flex-start' : 'center',
         marginBottom: RFValue(10),
+        justifyContent: 'space-between',
         ...extStyles
       }}
     >
-      <View style={{ width: '15%' }}>
-        <DesignIcon name={name} pkg={pkg} size={size} color={color} extStyles={{ marginRight: RFValue(10) }} />
+      <View style={{}}>
+        <DesignIcon name={name} pkg={pkg} size={size} color={color} extStyles={{ marginRight: 0 }} />
       </View>
-      <View style={{ width: rightIcon ? '70%' : '85%' }}>
-        <Text style={{ fontSize: RFValue(15) }}>{text}</Text>
+      <View style={{ width: '85%' }}>
+        <Text style={{ fontSize: RFValue(16), color: !textExists ? '#aaa' : '#000' }}>
+          {textExists ? text : 'No description'}
+        </Text>
       </View>
-      {/* {<View style={{ width: '15%' }}>
-        <DesignIcon name={name} pkg={rIpkg} size={size} color={color} extStyles={{ marginRight: RFValue(10) }} />
-      </View>} */}
     </Pressable>
   );
 };

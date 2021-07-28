@@ -115,12 +115,12 @@ const EventProfile = ({ navigation, route }) => {
       behavior={Platform.OS === 'ios' && 'padding'}
       keyboardVerticalOffset={!isKeyboardVisible ? 40 + useSafeAreaInsets().top : 0}
     >
-      <CommentBox visible={isKeyboardVisible} />
       <SafeAreaView
         // behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         // keyboardVerticalOffset={Platform.OS === 'ios' ? RFValue(90) : 0}
         style={{ flex: 1, backgroundColor: '#eee' }}
       >
+        <CommentBox />
         {/* <LoadingModal
           isVisible={
             loading.likeEvent || loading.attendParticipate || loading.getEvent || loading.unattendUnparticipate

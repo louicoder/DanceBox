@@ -14,7 +14,7 @@ import { RFValue } from 'react-native-responsive-fontsize';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import firestore from '@react-native-firebase/firestore';
 import LoadingModal from '../../Components/LoadingModal';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { HelperFunctions } from '../../Utils';
 import { DesignIcon, IconWithText } from '../../Components';
 import moment from 'moment';
@@ -22,15 +22,18 @@ import moment from 'moment';
 const OrganiserProfile = ({ navigation, route: { params } }) => {
   const [ state, setState ] = React.useState({ ...params, loading: false, fLoading: false });
   const { user } = useSelector((state) => state.Account);
+  const dispatch = useDispatch();
 
+  // console.log('PArams', params);
   React.useEffect(
     () => {
       const sub = navigation.addListener('focus', () => {
-        getOrganiser();
+        getUser(params.id);
+        // getOrganiser();
       });
       return () => sub;
     },
-    [ navigation ]
+    [ navigation, params.id ]
   );
 
   const getOrganiserEvents = () => {
@@ -41,8 +44,24 @@ const OrganiserProfile = ({ navigation, route: { params } }) => {
     //
   };
 
-  const getOrganiser = () => {
-    //
+  // const getUser = () => {
+  //   HelperFunctions.getAsyncObjectData('user', ({ error, result }) => {
+  //     // console.log('USer', result.uid);
+  //     if (error) return alert('Error');
+  //     getOrganiser(result.uid);
+  //     // setState({...state, result});
+  //   });
+  // };
+
+  const getUser = (uid) => {
+    dispatch.Account.getOrganiser({
+      uid,
+      callback: (res) => {
+        // console.log('RESULT profile', res.result);
+        if (!res.success) return alert('ERror');
+        setState({ ...state, ...res.result });
+      }
+    });
   };
 
   const followUser = async () => {
@@ -53,7 +72,7 @@ const OrganiserProfile = ({ navigation, route: { params } }) => {
     //
   };
 
-  const followed = state.followers && !state.followers.includes(user.uid);
+  const followed = state.followers && state.followers.includes(user.uid);
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -71,7 +90,7 @@ const OrganiserProfile = ({ navigation, route: { params } }) => {
             resizeMode="cover"
           >
             <Pressable
-              onPress={followUnfollow}
+              // onPress={followUnfollow}
               style={{
                 paddingHorizontal: RFValue(20),
                 paddingVertical: RFValue(10),
@@ -83,8 +102,8 @@ const OrganiserProfile = ({ navigation, route: { params } }) => {
                 right: RFValue(10)
               }}
             >
-              <DesignIcon pkg="ad" name={followed ? 'deleteuser' : 'adduser'} color="#fff" size={RFValue(20)} />
-              <Text style={{ color: '#fff', fontSize: RFValue(14), fontWeight: 'bold', marginLeft: RFValue(5) }}>
+              <DesignIcon pkg="ft" name={followed ? 'user-check' : 'user-plus'} color="#fff" size={RFValue(20)} />
+              <Text style={{ color: '#fff', fontSize: RFValue(16), marginLeft: RFValue(10) }}>
                 {followed ? 'Unfollow' : 'Follow'}
               </Text>
             </Pressable>
@@ -120,22 +139,22 @@ const OrganiserProfile = ({ navigation, route: { params } }) => {
             <Text style={{ fontSize: RFValue(18), fontWeight: 'bold', color: '#aaa' }}>Account Information:</Text>
             <IconWithText
               extStyles={{ marginTop: RFValue(20) }}
-              name="addusergroup"
-              pkg="ad"
+              name="users"
+              pkg="ft"
               text={`${state.followers && state.followers.length} followers ・ ${state.following &&
                 state.following.length} following`}
             />
             <IconWithText name="pin" text={`Located ・ ${state.companyAddress}`} />
             <IconWithText name="team" pkg="ad" text={state.companyType} />
 
-            <IconWithText name="equal" text={state.companyDescription} />
+            <IconWithText name="idcard" pkg="ad" text={state.companyDescription} />
 
             <IconWithText name="tago" pkg="ad" text={state.eventCategories && state.eventCategories.join(', ')} />
             <IconWithText
               name="clockcircleo"
               pkg="ad"
               text={`Created ・ ${moment(state.dateCreated).fromNow()}`}
-              size={RFValue(23)}
+              size={RFValue(20)}
             />
           </View>
 

@@ -29,6 +29,7 @@ import Menus from './Menus';
 import Modal from '../../Components/Modal';
 import PasswordReset from './Individual/PasswordReset';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import CommentBox from '../../Components/CommentBox';
 
 const Account = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -144,22 +145,7 @@ const Account = ({ navigation }) => {
         <PasswordReset />
       </Modal> */}
       <SafeAreaView style={{ flex: 1 }}>
-        {/* <View
-          style={{
-            borderTopWidth: 1,
-            borderTopColor: '#aaa',
-            width: '100%',
-            backgroundColor: '#00000045',
-            position: 'absolute',
-            bottom: 0,
-            zIndex: 100
-          }}
-        >
-          <TextInput
-            style={{ width: '100%', height: RFValue(50), backgroundColor: '#fff' }}
-            placeholder="Enter your new password"
-          />
-        </View> */}
+        <CommentBox />
         <ScrollView style={{ flex: 1, backgroundColor: '#eee', zIndex: 10 }}>
           <View
             style={{

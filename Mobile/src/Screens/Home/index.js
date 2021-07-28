@@ -8,6 +8,8 @@ import { Button, ComingSoon, Text as TextComp } from '../../Components';
 import TopCategories from './TopCategories';
 import { CONSTANTS, HelperFunctions } from '../../Utils';
 import { useDispatch, useSelector } from 'react-redux';
+import Organisers from './Organisers';
+import EventsInMonth from './EventsInMonth';
 
 const { width } = Dimensions.get('window');
 
@@ -93,164 +95,11 @@ const Home = ({ navigation, ...props }) => {
       <ScrollView style={{ flex: 1, width: '100%', backgroundColor: '#aaaaaa80' }}>
         <TopCategories navigation={navigation} />
 
-        <View
-          style={{
-            backgroundColor: '#fff',
-            marginTop: RFValue(0),
-            paddingVertical: RFValue(15),
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between'
-          }}
-        >
-          <Text
-            style={{
-              marginHorizontal: RFValue(10),
-              fontSize: RFValue(16),
-              fontWeight: 'bold'
-            }}
-          >
-            Events Companies:
-          </Text>
-          <Pressable
-            // onPress={() => Alert.alert('Pending feature', 'This feature is Coming soon')}
-            onPress={() => navigation.navigate('AllOrganisers')}
-          >
-            <Text
-              style={{
-                marginHorizontal: RFValue(10),
-                fontSize: RFValue(14),
-                color: 'blue'
-                // fontWeight: 'bold'
-              }}
-            >
-              View All
-            </Text>
-          </Pressable>
-        </View>
+        <Organisers navigation={navigation} />
 
-        <View
-          style={{
-            width: '100%',
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            flexWrap: 'wrap',
-            backgroundColor: '#fff',
-            paddingBottom: RFValue(10)
-          }}
-        >
-          {randomOrganisers &&
-            randomOrganisers.map(({ companyName, ...rest }, index) => (
-              // state.organisers.slice(0, 4).map(({ companyName, ...rest }, index) => (
-              <ImageBackground
-                key={HelperFunctions.keyGenerator()}
-                source={{ uri: rest.imageUrl }}
-                style={{ height: RFValue(150), width: '49%', marginBottom: RFValue(6) }}
-                imageStyle={{ width: '100%', backgroundColor: '#eeee' }}
-                resizeMode="cover"
-              >
-                <Pressable
-                  onPress={() => navigation.navigate('OrganiserProfile', { ...rest, companyName })}
-                  style={{ width: '100%', height: RFValue(150) }}
-                >
-                  <View
-                    style={{
-                      width: '100%',
-                      backgroundColor: '#010203',
-                      height: RFValue(30),
-                      position: 'absolute',
-                      bottom: 0,
-                      justifyContent: 'center'
-                    }}
-                  >
-                    <Text
-                      style={{
-                        color: '#fff',
-                        fontSize: RFValue(13),
-                        paddingHorizontal: RFValue(5),
-                        fontWeight: 'bold'
-                      }}
-                    >
-                      {companyName && companyName.slice(0, 18)}
-                      {companyName && companyName.length > 18 && '...'}
-                    </Text>
-                  </View>
-                </Pressable>
-              </ImageBackground>
-            ))}
-        </View>
-
-        <View style={{ backgroundColor: '#fff', marginTop: RFValue(10) }}>
-          <Text
-            style={{
-              marginHorizontal: RFValue(10),
-              marginVertical: RFValue(15),
-              fontSize: RFValue(16),
-              fontWeight: 'bold',
-              backgroundColor: '#fff'
-            }}
-          >
-            Events this month:
-          </Text>
-        </View>
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            flexWrap: 'wrap',
-            width: '100%',
-            alignItems: 'flex-start',
-            flex: 1,
-            backgroundColor: '#fff',
-            paddingBottom: RFValue(15)
-          }}
-        >
-          {state.eventsInMonth &&
-            state.eventsInMonth.map((item) => (
-              <Pressable
-                key={HelperFunctions.keyGenerator()}
-                onPress={() => navigation.navigate('Events', { screen: 'EventProfile', params: { _id: item._id } })}
-                style={{
-                  flexDirection: 'row',
-                  width: '100%',
-                  paddingHorizontal: RFValue(10)
-                }}
-              >
-                <Image
-                  source={{ uri: item.imageUrl || CONSTANTS.EVENTS_PIC }}
-                  style={{ width: RFValue(80), height: RFValue(80) }}
-                />
-                <View style={{ flexGrow: 1, paddingHorizontal: RFValue(10) }}>
-                  <Text style={{ fontSize: RFValue(16), fontWeight: 'bold' }}>{item.title}</Text>
-                  <Text style={{ fontSize: RFValue(12), marginVertical: RFValue(5) }}>Date ・ {item.startDate}</Text>
-                  <Text style={{ fontSize: RFValue(12), marginBottom: RFValue(5), fontWeight: 'bold' }}>
-                    Fee ・ {item.price ? item.price : 'FREE'}
-                  </Text>
-
-                  <View style={{ width: '100%', flexDirection: 'row' }}>
-                    {item.tags &&
-                      item.tags.map((tg) => (
-                        <Text
-                          key={HelperFunctions.keyGenerator()}
-                          style={{
-                            padding: RFValue(3),
-                            backgroundColor: '#01020320',
-                            marginRight: RFValue(10),
-                            borderRadius: 20
-                          }}
-                        >
-                          #{tg}
-                        </Text>
-                      ))}
-                  </View>
-                </View>
-                <View />
-              </Pressable>
-            ))}
-        </View>
+        <EventsInMonth navigation={navigation} />
       </ScrollView>
     </View>
-    // </SafeAreaView>
   );
 };
 
