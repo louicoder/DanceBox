@@ -12,38 +12,54 @@ import { HelperFunctions } from '../../Utils';
 
 import firestore from '@react-native-firebase/firestore';
 
-const Login = ({ navigation }) => {
+const Login = ({ navigation, route }) => {
   const dispatch = useDispatch();
   const statex = useSelector((state) => state.Account);
   const loading = useSelector((state) => state.loading.effects.Account);
   const [ state, setState ] = React.useState({
     loginMode: true,
     activeLogin: null,
+    justCreated: false,
+    passwordVisible: true,
     email: 'musanje2010@gmail.com',
     password: 'password',
-    passwordVisible: true,
-    justCreated: false,
-    docId: ''
+    followers: [],
+    following: [],
+    facebook: '',
+    linkedin: '',
+    twitter: '',
+    whatsapp: '',
+    instagram: '',
+    interests: [],
+    // accountType: state.activeLogin,
+    accountType: 'individual',
+    imageUrl: ''
   });
+
+  // console.log('Ladoinf', loading);
 
   const loginHandler = () => {
     Keyboard.dismiss();
-    const { email, password, docId } = state;
-    dispatch.Account.signIn({
-      payload: { email, password },
+    const { email, password } = state;
+    dispatch.Account.login({
+      email,
+      password,
       callback: ({ success, result }) => {
-        if (!success) return HelperFunctions.switchLoginError(result);
-        dispatch.Account.setUserDetails({ ...result, password });
-        HelperFunctions.storeAsyncObjectData('user', { ...result, password }, ({ error }) => {
-          if (error) return HelperFunctions.Notify('Error', error);
-          return state.justCreated ? navigation.navigate('Interests', { docId }) : navigation.navigate('Home');
+        if (!success) return HelperFunctions.Notify('Error', result);
+        HelperFunctions.getAsyncObjectData('user', ({ success, result }) => {
+          if (!success) return HelperFunctions.Notify('Error', result);
+          return route.params.goToScreen
+            ? navigation.navigate(route.params.goToScreen, { screen: route.params.goToScreen })
+            : navigation.navigate('Home');
         });
       }
     });
   };
 
+  // const checkNavigationScreen = () =>
+
   const switchError = (errorCode) => {
-    console.log(errorCode);
+    // console.log(errorCode);
     switch (errorCode) {
       case 'auth/invalid-email':
         return 'The email is invalid or badly formatted';
@@ -58,16 +74,13 @@ const Login = ({ navigation }) => {
     }
   };
 
-  // React.useEffect(() => {
-  //   HelperFunctions.getAsyncObjectData('user', (res) => {
-  //     console.log('RESult', res);
-  //     // if (res && res.uid) {
-  //     //   dispatch.Account.setUserDetails(res);
-  //     // }
-  //   });
-
-  //   // console.log('USER===', statex.user);
-  // }, []);
+  React.useEffect(
+    () => {
+      setState({ ...state, loginMode: route.params.loginMode || true });
+      // console.log('USER===', route.params);
+    },
+    [ navigation ]
+  );
 
   const createAccountHandler = () => {
     Keyboard.dismiss();
@@ -76,32 +89,13 @@ const Login = ({ navigation }) => {
         'Error creating account',
         'Make sure the Email and password are in a valid format and try again'
       );
-    const { email, password, docId } = state;
-
-    const payload = {
-      email,
-      password,
-      followers: [],
-      following: [],
-      facebook: '',
-      linkedin: '',
-      twitter: '',
-      whatsapp: '',
-      instagram: '',
-      interests: [],
-      // accountType: state.activeLogin,
-      accountType: 'individual',
-      imageUrl: '',
-      uid: docId
-    };
+    const { loginMode, activeLogin, justCreated, passwordVisible, ...payload } = state;
 
     dispatch.Account.createUserAccount({
       payload,
-      callback: (res) => {
-        // console.log('doc id', res.doc);
-        if (res.error) return Alert.alert('Error signing up', res.error);
-        HelperFunctions.Notify('Success', 'Your account has been created successfully, you can now login');
-        return setState({ ...state, loginMode: true, justCreated: true, docId: res.doc });
+      callback: ({ success, result }) => {
+        if (!success) return HelperFunctions.Notify('Error signing up', result);
+        return navigation.navigate('Interests');
       }
     });
   };
@@ -136,26 +130,6 @@ const Login = ({ navigation }) => {
               )}
             </Text>
 
-            {/* {state.loginMode ? null : (
-              <View
-                style={{
-                  marginVertical: RFValue(10),
-                  flexDirection: 'row',
-                  flexWrap: 'wrap',
-                  justifyContent: 'space-between'
-                }}
-              >
-                {Elements.map((props, index) => (
-                  <Option
-                    {...props}
-                    key={index}
-                    onPress={() =>
-                      setState({ ...state, activeLogin: props.title === state.activeLogin ? null : props.title })}
-                    selected={state.activeLogin === props.title}
-                  />
-                ))}
-              </View>
-            )} */}
             <Input
               placeholder="Enter your email address"
               value={state.email}
@@ -171,6 +145,7 @@ const Login = ({ navigation }) => {
             />
 
             <Button
+              loading={loading.login}
               extStyles={{ backgroundColor: '#010203' }}
               title={state.loginMode ? 'Login' : 'Create account'}
               onPress={() => (state.loginMode ? loginHandler() : createAccountHandler())}
@@ -199,4 +174,4 @@ const Login = ({ navigation }) => {
 
 export default Login;
 
-const Elements = [ { title: 'Individual' }, { title: 'Company' } ];
+// const Elements = [ { title: 'Individual' }, { title: 'Company' } ];

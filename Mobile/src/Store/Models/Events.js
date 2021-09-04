@@ -84,19 +84,9 @@ export default {
       }
     },
 
-    async createEventComment ({ eventId, payload, callback }, state) {
-      // console.log('REache event comment', payload, eventId);
+    async createEventComment ({ payload, callback }) {
       try {
-        await AxiosClient.patch(`/events/comments/create/${eventId}`, payload).then(({ data }) => {
-          if (data.success) {
-            const events = state.Events.events.map(
-              (event) => (event._id === eventId ? { ...event, comments: [ ...event.comments, payload ] } : event)
-            );
-            dispatch.Events.setEvents(events);
-            callback(data);
-          }
-          callback(data);
-        });
+        await AxiosClient.post(`/comments/event/create`, payload).then(({ data }) => callback(data));
       } catch (error) {
         return callback({ success: false, result: error.message });
       }
@@ -142,6 +132,17 @@ export default {
     async getEvent ({ eventId, callback }, state) {
       try {
         await AxiosClient.get(`/events/single/${eventId}`).then(({ data }) => {
+          callback(data);
+        });
+      } catch (error) {
+        return callback({ success: false, result: error.message });
+      }
+    },
+
+    async getEventComments ({ eventId, callback }, state) {
+      try {
+        await AxiosClient.get(`/comments/event/${eventId}`).then(({ data }) => {
+          // console.log('Commetns', data);
           callback(data);
         });
       } catch (error) {

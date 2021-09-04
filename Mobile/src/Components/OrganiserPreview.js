@@ -4,9 +4,11 @@ import { RFValue } from 'react-native-responsive-fontsize';
 import { CONSTANTS } from '../Utils';
 import DesignIcon from './DesignIcon';
 
-const OrganiserPreview = ({ navigation }) => {
+const OrganiserPreview = ({ companyName, followers, following, companyDescription, navigation, _id: id, imageUrl }) => {
+  // console.log('Id---', id);
   return (
     <Pressable
+      onPress={() => navigation.navigate('OrganiserProfile', { id })}
       style={{
         width: '100%',
         flexDirection: 'row',
@@ -14,12 +16,12 @@ const OrganiserPreview = ({ navigation }) => {
         paddingVertical: RFValue(10)
       }}
     >
-      <Image source={{ uri: CONSTANTS.EVENTS_PIC }} style={{ width: RFValue(120), height: RFValue(120) }} />
+      <Image source={{ uri: imageUrl || CONSTANTS.EVENTS_PIC }} style={{ width: RFValue(120), height: RFValue(120) }} />
       <View style={{ flexShrink: 1, paddingLeft: RFValue(10) }}>
-        <Text style={{ fontSize: RFValue(16), fontWeight: 'bold' }}>Company name here</Text>
-        <Text style={{ fontSize: RFValue(14), marginVertical: RFValue(10) }}>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Primum divisit ineleganter; Frater et T. Non autem
-          hoc: igitur ne illud quidem.{' '}
+        <Text style={{ fontSize: RFValue(16), fontWeight: 'bold' }}>{companyName}</Text>
+        <Text style={{ fontSize: RFValue(13), marginVertical: RFValue(5) }}>
+          {companyDescription && companyDescription.slice(0, 150)}
+          {companyDescription && companyDescription.length > 150 && '...'}
         </Text>
         <View
           style={{
@@ -31,11 +33,12 @@ const OrganiserPreview = ({ navigation }) => {
           }}
         >
           <View style={{ flexDirection: 'row', alignItems: 'center', borderWidth: 0 }}>
-            <DesignIcon name="user-check" pkg="ft" />
-            <DesignIcon name="share-a" pkg="fot" extStyles={{ marginLeft: RFValue(10) }} />
-            {/* <DesignIcon name="bookmark" pkg="ft" /> */}
+            {/* <DesignIcon name="user-check" pkg="ft" />
+            <DesignIcon name="share-a" pkg="fot" extStyles={{ marginLeft: RFValue(10) }} /> */}
           </View>
-          <Text style={{ alignSelf: 'flex-end', fontSize: RFValue(16), color: '#aaa' }}>20 followers</Text>
+          <Text style={{ alignSelf: 'flex-end', fontSize: RFValue(14), color: '#aaa' }}>
+            {followers && `${followers.length} followers`}
+          </Text>
         </View>
       </View>
     </Pressable>

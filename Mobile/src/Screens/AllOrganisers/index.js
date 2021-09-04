@@ -27,8 +27,6 @@ const AllOrganisers = ({ navigation }) => {
 
   // console.log('Organisers', allOrganisers);
   return (
-    // <SafeAreaView style={{ flex: 1 }}>
-    // <View style={{ flex: 1 }}>
     <FlatList
       contentContainerStyle={{ backgroundColor: '#eee' }}
       style={{ flex: 1 }}
@@ -36,37 +34,39 @@ const AllOrganisers = ({ navigation }) => {
       data={allOrganisers}
       showsVerticalScrollIndicator={false}
       renderItem={({ item, index }) => {
-        // console.log('index', index, item.id);
         return (
           <Pressable
-            style={{ paddingBottom: RFValue(0), marginBottom: RFValue(15), backgroundColor: '#fff' }}
-            onPress={() => navigation.navigate('OrganiserProfile', { id: item.uid })}
+            style={{
+              paddingBottom: RFValue(0),
+              marginBottom: RFValue(allOrganisers && allOrganisers.length !== index + 1 ? 15 : 0),
+              backgroundColor: '#fff'
+            }}
+            onPress={() => navigation.navigate('OrganiserProfile', { id: item._id })}
           >
             <Image
               source={{ uri: item.imageUrl || CONSTANTS.EVENTS_PIC }}
-              style={{ width: '100%', height: RFValue(200) }}
+              style={{ width: '100%', height: RFValue(300) }}
             />
             <View style={{ padding: RFValue(10) }}>
               <Text style={{ fontSize: RFValue(18), marginTop: RFValue(0), fontWeight: 'bold' }}>
                 {item.companyName}
               </Text>
-              {/* <View>
-                {item.eventCatgeories &&
-                  item.eventCatgeories.map((cat) => (
-                    <Text style={{ fontSize: RFValue(10), padding: RFValue(5) }}>{cat}</Text>
-                  ))}
-              </View> */}
+              <View style={{ marginVertical: RFValue(10) }}>
+                <Text style={{ fontSize: RFValue(16) }}>
+                  {item.companyDescription && item.companyDescription.slice(0, 300)}
+                  {item.companyDescription && item.companyDescription.length > 300 && '...'}
+                </Text>
+              </View>
               <View
                 style={{
                   flexDirection: 'row',
                   justifyContent: 'space-between',
-                  alignItems: 'center',
-                  marginVertical: RFValue(10)
+                  alignItems: 'center'
                 }}
               >
-                {/* <Text style={{ fontSize: RFValue(14) }}>{item.dateCreated}</Text> */}
-                <Text style={{ fontSize: RFValue(14), color: '#aaa' }}>
-                  {item.followers && item.followers.length} ・ followers
+                <Text style={{ fontSize: RFValue(16), color: '#aaa' }}>
+                  {item.followers && `${item.followers.length} followers`} ・{' '}
+                  {item.following && `${item.following.length} following`}
                 </Text>
               </View>
             </View>
@@ -74,8 +74,6 @@ const AllOrganisers = ({ navigation }) => {
         );
       }}
     />
-    // </View>
-    // </SafeAreaView>
   );
 };
 

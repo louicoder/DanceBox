@@ -24,16 +24,16 @@ const OrganiserProfile = ({ navigation, route: { params } }) => {
   const { user } = useSelector((state) => state.Account);
   const dispatch = useDispatch();
 
-  // console.log('PArams', params);
   React.useEffect(
     () => {
       const sub = navigation.addListener('focus', () => {
         getUser(params.id);
+        console.log('PArams', params.id);
         // getOrganiser();
       });
       return () => sub;
     },
-    [ navigation, params.id ]
+    [ navigation, params ]
   );
 
   const getOrganiserEvents = () => {
@@ -53,13 +53,13 @@ const OrganiserProfile = ({ navigation, route: { params } }) => {
   //   });
   // };
 
-  const getUser = (uid) => {
+  const getUser = () => {
     dispatch.Account.getOrganiser({
-      uid,
+      uid: params.id,
       callback: (res) => {
-        // console.log('RESULT profile', res.result);
+        // console.log('RESULT profile', res);
         if (!res.success) return alert('ERror');
-        setState({ ...state, ...res.result });
+        setState({ ...state, ...res.result, dateCreated: new Date(res.result.dateCreated) });
       }
     });
   };

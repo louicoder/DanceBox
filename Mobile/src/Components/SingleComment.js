@@ -16,6 +16,7 @@ const SingleComment = ({
   navigation: { navigate },
   _id,
   blog,
+  user,
   ...rest
 }) => {
   // console.log('OWNER', rest);
@@ -35,15 +36,23 @@ const SingleComment = ({
         <View style={{ width: '15%' }}>
           <Image
             source={{
-              uri: imageUrl || CONSTANTS.DEFAULT_PROFILE
+              uri: user.imageUrl || CONSTANTS.DEFAULT_PROFILE
             }}
             style={{ width: RFValue(30), height: RFValue(30), borderRadius: RFValue(100) }}
           />
         </View>
         <View style={{ width: '80%' }}>
-          {owner && <Text style={{ fontSize: RFValue(14), fontWeight: 'bold' }}>{owner.name || owner.email}</Text>}
+          {user && (
+            <Text style={{ fontSize: RFValue(12), fontWeight: 'bold' }}>
+              {user.accountType === 'individual' ? (
+                `${user.name || user.username || user.email}`
+              ) : (
+                `${user.companyName || user.email}`
+              )}
+            </Text>
+          )}
           <Text style={{ color: '#aaaaaa', fontSize: RFValue(12) }}>{moment(dateCreated).fromNow()}</Text>
-          <Text style={{ paddingVertical: RFValue(6), color: '#00000090', fontSize: RFValue(14) }}>{comment}</Text>
+          <Text style={{ paddingVertical: RFValue(6), fontSize: RFValue(12) }}>{comment}</Text>
         </View>
       </View>
       {/* {last && (

@@ -27,12 +27,12 @@ const Input = ({
         textAlignVertical={multiline ? 'top' : 'center'}
         style={[
           {
-            height: RFValue(50),
+            height: RFValue(45),
             borderWidth: filled ? 0 : RFValue(1),
             backgroundColor: filled ? '#eee' : 'transparent',
             borderColor: '#ccc',
             width: '100%',
-            fontSize: RFValue(14),
+            fontSize: RFValue(16),
             // borderRadius: RFValue(5),
             paddingHorizontal: RFValue(10)
           },

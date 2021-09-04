@@ -14,26 +14,28 @@ let sub;
 const Splash = ({ navigation: { navigate } }) => {
   const dispatch = useDispatch();
   const loading = useSelector((state) => state.loading.effects.Account);
-  const state = useSelector((state) => state.Account);
+  const { user } = useSelector((state) => state.Account);
 
   useEffect(() => {
-    if (AUTH.currentUser && AUTH.currentUser.uid) {
-      const { uid, ...rest } = AUTH.currentUser;
-      if (uid) getUser(uid);
-      else navigate('Login');
-    } else {
-      navigate('Login');
-    }
+    // if (AUTH.currentUser && AUTH.currentUser.uid) {
+    //   const { uid, ...rest } = AUTH.currentUser;
+    //   if (uid) getUser(uid);
+    //   else navigate('Login');
+    // } else {
+    //   navigate('Login');
+    // }
+    getUser();
   }, []);
 
   const getUser = (uid) => {
     HelperFunctions.getAsyncObjectData('user', ({ error, result }) => {
+      console.log('USER======', result);
       if (error) {
-        return HelperFunctions.Notify('Error', error);
+        // return HelperFunctions.Notify('Error', error);
       }
-      if (!result) return navigate('Login');
+      // if (!result) return navigate('Login');
       dispatch.Account.setUserDetails(result);
-      return navigate('Home');
+      navigate('Home');
     });
   };
 

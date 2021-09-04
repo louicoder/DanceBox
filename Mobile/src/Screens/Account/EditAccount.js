@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, Pressable, Alert, Keyboard } from 'react-native';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { useDispatch, useSelector } from 'react-redux';
 import Input from '../../Components/Input';
@@ -29,8 +29,15 @@ const EditAccount = () => {
   });
 
   React.useEffect(() => {
-    // setState({ ...state, ...user });
+    getUser();
   }, []);
+
+  const getUser = () => {
+    HelperFunctions.getAsyncObjectData('user', ({ success, result }) => {
+      if (success) setState({ ...state, ...result });
+      // console.log('RESULT____', result);
+    });
+  };
 
   const updateUserDetails = () => {
     Keyboard.dismiss();
@@ -64,32 +71,57 @@ const EditAccount = () => {
 
   // const
   // console.log('Interests', user);
+  const isInd = state && state.accountType === 'individual';
+
   return (
     <React.Fragment>
       <LoadingModal isVisible={loading.updateAccountDetails} />
       <KeyboardAwareScrollView style={{ paddingHorizontal: RFValue(10) }} keyboardShouldPersistTaps="handled">
         {/* <Text>Thsis the edit account page</Text> */}
-        <Input
-          placeholder="Enter your full name"
-          title="Your full name"
-          extStyles={{ marginTop: RFValue(10) }}
-          value={state.name}
-          onChangeText={(name) => setState({ ...state, name })}
-        />
+        {isInd && (
+          <Input
+            placeholder="Enter your full name"
+            title="Your full name"
+            extStyles={{ marginTop: RFValue(10) }}
+            value={state.name}
+            onChangeText={(name) => setState({ ...state, name })}
+          />
+        )}
+        {!isInd && (
+          <Input
+            placeholder="Enter company name"
+            title="Company name"
+            extStyles={{ marginTop: RFValue(10) }}
+            value={state.companyName}
+            onChangeText={(companyName) => setState({ ...state, companyName })}
+          />
+        )}
+        {!isInd && (
+          <Input
+            placeholder="Enter company address"
+            title="Company address"
+            extStyles={{ marginTop: RFValue(10) }}
+            value={state.companyAddress}
+            onChangeText={(companyAddress) => setState({ ...state, companyAddress })}
+          />
+        )}
+
         <Input
           placeholder="Enter stage name or username or nickname"
           title="Your stage name/username/alias"
           value={state.username}
           onChangeText={(username) => setState({ ...state, username })}
         />
-        <Input
-          multiline
-          inputStyles={{ height: RFValue(200) }}
-          placeholder="Enter a brief intro about yourself"
-          title="Tell us about yourself"
-          onChangeText={(about) => setState({ ...state, about })}
-          value={state.about}
-        />
+        {!isInd && (
+          <Input
+            multiline
+            inputStyles={{ height: RFValue(200) }}
+            placeholder="Enter a brief intro about the company"
+            title="Tell us about the company"
+            onChangeText={(companyDescription) => setState({ ...state, companyDescription })}
+            value={state.companyDescription}
+          />
+        )}
 
         <Pressable
           onPress={() => setState({ ...state, tagsVisible: !state.tagsVisible })}

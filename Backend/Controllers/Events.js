@@ -72,7 +72,7 @@ const getEvent = async (req, res) => {
 
 const getRandomEvents = async (req, res) => {
   try {
-    await EventsModel.aggregate([ { $sample: { size: 5 } } ]).then((result) => res.json({ success: true, result }));
+    await EventsModel.aggregate([ { $sample: { size: 3 } } ]).then((result) => res.json({ success: true, result }));
   } catch (error) {
     return res.json({ success: false, result: error.message });
   }

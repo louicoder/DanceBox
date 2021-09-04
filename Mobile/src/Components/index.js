@@ -9,6 +9,11 @@ import Filters from './Filters';
 import DesignIcon from './DesignIcon';
 import IconWithText from './IconWithText';
 import OrganiserPreview from './OrganiserPreview';
+import LoginPlaceholder from './LoginPlaceholder';
+import StickyView from './StickyView';
+import PasswordInput from './PasswordInput';
+import CommentBox from './CommentBox';
+import Modal from './Modal';
 
 export {
   IconComp,
@@ -21,5 +26,10 @@ export {
   Filters,
   DesignIcon,
   IconWithText,
-  OrganiserPreview
+  OrganiserPreview,
+  LoginPlaceholder,
+  StickyView,
+  PasswordInput,
+  CommentBox,
+  Modal
 };

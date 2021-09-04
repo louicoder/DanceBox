@@ -10,7 +10,7 @@ export const keyGenerator = () => Math.random().toString(36).slice(2);
 export const CheckPermissions = async (permission, callback) => {
   await check(permission)
     .then(async (result) => {
-      console.log('Permisision result', result);
+      // console.log('Permisision result', result);
       switchPermissionResult(result, permission, callback);
     })
     .catch((error) => {
@@ -58,6 +58,8 @@ const switchPermissionResult = (result, permission, callback) => {
 export const ImagePicker = (callback, opts = { maxWidth: 500, maxHeight: 500 }) => {
   const options = {
     title: 'Select Photo',
+    includeBase64: true,
+    // quality: 0.5,
     // customButtons: [ { name: 'fb', title: 'Choose Photo from Gallery' } ],
     storageOptions: {
       skipBackup: true
@@ -160,10 +162,11 @@ export const getAsyncObjectData = async (key, callback) => {
   try {
     const jsonValue = await AsyncStorage.getItem(key);
     // return callback ? callback(JSON.parse(jsonValue)) : jsonValue != null ? JSON.parse(jsonValue) : null;
-    return callback({ error: null, result: JSON.parse(jsonValue) });
+    // console.log('USERRRRRRRRRR', JSON.parse(jsonValue));
+    return callback({ success: true, result: JSON.parse(jsonValue) });
   } catch (error) {
     // console.log('ERROR get storage', e);
-    return callback({ error, result: null });
+    return callback({ success: false, result: error.message });
   }
 };
 
@@ -171,10 +174,9 @@ export const storeAsyncObjectData = async (key, value, callback) => {
   try {
     if (typeof key !== 'string') return callback({ error: 'Unsupported data type, Only string allowed' });
     const jsonValue = JSON.stringify(value);
-    await AsyncStorage.setItem(key, jsonValue);
-    callback({ error: undefined });
+    await AsyncStorage.setItem(key, jsonValue).then(() => callback({ success: true, result: 'Success' }));
   } catch (e) {
-    callback({ error: e.message });
+    callback({ success: false, result: e.message });
     // saving error
   }
 };
@@ -190,7 +192,7 @@ export const removeAsyncObjectData = async (key, callback) => {
 };
 
 export const switchLoginError = (errorCode) => {
-  console.log(errorCode);
+  // console.log(errorCode);
   switch (errorCode) {
     case 'auth/invalid-email':
       return 'The email is invalid or badly formatted';
@@ -221,3 +223,5 @@ export const shuffleArray = (array) => {
 
   return array;
 };
+
+export const getUser = (callback) => getAsyncObjectData('user', (res) => callback(res));

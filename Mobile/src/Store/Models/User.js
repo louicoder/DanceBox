@@ -14,7 +14,7 @@ export default {
     async getUserDetails ({ uid, callback }) {
       try {
         await AxiosClient.get(`/account/${uid}`).then(({ data: { success, result } }) => {
-          console.log('Dispatch', dispatch);
+          // console.log('Dispatch', dispatch);
           if (success) {
             dispatch.User.setProfile(result);
             return callback({ result, success });

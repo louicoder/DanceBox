@@ -99,10 +99,11 @@ const CommentsLikeButtons = ({ comments, likes, type, id, extStyles, likeHandler
       style={{
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'flex-start',
+        // justifyContent: 'flex-start',
         width: '100%',
         justifyContent: 'space-between',
-        marginVertical: RFValue(10)
+        marginVertical: RFValue(20),
+        paddingHorizontal: RFValue(10)
       }}
     >
       <Text style={{ alignSelf: 'flex-end', fontSize: RFValue(16), color: '#aaa' }}>

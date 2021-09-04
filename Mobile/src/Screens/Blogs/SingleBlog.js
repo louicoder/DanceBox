@@ -57,14 +57,14 @@ const SingleBlog = ({
         >
           <Image
             source={{ uri: owner.imageUrl || CONSTANTS.DEFAULT_PROFILE }}
-            style={{ height: RFValue(40), width: RFValue(40), borderRadius: RFValue(50) }}
+            style={{ height: RFValue(30), width: RFValue(30), borderRadius: RFValue(50) }}
           />
           <View style={{ flexGrow: 1, flexDirection: 'row', justifyContent: 'space-between' }}>
             <View style={{ paddingLeft: RFValue(10) }}>
               <Text style={{ fontSize: RFValue(14) }}>{owner.name || owner.email}</Text>
               <Text style={{ fontSize: RFValue(12), color: '#aaa' }}>{moment(dateCreated).fromNow()}</Text>
             </View>
-            <MaterialCommunityIcons name="dots-vertical" size={RFValue(20)} style={{}} />
+            {/* <MaterialCommunityIcons name="dots-vertical" size={RFValue(20)} style={{}} /> */}
           </View>
         </View>
       )}

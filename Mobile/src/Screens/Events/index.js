@@ -15,8 +15,9 @@ import SingleEvent from './SingleEvent';
 const Events = ({ navigation, ...props }) => {
   const dispatch = useDispatch();
   const [ state, setState ] = React.useState({ period: null });
+  const [ user, setUser ] = React.useState({});
   const { events } = useSelector((state) => state.Events);
-  const { user } = useSelector((state) => state.Account);
+  // const { user } = useSelector((state) => state.Account);
   const loading = useSelector((state) => state.loading.effects.Events);
 
   React.useEffect(
@@ -31,8 +32,12 @@ const Events = ({ navigation, ...props }) => {
   );
 
   React.useEffect(() => {
-    // checkPermissions();
+    getUser();
   }, []);
+
+  const getUser = () => {
+    HelperFunctions.getAsyncObjectData('user', ({ success, result }) => success && setUser(result));
+  };
 
   const getEvents = () => {
     dispatch.Events.getEvents((response) => {

@@ -54,18 +54,20 @@ export default {
       }
     },
 
-    async createBlogComment ({ blogId, payload, callback }, state) {
+    async getBlogComments ({ blogId, callback }, state) {
       try {
-        await AxiosClient.patch(`/blogs/comments/create/${blogId}`, payload).then(({ data }) => {
-          if (data.success) {
-            const update = state.Blogs.blogs.map(
-              (blog) => (blog._id === blogId ? { ...blog, comments: [ ...blog.comments, payload ] } : blog)
-            );
-            dispatch.Blogs.setBlogs(update);
-            callback(data);
-          }
+        await AxiosClient.get(`/comments/blog/${blogId}`).then(({ data }) => {
+          // console.log('Commetns', data);
           callback(data);
         });
+      } catch (error) {
+        return callback({ success: false, result: error.message });
+      }
+    },
+
+    async createBlogComment ({ payload, callback }) {
+      try {
+        await AxiosClient.post(`/comments/blog/create`, payload).then(({ data }) => callback(data));
       } catch (error) {
         return callback({ success: false, result: error.message });
       }

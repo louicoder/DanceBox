@@ -13,7 +13,7 @@ const CommentBox = ({ postComment, loading = false }) => {
   const getUser = () => {
     //
     HelperFunctions.getAsyncObjectData('user', (res) => {
-      console.log('User comment box', res);
+      // console.log('User comment box', res);
     });
   };
 

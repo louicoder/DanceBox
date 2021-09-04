@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Dimensions, ScrollView, Image, Text, Alert, ImageBackground, Pressable } from 'react-native';
+import { View, Dimensions, ScrollView, Image, Text, Alert, ImageBackground, Pressable, TextInput } from 'react-native';
 import Ripple from 'react-native-material-ripple';
 import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -10,6 +10,8 @@ import { CONSTANTS, HelperFunctions } from '../../Utils';
 import { useDispatch, useSelector } from 'react-redux';
 import Organisers from './Organisers';
 import EventsInMonth from './EventsInMonth';
+import StickyView from '../../Components/StickyView';
+import CommentBox from '../../Components/CommentBox';
 
 const { width } = Dimensions.get('window');
 
@@ -17,23 +19,15 @@ const Home = ({ navigation, ...props }) => {
   // console.log('PROPS HOME', props);
   const dispatch = useDispatch();
   const [ state, setState ] = React.useState({ period: null, organisers: [], eventsInMonth: [] });
-  const { randomOrganisers, user } = useSelector((state) => state.Account);
+  const { user } = useSelector((state) => state.Account);
   const { profile } = useSelector((state) => state.User);
   const { blogs } = useSelector((state) => state.Blogs);
 
-  console.log('PROFILE', user);
+  // console.log('PROFILE', user);
   React.useEffect(() => {
     // getRandomOrganisers();
-    // getEventsInMonth();
+    getEventsInMonth();
   }, []);
-
-  const getRandomOrganisers = () => {
-    dispatch.Account.getRandomOrganisers(({ error, doc: randomOrganisers }) => {
-      // console.log('RES----DOC', res.doc);
-      if (error) return Alert.alert('Error', error);
-      // setState({ ...state, randomOrganisers });
-    });
-  };
 
   const getEventsInMonth = (det) => {
     let dt, mnth, yr, month;
@@ -60,19 +54,24 @@ const Home = ({ navigation, ...props }) => {
   return (
     // <SafeAreaView style={{ flex: 1 }}>
     <View style={{ flexGrow: 1 }}>
-      <View
+      {/* <StickyView>
+        <TextInput
+          style={{ height: RFValue(50), width: '100%', backgroundColor: '#000' }}
+          placeholder="Enter comment here..."
+        />
+      </StickyView> */}
+      {/* <CommentBox /> */}
+      <SafeAreaView
         style={{
           flexDirection: 'row',
           width: '100%',
           justifyContent: 'space-between',
           alignItems: 'center',
-          paddingHorizontal: RFValue(10),
-          marginTop: useSafeAreaInsets().top
+          paddingHorizontal: RFValue(10)
+          // marginTop: useSafeAreaInsets().top
         }}
       >
         <View style={{ marginVertical: RFValue(10) }}>
-          {/* <TextComp text="Rique Welcome to," extStyles={{ fontSize: RFValue(16) }} /> */}
-          {/* <Image source={LOGO} style={{ width: RFValue(40), height: RFValue(40) }} /> */}
           <TextComp text="Dance Box" extStyles={{ fontSize: RFValue(30), fontWeight: '700', color: '#010203' }} />
         </View>
         <Ripple
@@ -90,7 +89,7 @@ const Home = ({ navigation, ...props }) => {
         >
           <Icon name="menu" size={RFValue(20)} color="#fff" />
         </Ripple>
-      </View>
+      </SafeAreaView>
 
       <ScrollView style={{ flex: 1, width: '100%', backgroundColor: '#aaaaaa80' }}>
         <TopCategories navigation={navigation} />

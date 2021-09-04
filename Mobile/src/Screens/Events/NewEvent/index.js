@@ -8,9 +8,10 @@ import {
   ScrollView,
   Dimensions,
   Platform,
-  Keyboard
+  Keyboard,
+  Alert
 } from 'react-native';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { RFValue } from 'react-native-responsive-fontsize';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { CONSTANTS, HelperFunctions } from '../../../Utils';
@@ -374,6 +375,7 @@ const NewEvent = ({ navigation }) => {
             value={state.judgingNotes}
             onChangeText={(judgingNotes) => setState({ ...state, judgingNotes })}
             placeholder="Enter the notes how the event will be judged"
+            textAlignVertical="top"
             multiline
             style={{
               backgroundColor: '#eee',
@@ -381,7 +383,8 @@ const NewEvent = ({ navigation }) => {
               maxHeight: RFValue(200),
               marginVertical: RFValue(10),
               fontSize: RFValue(14),
-              paddingHorizontal: RFValue(10)
+              paddingHorizontal: RFValue(10),
+              paddingTop: RFValue(10)
               // maxHeight: RFValue(200)
             }}
           />
@@ -391,7 +394,7 @@ const NewEvent = ({ navigation }) => {
             scrollEnabled={false}
             value={state.description}
             onChangeText={(description) => setState({ ...state, description })}
-            placeholder="Enter event description"
+            placeholder="Enter a brief description of this event..."
             multiline
             style={{
               backgroundColor: '#eee',
@@ -399,7 +402,9 @@ const NewEvent = ({ navigation }) => {
               maxHeight: RFValue(200),
               marginVertical: RFValue(10),
               fontSize: RFValue(14),
-              paddingHorizontal: RFValue(10)
+              paddingHorizontal: RFValue(10),
+              paddingTop: RFValue(10)
+
               // maxHeight: RFValue(200)
             }}
           />

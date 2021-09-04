@@ -1,9 +1,26 @@
 import React from 'react';
-import { View, Text, Pressable } from 'react-native';
+import { View, Text, Pressable, Alert } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
+import { useDispatch, useSelector } from 'react-redux';
 import OrganiserPreview from '../../Components/OrganiserPreview';
+import { HelperFunctions } from '../../Utils';
 
 const Organisers = ({ navigation }) => {
+  const [ organisers, setOrganisers ] = React.useState([]);
+  const dispatch = useDispatch();
+  const { randomOrganisers } = useSelector((state) => state.Account);
+  React.useEffect(() => {
+    getRandomOrganisers();
+  }, []);
+
+  const getRandomOrganisers = () => {
+    dispatch.Account.getRandomOrganisers(({ success, result }) => {
+      // console.log('RES----DOC', res.doc);
+      if (!success) return Alert.alert('Error', result);
+      // setState(doc);
+    });
+  };
+
   return (
     <View style={{ width: '100%', paddingHorizontal: RFValue(10), backgroundColor: '#fff' }}>
       <View
@@ -24,7 +41,7 @@ const Organisers = ({ navigation }) => {
             color: '#aaa'
           }}
         >
-          Events Companies:
+          Featured Event Companies:
         </Text>
         <Pressable
           // onPress={() => Alert.alert('Pending feature', 'This feature is Coming soon')}
@@ -42,7 +59,10 @@ const Organisers = ({ navigation }) => {
           </Text>
         </Pressable>
       </View>
-      {[ 0, 2, 3, 4 ].map(() => <OrganiserPreview navigation={navigation} />)}
+      {randomOrganisers &&
+        randomOrganisers.map((orgzr) => (
+          <OrganiserPreview key={HelperFunctions.keyGenerator()} navigation={navigation} {...orgzr} />
+        ))}
     </View>
   );
 };

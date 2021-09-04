@@ -45,6 +45,7 @@ const Header = ({
   navigation,
   eventId,
   postComment,
+  showCommentBox,
   ...rest
 }) => {
   // const { user } = useSelector((state) => state.Account);
@@ -53,12 +54,11 @@ const Header = ({
   const [ user, setUser ] = React.useState(false);
   const [ comment, setComment ] = React.useState('posting something else here');
 
-  // console.log(object)
   React.useEffect(
     () => {
       // const sub =
-      const sub = navigation.addListener('focus', () => {
-        HelperFunctions.getAsyncObjectData('user', (res) => setUser(res));
+      const sub = navigation.addListener('focus', async () => {
+        await HelperFunctions.getAsyncObjectData('user', ({ success, result }) => setUser(result));
       });
     },
     [ navigation ]
@@ -66,12 +66,12 @@ const Header = ({
 
   const isParticipant = () => {
     // const part = events.find((event) => event._id === _id);
-    return participating && participating.findIndex((el) => el.uid === user.uid) !== -1;
+    return user && participating && participating.findIndex((el) => el._id === user._id) !== -1;
   };
 
   const isAttending = () => {
     // const attend = events.find((event) => event._id === _id);
-    return attending && attending.findIndex((el) => el.uid === user.uid) !== -1;
+    return user && attending && attending.findIndex((el) => el._id === user._id) !== -1;
   };
 
   return (
@@ -123,7 +123,7 @@ const Header = ({
         {/* End tags */}
 
         <Pressable
-          onPress={() => navigation.navigate('Voting')}
+          onPress={() => navigation.navigate('Voting', { user, eventId: _id })}
           style={{
             width: '100%',
             backgroundColor: '#eee',
@@ -226,6 +226,7 @@ const Header = ({
           </View>
 
           <Pressable
+            onPress={showCommentBox}
             style={{
               flexGrow: 1,
               backgroundColor: '#eee',

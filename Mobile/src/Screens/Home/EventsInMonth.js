@@ -3,7 +3,7 @@ import { View, Text, Pressable, Image } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { DesignIcon, IconWithText } from '../../Components';
 import OrganiserPreview from '../../Components/OrganiserPreview';
-import { CONSTANTS } from '../../Utils';
+import { CONSTANTS, HelperFunctions } from '../../Utils';
 
 const EventsInMonth = ({ navigation }) => {
   return (
@@ -31,7 +31,7 @@ const EventsInMonth = ({ navigation }) => {
       >
         Events happening this month:
       </Text>
-      {[ 0, 2, 3, 4 ].map((l) => <OrganiserPreview navigation={navigation} />)}
+      {[ 0, 2, 3, 4 ].map((l) => <OrganiserPreview key={HelperFunctions.keyGenerator()} navigation={navigation} />)}
     </View>
   );
 };

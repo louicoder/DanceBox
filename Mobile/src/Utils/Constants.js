@@ -4,3 +4,5 @@ export const DEFAULT_PROFILE =
 export const INTERESTS = [ 'Competition', 'Performance', 'Workshop', 'Festival', 'Class', 'Video shoot' ];
 
 export const EVENTS_PIC = 'https://campusrec.fsu.edu/wp-content/uploads/2019/02/dance.jpg';
+
+export const THEME_COLOR = '#FA7C14';

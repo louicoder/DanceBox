@@ -77,7 +77,7 @@ const CalendarScreens = () => (
 );
 
 const HomeScreens = ({ socket }) => (
-  <HomeStack.Navigator screenOptions={{ header: (props) => null }}>
+  <HomeStack.Navigator screenOptions={{ header: (props) => null }} headerMode="screen">
     <HomeStack.Screen name="Home" component={Home} socket={socket} />
     <HomeStack.Screen
       name="BlogProfile"
@@ -150,7 +150,9 @@ const SearchScreens = () => (
     <SearchStack.Screen
       name="EventProfile"
       component={EventProfile}
-      options={{ header: (props) => <Header {...props} title="Event details" /> }}
+      options={{
+        header: (props) => <Header {...props} title="Event details" />
+      }}
     />
     <SearchStack.Screen
       name="NewEventComment"

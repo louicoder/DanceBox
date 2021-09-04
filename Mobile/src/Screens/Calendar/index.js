@@ -26,7 +26,7 @@ const CalendarComponent = () => {
     if (det) {
       month = det.split('-').slice(0, 2).join('-');
       // month
-      console.log('Date here', month);
+      // console.log('Date here', month);
     } else {
       dt = new Date().toLocaleDateString('en-us').split('/');
       mnth = dt[0].length === 1 ? `0${dt[0]}` : dt[0];
@@ -73,14 +73,14 @@ const CalendarComponent = () => {
       {state.calendarVisible && (
         <Calendar
           onMonthChange={(month) => {
-            console.log('month changed', month);
+            // console.log('month changed', month);
             getEventsInMonth(month.dateString);
           }}
           current={new Date()}
           // displayLoadingIndicator
           markedDates={state.markedDates}
           markingType={'multi-dot'}
-          onDayPress={(e) => console.log('Date', e)}
+          // onDayPress={(e) => console.log('Date', e)}
         />
       )}
 

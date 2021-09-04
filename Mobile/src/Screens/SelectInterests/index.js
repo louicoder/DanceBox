@@ -7,7 +7,7 @@ import LoadingModal from '../../Components/LoadingModal';
 import { CONSTANTS } from '../../Utils';
 import { QUERIES } from '../../Firebase';
 
-const Interests = ({ navigation, route: { params: { docId } } }) => {
+const Interests = ({ navigation }) => {
   const { user } = useSelector((state) => state.Account);
   const [ state, setState ] = React.useState({ interests: [], loading: false });
   const dispatch = useDispatch();
@@ -22,13 +22,12 @@ const Interests = ({ navigation, route: { params: { docId } } }) => {
   };
 
   const postIntersts = async () => {
-    setState({ ...state, loading: true });
-    const { interests } = state;
-
-    await QUERIES.updateDoc('Users', docId, { interests }, (res) => {
-      if (res.error) return Alert.alert('Error updating interests', res.error);
-      return navigation.navigate('Home');
-    });
+    // setState({ ...state, loading: true });
+    // const { interests } = state;
+    // await QUERIES.updateDoc('Users', docId, { interests }, (res) => {
+    //   if (res.error) return Alert.alert('Error updating interests', res.error);
+    //   return navigation.navigate('Home');
+    // });
     // await firestore()
     //   .collection('Users')
     //   .doc(user.uid)

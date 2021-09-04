@@ -10,7 +10,7 @@ const UserSchema = new mongoose.Schema({
   eventCategories: { type: Array },
   name: { type: String },
   username: { type: String },
-  email: { type: String, required: true },
+  email: { type: String, required: true, unique: true },
   imageUrl: { type: String },
   interests: { type: Array },
   facebook: { type: String },
@@ -22,7 +22,8 @@ const UserSchema = new mongoose.Schema({
   whatsapp: { type: String },
   about: { type: String },
   followers: { type: Array },
-  following: { type: Array }
+  following: { type: Array },
+  password: { type: String, required: true }
 });
 
 module.exports = mongoose.model('users', UserSchema);

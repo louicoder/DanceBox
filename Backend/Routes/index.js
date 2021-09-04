@@ -3,5 +3,6 @@ const EventsRoute = require('./Events');
 const ReviewsRoute = require('./Reviews');
 const Companies = require('./Companies');
 const AccountsRoute = require('./Account');
+const CommentsRoute = require('./Comments');
 
-module.exports = { BlogsRoute, EventsRoute, ReviewsRoute, Companies, AccountsRoute };
+module.exports = { BlogsRoute, EventsRoute, ReviewsRoute, Companies, AccountsRoute, CommentsRoute };

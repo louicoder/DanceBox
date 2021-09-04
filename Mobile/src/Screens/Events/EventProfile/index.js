@@ -26,15 +26,18 @@ import { useDispatch, useSelector } from 'react-redux';
 import { KeyboardAwareFlatList, KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ComingSoon, DesignIcon } from '../../../Components';
-import CommentBox from '../../../Components/CommentBox';
+import CommentBox from './CommentBox';
+// import KeyboardStickyView from '../../Components/StickyView';
 
 const EventProfile = ({ navigation, route }) => {
   const dispatch = useDispatch();
-  const { user } = useSelector((state) => state.Account);
-  const stato = useSelector((state) => state);
+  // const { user } = useSelector((state) => state.Account);
+  // const stato = useSelector((state) => state);
   const loading = useSelector((state) => state.loading.effects.Events);
   const [ event, setEvent ] = React.useState({});
+  const [ state, setState ] = React.useState({ commentShowing: false, comments: [] });
   const [ isKeyboardVisible, setKeyboardVisible ] = React.useState(false);
+  const [ user, setUser ] = React.useState(false);
 
   React.useEffect(
     () => {
@@ -44,27 +47,22 @@ const EventProfile = ({ navigation, route }) => {
   );
 
   React.useEffect(() => {
-    const KS = Keyboard.addListener('keyboardDidShow', () => setKeyboardVisible(true));
-    const KH = Keyboard.addListener('keyboardDidHide', () => setKeyboardVisible(false));
-
-    return () => {
-      KH.remove();
-      KS.remove();
-    };
+    HelperFunctions.getUser(({ result, success }) => success && setUser(result));
   }, []);
 
-  // console.log('----USER---', stato);
+  // console.log('----USER---', user);
 
   const getEvent = () =>
     dispatch.Events.getEvent({
       eventId: route.params._id,
-      callback: (resp) => {
-        if (!resp.success)
+      callback: ({ success, result }) => {
+        if (!success)
           return Alert.alert(
             'Error getting event',
             'Something went wrong while trying to fetch this event, please try again'
           );
-        setEvent(resp.result);
+        setEvent(result);
+        return getComments();
       }
     });
 
@@ -94,79 +92,83 @@ const EventProfile = ({ navigation, route }) => {
   };
 
   const postComment = (comment) => {
-    // Keyboard.dismiss();
-    const { email, name = '', imageUrl = '', uid } = user;
-    const owner = { email, name, imageUrl, uid };
+    Keyboard.dismiss();
     dispatch.Events.createEventComment({
-      eventId: event._id,
-      payload: { comment, owner },
-      callback: (res) => {
-        // console.log('Rvent when going back==', res);
-        if (!res.success) return HelperFunctions.Notify('Error', res.result);
-        const event = events.find((event) => event._id === eventId);
-        return navigation.navigate('EventProfile', { ...event, comments: [ ...event.comments, { comment, owner } ] });
+      eventId: user,
+      payload: { comment, authorId: user._id, type: 'event', id: route.params.eventId },
+      callback: ({ result, success }) => {
+        if (!success) return HelperFunctions.Notify('Error', result);
+        let comments = [ ...state.comments ];
+        comments.unshift(result);
+        setState({ ...state, comments, commentShowing: false });
       }
     });
   };
 
+  const getComments = () =>
+    dispatch.Events.getEventComments({
+      eventId: route.params._id,
+      callback: ({ result, success }) => {
+        // console.log('Comments', result);
+        if (!success) return HelperFunctions.Notify('Erro getting comments', result);
+        setState({ ...state, comments: result });
+      }
+    });
+
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === 'ios' && 'padding'}
-      keyboardVerticalOffset={!isKeyboardVisible ? 40 + useSafeAreaInsets().top : 0}
-    >
-      <CommentBox visible={isKeyboardVisible} />
-      <SafeAreaView
-        // behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        // keyboardVerticalOffset={Platform.OS === 'ios' ? RFValue(90) : 0}
+    <SafeAreaView style={{ flex: 1 }}>
+      {state.commentShowing && (
+        <CommentBox close={() => setState({ ...state, commentShowing: false })} postComment={postComment} user={user} />
+      )}
+      <ScrollView
         style={{ flex: 1, backgroundColor: '#eee' }}
+        // extraScrollHeight={useSafeAreaInsets().top}
       >
         {/* <LoadingModal
           isVisible={
             loading.likeEvent || loading.attendParticipate || loading.getEvent || loading.unattendUnparticipate
           }
         /> */}
-        <ScrollView
-          style={{ flex: 1, backgroundColor: '#eee', zIndex: 10 }}
-          // extraScrollHeight={useSafeAreaInsets().top}
-        >
-          <Header
-            {...event}
-            navigation={navigation}
-            attendParticipate={attendParticipate}
-            unattendUnparticipate={unattendUnparticipate}
-            likeHandler={likeHandler}
-            postComment={(comment) => postComment(comment)}
-          />
-          <View style={{ paddingVertical: RFValue(10), flexGrow: 1, backgroundColor: '#fff' }}>
-            {event &&
-              event.comments &&
-              event.comments.map((item, index) => (
-                <SingleComment
-                  first={index === 0}
-                  {...item}
-                  navigation={navigation}
-                  last={index + 1 === event.comments.length}
-                  goto={() => navigation.navigate('NewEventComment', { eventId: event._id })}
-                />
-              ))}
-            {event.comments && !event.comments.length ? (
-              <ComingSoon title="">
-                <Pressable
-                  style={{ alignItems: 'center', justifyContent: 'center' }}
-                  onPress={() => navigation.navigate('NewEventComment', { eventId })}
-                >
-                  <DesignIcon name="chatbubble-ellipses-outline" pkg="io" size={RFValue(100)} color="#ccc" />
-                  <Text style={{ textAlign: 'center', color: '#ccc', fontSize: RFValue(16) }}>
-                    No comments yet, touch here to be the first one to add a comment...
-                  </Text>
-                </Pressable>
-              </ComingSoon>
-            ) : null}
-          </View>
-        </ScrollView>
-      </SafeAreaView>
-    </KeyboardAvoidingView>
+
+        <Header
+          {...event}
+          navigation={navigation}
+          attendParticipate={attendParticipate}
+          unattendUnparticipate={unattendUnparticipate}
+          likeHandler={likeHandler}
+          postComment={(comment) => postComment(comment)}
+          showCommentBox={() => setState({ ...state, commentShowing: true })}
+        />
+
+        <View style={{ paddingVertical: RFValue(10), flexGrow: 1, backgroundColor: '#fff' }}>
+          {state.comments && state.comments.length ? (
+            state.comments.map((item, index) => (
+              <SingleComment
+                key={item._id}
+                first={index === 0}
+                {...item}
+                navigation={navigation}
+                last={index + 1 === event.comments.length}
+                // goto={() => navigation.navigate('NewEventComment', { eventId: event._id })}
+              />
+            ))
+          ) : null}
+          {event.comments && !event.comments.length ? (
+            <ComingSoon title="">
+              <Pressable
+                style={{ alignItems: 'center', justifyContent: 'center' }}
+                onPress={() => navigation.navigate('NewEventComment', { eventId })}
+              >
+                <DesignIcon name="chatbubble-ellipses-outline" pkg="io" size={RFValue(100)} color="#ccc" />
+                <Text style={{ textAlign: 'center', color: '#ccc', fontSize: RFValue(16) }}>
+                  No comments yet, touch here to be the first one to add a comment...
+                </Text>
+              </Pressable>
+            </ComingSoon>
+          ) : null}
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 

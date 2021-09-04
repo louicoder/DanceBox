@@ -6,7 +6,7 @@ export default {
   state: { user: {}, events: [], blogs: [], randomOrganisers: [], allOrganisers: [] },
   reducers: {
     setUserDetails (state, user) {
-      console.log('Setting user details', state);
+      // console.log('Setting user details----', user);
       return { ...state, user };
     },
     setEventsAndBlogs (state, { events, blogs }) {
@@ -24,33 +24,41 @@ export default {
     //
     async createUserAccount ({ payload, callback }) {
       try {
-        await QUERIES.createUserAccount(payload, callback);
+        await AxiosClient.post('/accounts/create', payload).then(({ data }) => {
+          if (data.success) {
+            dispatch.Account.setUserDetails(data.result.user);
+            HelperFunctions.storeAsyncObjectData('user', data.result.user, (res) => callback(res));
+          }
+          return callback(data);
+        });
       } catch (error) {
         return callback({ success: false, result: error.message });
       }
     },
 
-    async signIn ({ payload: { email, password }, callback }) {
+    async login ({ email, password, callback }) {
       try {
-        await QUERIES.signIn(email, password, async ({ uid, error }) => {
-          if (error) {
-            return callback({ error, doc: undefined });
+        await AxiosClient.post('/accounts/login', { email, password }).then(({ data }) => {
+          if (data.success) {
+            dispatch.Account.setUserDetails(data.result.user);
+            HelperFunctions.storeAsyncObjectData('user', data.result.user, callback);
           }
-          return dispatch.Account.getUserDetails({ uid, callback });
+          callback(data);
         });
       } catch (error) {
-        return callback({ success: false, result: error });
+        return callback({ success: false, result: error.message });
       }
     },
 
     async getRandomOrganisers (callback) {
       try {
-        await AxiosClient.get(`/accounts/organisers`).then((res) => {
-          dispatch.Account.setRandomOrganisers(res.data.result);
-          callback({ error: undefined, doc: [ ...res.data.result ] });
+        await AxiosClient.get(`/accounts/organisers`).then(({ data }) => {
+          dispatch.Account.setRandomOrganisers(data.result);
+          // console.log('Orgainserss', data.result);
+          callback(data);
         });
       } catch (error) {
-        return callback({ error: error.message, success: false });
+        return callback({ result: error.message, success: false });
       }
     },
 
@@ -68,6 +76,7 @@ export default {
     async getOrganiser ({ uid, callback }) {
       try {
         await AxiosClient.get(`/accounts/${uid}`).then(({ data }) => {
+          // console.log('Data===', data, 'UID====', uid);
           callback(data);
         });
       } catch (error) {
@@ -77,9 +86,9 @@ export default {
 
     async getUserDetails ({ uid, callback }) {
       try {
-        await AxiosClient.get(`/accounts/${uid}`).then(({ data: { success, result } }) => {
-          if (success) return callback({ result, success });
-          callback({ success, result });
+        await AxiosClient.get(`/accounts/${uid}`).then(({ data }) => {
+          // if (success) return callback({ result, success });
+          callback(data);
         });
       } catch (error) {
         return callback({ success: false, result: error.message });
@@ -108,8 +117,8 @@ export default {
         if (eventSucess && blogSucess) {
           dispatch.Account.setEventsAndBlogs({ events, blogs });
         }
-        console.log('USER EVENTS', events);
-        console.log('USER BLOGS', blogs);
+        // console.log('USER EVENTS', events);
+        // console.log('USER BLOGS', blogs);
         callback({ success: eventSucess && blogSucess, result: { events, blogs } });
       } catch (error) {
         return callback({ success: false, result: error.message });

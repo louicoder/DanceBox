@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TextInput, Platform } from 'react-native';
+import { View, Text, TextInput, Platform, Pressable } from 'react-native';
 import Ripple from 'react-native-material-ripple';
 import { RFValue } from 'react-native-responsive-fontsize';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -26,15 +26,16 @@ const PasswordInput = ({
       <TextInput
         autoCapitalize="none"
         autoCorrect={false}
+        autoFocus
         autoCompleteType="off"
         ref={El}
         style={{
-          height: RFValue(50),
+          height: RFValue(45),
           borderWidth: filled ? 0 : RFValue(1),
           backgroundColor: filled ? '#eee' : 'transparent',
           borderColor: '#ccc',
           flexGrow: 1,
-          fontSize: RFValue(14),
+          fontSize: RFValue(16),
           paddingHorizontal: RFValue(10)
           // borderTopLeftRadius: RFValue(5),
           // borderBottomLeftRadius: RFValue(5)
@@ -44,7 +45,7 @@ const PasswordInput = ({
         placeholder={placeholder}
         secureTextEntry={secure}
       />
-      <Ripple
+      <Pressable
         style={{
           width: RFValue(50),
           backgroundColor: '#eee',
@@ -53,11 +54,11 @@ const PasswordInput = ({
           // borderTopRightRadius: RFValue(5),
           // borderBottomRightRadius: RFValue(5)
         }}
-        onPressIn={switchPasswordVisibility}
-        rippleCentered
+        onPress={switchPasswordVisibility}
+        // rippleCentered
       >
         <Icon name={secure ? 'eye' : 'eye-off'} size={RFValue(25)} color="#aaa" />
-      </Ripple>
+      </Pressable>
     </View>
   );
 };
