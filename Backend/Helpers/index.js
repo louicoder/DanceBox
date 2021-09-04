@@ -1,6 +1,6 @@
 const Bcrypt = require('bcrypt');
 const JWT = require('jsonwebtoken');
-const { AccountModel } = require('../Models');
+const { AccountModel, CommentsModel } = require('../Models');
 require('dotenv').config();
 
 const paginateHelper = (page, limit, totalDocuments, result, res) => {
@@ -65,8 +65,27 @@ const userFiller = async (array, field = '_id') => {
   }
 };
 
+// const commentsFiller = async (_id, type, authorId) => {
+//   try {
+//     let query = { _id, type };
+//     if (authorId) query = { ...query, authorId };
+//     // forof(comment)
+//     return await CommentsModel.find(query).countDocuments();
+//   } catch (error) {
+//     return;
+//   }
+// };
+
 const hashPassword = (stringToHash) => Bcrypt.hashSync(stringToHash, 10);
 
 const decodePassword = (password, hashedPassword) => Bcrypt.compareSync(password, hashedPassword);
 
-module.exports = { paginateHelper, createToken, validateToken, hashPassword, decodePassword, userFiller };
+module.exports = {
+  paginateHelper,
+  createToken,
+  validateToken,
+  hashPassword,
+  decodePassword,
+  userFiller
+  // commentsFiller
+};

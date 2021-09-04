@@ -10,6 +10,7 @@ import { Filters } from '../../Components';
 import LoadingModal from '../../Components/LoadingModal';
 import Modal from '../../Components/Modal';
 import { HelperFunctions } from '../../Utils';
+import { THEME_COLOR } from '../../Utils/Constants';
 import SingleEvent from './SingleEvent';
 
 const Events = ({ navigation, ...props }) => {
@@ -32,12 +33,8 @@ const Events = ({ navigation, ...props }) => {
   );
 
   React.useEffect(() => {
-    getUser();
+    HelperFunctions.getUser(({ success, result }) => success && setUser(result));
   }, []);
-
-  const getUser = () => {
-    HelperFunctions.getAsyncObjectData('user', ({ success, result }) => success && setUser(result));
-  };
 
   const getEvents = () => {
     dispatch.Events.getEvents((response) => {
@@ -45,26 +42,7 @@ const Events = ({ navigation, ...props }) => {
     });
   };
 
-  // console.log('ACCount type', user);
-
-  const checkPermissions = async () => {
-    try {
-      await HelperFunctions.CHECK_GALLERY_PERMISSIONS((res) => {
-        // console.log('Gallery prems', res);
-        if (!res.success) {
-          return HelperFunctions.Notify(
-            'Error',
-            'You need to grant DAncebox permissions to access your gallery so you can upload images '
-          );
-          // return navigate('Home');
-        }
-        // return navigate('Home');
-      });
-    } catch (error) {
-      return HelperFunctions.Notify('Error', error.message);
-    }
-  };
-
+  // console.log('Events', events && events[0]);
   return (
     <React.Fragment>
       <LoadingModal isVisible={loading.getEvents} />
@@ -79,14 +57,14 @@ const Events = ({ navigation, ...props }) => {
               marginVertical: RFValue(10)
             }}
           >
-            <Text style={{ fontSize: RFValue(30), fontWeight: '700' }}>Events</Text>
+            <Text style={{ fontSize: RFValue(30), fontWeight: '700', color: THEME_COLOR }}>Events</Text>
             {user &&
             user.accountType === 'company' && (
               <Pressable
                 onPress={() => navigation.navigate('NewEvent')}
                 // onPress={() => Alert.alert('Coming soon', 'This feature is fully coming soon, look out for more updates')}
                 style={{
-                  backgroundColor: '#000',
+                  backgroundColor: THEME_COLOR,
                   width: RFValue(40),
                   height: RFValue(40),
                   borderRadius: RFValue(50),
@@ -94,7 +72,7 @@ const Events = ({ navigation, ...props }) => {
                   justifyContent: 'center'
                 }}
               >
-                <Icon name="plus" color="#fff" size={RFValue(20)} />
+                <Icon name="plus" color="#fff" size={RFValue(25)} />
               </Pressable>
             )}
           </View>

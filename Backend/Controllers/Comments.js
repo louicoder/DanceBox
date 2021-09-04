@@ -33,11 +33,11 @@ const getBlogComments = async (req, res) => {
   const { blogId: id } = req.params;
   const { page = 1, limit = 10 } = req.query;
   try {
-    const total = await CommentsModel.find({ id, type: 'blog' }).countDocuments();
+    const total = await CommentsModel.find({ id, commentType: 'blog' }).countDocuments();
     console.log('Here in blog comments', total);
-    const response = await CommentsModel.find({ id });
+    const response = await CommentsModel.find({ id, commentType: 'blog' });
     let final = await userFiller(response, 'authorId');
-    final.sort((a, b) => b.dateCreated - a.dateCreated);
+    // final.sort((a, b) => b.dateCreated - a.dateCreated);
     return paginateHelper(page, limit, total, final, res);
   } catch (error) {
     // console.log('Final comments', error.message);
@@ -52,10 +52,10 @@ const getEventComments = async (req, res) => {
   const { page = 1, limit = 10 } = req.query;
   try {
     // console.log('Here incomments');
-    const total = await CommentsModel.find({ id, type: 'event' }).countDocuments();
-    const response = await CommentsModel.find({ id });
+    const total = await CommentsModel.find({ id, commentType: 'event' }).countDocuments();
+    const response = await CommentsModel.find({ id, commentType: 'event' });
     let final = await userFiller(response, 'authorId');
-    final.sort((a, b) => b.dateCreated - a.dateCreated);
+    // final.sort((a, b) => b.dateCreated - a.dateCreated);
     return paginateHelper(page, limit, total, final, res);
   } catch (error) {
     // console.log('Final comments', error.message);

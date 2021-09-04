@@ -97,13 +97,7 @@ export default {
 
     async updateAccountDetails ({ uid, payload, callback }) {
       try {
-        await QUERIES.updateDoc('Users', uid, payload, (res) => {
-          // console.log('ERRR GET DET', res);
-          if (!res.error) {
-            dispatch.Account.setUserDetails(res.doc);
-          }
-          callback({ ...res, doc: { ...res.doc, uid } });
-        });
+        await AxiosClient.post(`/accounts/update/${uid}`, payload).then(({ data }) => callback(data));
       } catch (error) {
         return callback({ success: false, result: error.message });
       }

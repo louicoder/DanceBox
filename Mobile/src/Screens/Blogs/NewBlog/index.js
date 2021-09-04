@@ -17,10 +17,11 @@ import auth from '@react-native-firebase/auth';
 import { useSelector } from 'react-redux';
 
 const NewBlog = ({ navigation }) => {
-  const { user } = useSelector((state) => state.Account);
+  // const { user } = useSelector((state) => state.Account);
   const loading = useSelector((state) => state.loading.effects.Blogs);
   const dispatch = useDispatch();
-  const [ modal, setModal ] = React.useState(true);
+  // const [ modal, setModal ] = React.useState(true);
+  const [ user, setUser ] = React.useState({});
   const [ state, setState ] = React.useState({
     image: {},
     tags: [],
@@ -29,7 +30,7 @@ const NewBlog = ({ navigation }) => {
     free: 'free',
     datePickerVisible: false,
     loading: false,
-    title: 'My new blog',
+    title: '',
     description: '',
     component: 'startdate',
     modalVisible: false
@@ -37,23 +38,24 @@ const NewBlog = ({ navigation }) => {
   });
 
   React.useEffect(() => {
-    checkPermissions();
+    HelperFunctions.getUser(({ result, success }) => success && setUser(result));
+    // checkPermissions();
   }, []);
 
-  const checkPermissions = async () => {
-    try {
-      await HelperFunctions.CHECK_GALLERY_PERMISSIONS((res) => {
-        // console.log('Gallery prems', res);
-        if (!res.success)
-          return HelperFunctions.Notify(
-            'Error',
-            'You need to grant DAncebox permissions to access your gallery so you can upload images for you blog'
-          );
-      });
-    } catch (error) {
-      return HelperFunctions.Notify('Error', error.message);
-    }
-  };
+  // const checkPermissions = async () => {
+  //   try {
+  //     await HelperFunctions.CHECK_GALLERY_PERMISSIONS((res) => {
+  //       // console.log('Gallery prems', res);
+  //       if (!res.success)
+  //         return HelperFunctions.Notify(
+  //           'Error',
+  //           'You need to grant DAncebox permissions to access your gallery so you can upload images for you blog'
+  //         );
+  //     });
+  //   } catch (error) {
+  //     return HelperFunctions.Notify('Error', error.message);
+  //   }
+  // };
 
   const selectImage = () =>
     HelperFunctions.CheckPermissions(
@@ -63,23 +65,6 @@ const NewBlog = ({ navigation }) => {
         if (image.uri) setState({ ...state, image });
       })
     );
-
-  // const RenderModComponent = ({ component, endDate, startDate, setDate, closeModal }) => {
-  //   // console.log('CReate');
-  //   switch (component) {
-  //     case 'time':
-  //       return <Time />;
-  //     case 'startdate':
-  //       // return <StartDate setDate={setDate} date={startDate} closeModal={closeModal} />;
-  //       return (
-  //         <View
-  //           style={{ width: '100%', height: RFValue(200), backgroundColor: '#fff', position: 'absolute', bottom: 0 }}
-  //         />
-  //       );
-  //     case 'enddate':
-  //       return <EndDate setDate={setDate} date={endDate} closeModal={closeModal} />;
-  //   }
-  // };
 
   const uploadBlogImage = async (blogId) => {
     try {
@@ -127,17 +112,15 @@ const NewBlog = ({ navigation }) => {
     setState({ ...state, loading: true });
 
     try {
-      const dateCreated = new Date().toISOString();
       const { description, title, tags } = state;
       const payload = {
         description,
         title,
-        likes: [],
-        comments: [],
         imageUrl: '',
         tags,
-        owner: { uid: user.uid, email: user.email, imageUrl: user.imageUrl || '', name: user.name }
+        authorId: user._id
       };
+
       dispatch.Blogs.createBlog({
         payload,
         callback: (res) => {
@@ -215,7 +198,7 @@ const NewBlog = ({ navigation }) => {
         ) : null}
 
         <Pressable
-          onPress={() => setState({ ...state, tagsVisible: !state.tagsVisible })}
+          // onPress={() => setState({ ...state, tagsVisible: !state.tagsVisible })}
           style={{
             flexDirection: 'row',
             alignItems: 'center',
@@ -224,10 +207,10 @@ const NewBlog = ({ navigation }) => {
           }}
         >
           <Text style={{ fontSize: RFValue(14) }}>Add tags to your blog</Text>
-          <Icon name={state.tagsVisible ? 'chevron-up' : 'chevron-down'} size={RFValue(30)} />
+          {/* <Icon name={state.tagsVisible ? 'chevron-up' : 'chevron-down'} size={RFValue(30)} /> */}
         </Pressable>
         {state.tagsVisible ? (
-          <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginHorizontal: RFValue(10) }}>
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap', margin: RFValue(10) }}>
             {CONSTANTS.INTERESTS.map((item) => (
               <Pressable
                 key={HelperFunctions.keyGenerator()}

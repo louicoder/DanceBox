@@ -175,6 +175,7 @@ const OrganiserProfile = ({ navigation, route: { params } }) => {
               (social, index) =>
                 state[social] ? (
                   <IconWithText
+                    key={HelperFunctions.keyGenerator()}
                     extStyles={{ marginBottom: RFValue(15) }}
                     name={social}
                     pkg="fa"

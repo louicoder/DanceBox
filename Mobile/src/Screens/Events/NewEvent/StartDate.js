@@ -23,8 +23,9 @@ const StartDate = ({ date, setDate, closeModal }) => {
         current={date}
         minDate={new Date()}
         enableSwipeMonths={true}
-        onDayPress={({ dateString }) => setDate('startDate', dateString)}
-        markedDates={{ [moment(date).format('YYYY-MM-DD')]: { selected: true } }}
+        // onDayPress={({ dateString }) => setDate('startDate', dateString)}
+        onDayPress={({ dateString }) => setDate(new Date(dateString).toISOString())}
+        markedDates={{ [moment(date).format('DD-MM-YYYY')]: { selected: true } }}
       />
     </View>
   );

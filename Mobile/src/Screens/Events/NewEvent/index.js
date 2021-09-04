@@ -32,22 +32,25 @@ import { uploadImage } from '../../../Utils/HelperFunctions';
 import { QUERIES } from '../../../Firebase';
 import LoadingModal from '../../../Components/LoadingModal';
 import { useSelector } from 'react-redux';
+import { Button } from '../../../Components';
 
 const { height } = Dimensions.get('window');
 const NewEvent = ({ navigation }) => {
   const dispatch = useDispatch();
   const [ visible, setVisible ] = React.useState(true);
+  const [ user, setUser ] = React.useState(true);
   const loading = useSelector((state) => state.loading.effects.Events);
-  const { user } = useSelector((state) => state.Account);
+  // const { user } = useSelector((state) => state.Account);
   const [ imageLoading, setImageLoading ] = React.useState(false);
 
   const [ state, setState ] = React.useState({
-    title: '',
+    title: 'Online battle callout 2021',
     startDate: new Date(),
     endDate: new Date(),
     image: {},
-    venue: '',
-    description: ' ',
+    venue: 'Kamwokya playground',
+    description:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Indicant pueri, in quibus ut in speculis natura cernitur. Magni enim aestimabat pecuniam non modo non contra leges, sed etiam legibus partam. Vitae autem degendae ratio maxime quidem illis placuit quieta. Sed eum qui audiebant, quoad poterant, defendebant sententiam suam. Duo Reges: constructio interrete. Nunc dicam de voluptate, nihil scilicet novi, ea tamen, quae te ipsum probaturum esse confidam. Itaque in rebus minime obscuris non multus est apud eos disserendi labor. Nescio quo modo praetervolavit oratio',
     tags: [],
     tagsVisible: true,
     // date: moment(new Date()).format('YYYY-MM-DD'),
@@ -57,7 +60,8 @@ const NewEvent = ({ navigation }) => {
     modalVisible: false,
     modalComponent: 'startdate',
     // amount: 0,
-    judgingNotes: '',
+    judgingNotes:
+      'This battle will be strictly judged by the audience online and the results be available for everyone at any time to take a look',
     judgingCriteria: 'Judges',
     noOfJudges: 3,
     loading: false,
@@ -65,9 +69,9 @@ const NewEvent = ({ navigation }) => {
     // dateTime: new Date().toString()
   });
 
-  // console.log('STATE::::::', state);
-  // const checkPermissions = async () => await HelperFunctions.CheckPermissions()
-  // console.log('STATE DATE', new Date(state.date).toISOString('YYYY-MM-DD'));
+  React.useEffect(() => {
+    HelperFunctions.getUser(({ success, result }) => success && setUser(result));
+  }, []);
 
   const selectImage = async () =>
     await HelperFunctions.CHECK_GALLERY_PERMISSIONS(async (res) => {
@@ -96,6 +100,8 @@ const NewEvent = ({ navigation }) => {
   };
 
   const uploadEventImage = async (eventId) => {
+    setImageLoading(true);
+
     await HelperFunctions.uploadImage(
       `Events/${eventId}/${state.image.fileName}`,
       state.image.uri,
@@ -142,18 +148,17 @@ const NewEvent = ({ navigation }) => {
       imageUrl: '',
       price: state.free ? '0' : price,
       judgingCriteria: criteria,
-      owner: { uid: user.uid, email: user.email, name: user.name || '', imageUrl: user.imageUrl || '' }
+      authorId: user._id
     };
 
     dispatch.Events.createEvent({
       payload,
       callback: (res) => {
-        setImageLoading(true);
         if (!res.success) return HelperFunctions.Notify('Error', res.result);
         if (state.image.uri && res.success) {
           return uploadEventImage(res.result._id);
         }
-        setImageLoading(true);
+        setImageLoading(false);
         return navigation.navigate('Events');
       }
     });
@@ -409,8 +414,9 @@ const NewEvent = ({ navigation }) => {
             }}
           />
 
-          <Pressable
+          {/* <Pressable
             onPress={createEvent}
+            loading
             style={{
               backgroundColor: '#010203',
               height: RFValue(50),
@@ -420,7 +426,14 @@ const NewEvent = ({ navigation }) => {
             }}
           >
             <Text style={{ color: '#fff', fontSize: RFValue(16), fontWeight: 'bold' }}>Create event</Text>
-          </Pressable>
+          </Pressable> */}
+          <Button
+            title="Create event"
+            onPress={createEvent}
+            loading={loading.createEvent || imageLoading}
+            extStyles={{ backgroundColor: '#000' }}
+            textStyles={{ color: '#fff' }}
+          />
         </View>
         {/* end freee */}
       </KeyboardAwareScrollView>

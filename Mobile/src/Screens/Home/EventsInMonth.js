@@ -1,11 +1,42 @@
 import React from 'react';
 import { View, Text, Pressable, Image } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
+import { useDispatch } from 'react-redux';
 import { DesignIcon, IconWithText } from '../../Components';
+import EventPreview from '../../Components/EventPreview';
 import OrganiserPreview from '../../Components/OrganiserPreview';
 import { CONSTANTS, HelperFunctions } from '../../Utils';
 
 const EventsInMonth = ({ navigation }) => {
+  const [ events, setEvents ] = React.useState([]);
+  const dispatch = useDispatch();
+  React.useEffect(() => {
+    getEventsInMonth();
+  }, []);
+
+  const getEventsInMonth = (det) => {
+    let dt, mnth, yr, month;
+
+    dt = new Date().toLocaleDateString('en-us').split('/');
+    mnth = dt[0].length === 1 ? `0${dt[0]}` : dt[0];
+    yr = dt[2];
+    month = `${yr}-${mnth}`;
+
+    dispatch.Events.getEventsInMonth({
+      // month,
+      month: '05',
+      callback: ({ result, success }) => {
+        // console.log('HERE marked', result);
+        let dates = {};
+        if (success) {
+          result.map((evnt) => (dates = { ...dates, [evnt.startDate.slice(0, 10)]: { selected: true } }));
+          setEvents(result);
+        }
+      }
+    });
+  };
+
+  console.log('EVENTS IN MONTH', events);
   return (
     <View
       style={{
@@ -31,7 +62,7 @@ const EventsInMonth = ({ navigation }) => {
       >
         Events happening this month:
       </Text>
-      {[ 0, 2, 3, 4 ].map((l) => <OrganiserPreview key={HelperFunctions.keyGenerator()} navigation={navigation} />)}
+      {events && events.map((event) => <EventPreview key={HelperFunctions.keyGenerator()} {...event} />)}
     </View>
   );
 };

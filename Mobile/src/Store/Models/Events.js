@@ -2,13 +2,16 @@ import AxiosClient from '../Axios';
 import auth from '@react-native-firebase/auth';
 
 export default {
-  state: { events: [], randomEvents: [] },
+  state: { events: [], randomEvents: [], userEvents: [] },
   reducers: {
     setEvents (state, events) {
       return { ...state, events };
     },
     setRandomEvents (state, randomEvents) {
       return { ...state, randomEvents };
+    },
+    setUserEvents (state, userEvents) {
+      return { ...state, userEvents };
     }
   },
   effects: (dispatch) => ({
@@ -67,6 +70,18 @@ export default {
       }
     },
 
+    async getUserEvents ({ uid, callback }) {
+      console.log('USerid', uid);
+      try {
+        await AxiosClient.get(`/events/user/${uid}`).then(({ data }) => {
+          if (data.success) dispatch.Events.setUserEvents(data.result);
+          callback(data);
+        });
+      } catch (error) {
+        return callback({ success: false, result: error.message });
+      }
+    },
+
     async updateEvent ({ eventId, payload, callback }, state) {
       try {
         await AxiosClient.patch(`/events/update/${eventId}`, payload).then(({ data }) => {
@@ -116,7 +131,7 @@ export default {
 
         await AxiosClient.patch(`/events/like/${eventId}/${uid}`).then(({ data }) => {
           if (data.success) {
-            events = state.Events.events.map(
+            let events = state.Events.events.map(
               (event) => (event._id === eventId ? { ...event, likes: [ ...event.likes, uid ] } : event)
             );
 

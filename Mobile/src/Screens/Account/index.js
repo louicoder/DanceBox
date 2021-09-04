@@ -48,6 +48,7 @@ const Account = ({ navigation }) => {
   React.useEffect(
     () => {
       const sub = navigation.addListener('focus', () => {
+        console.log('Re-rendering account...------');
         getUser();
       });
       return () => sub;
@@ -74,7 +75,10 @@ const Account = ({ navigation }) => {
   }, []);
 
   const getUser = () =>
-    HelperFunctions.getAsyncObjectData('user', ({ result: user, success }) => success && setUser(user));
+    HelperFunctions.getUser(({ result: user, success }) => {
+      console.log('Sucess user===', user, success);
+      if (success) setUser(user);
+    });
 
   const selectImage = () =>
     HelperFunctions.ImagePicker(({ base64, uri, type, ...rest }) => uri && uploadProfileImage(image));
@@ -153,14 +157,28 @@ const Account = ({ navigation }) => {
               <View style={styles.nameContainer}>
                 {<Text style={styles.name}>{user.name || user.username || '⏤'}</Text>}
                 <Text style={styles.email}>{user.email}</Text>
-                <Pressable onPress={() => navigation.navigate('EditAccount')} style={styles.editButton}>
+                <Pressable
+                  onPress={() =>
+                    user.accountType === 'individual'
+                      ? navigation.navigate('EditAccount')
+                      : Alert.alert(
+                          'Still in development',
+                          'We are working hard to have organisers update their accounts in app, stay tuned'
+                        )}
+                  style={styles.editButton}
+                >
                   <Text style={styles.editButtonText}>Edit Profile</Text>
                 </Pressable>
               </View>
             </View>
 
             {user && (
-              <Profile resetPassword={() => setState({ ...state, passVisible: true })} {...user} logout={logout} />
+              <Profile
+                resetPassword={() => setState({ ...state, passVisible: true })}
+                {...user}
+                logout={logout}
+                navigation={navigation}
+              />
             )}
           </ScrollView>
         ) : (

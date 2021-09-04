@@ -9,9 +9,9 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import auth from '@react-native-firebase/auth';
 import LoadingModal from '../../Components/LoadingModal';
 
-const EditAccount = () => {
+const EditAccount = ({ navigation }) => {
   const dispatch = useDispatch();
-  const { user } = useSelector((state) => state.Account);
+  // const { user } = useSelector((state) => state.Account);
   const loading = useSelector((state) => state.loading.effects.Account);
   const [ state, setState ] = React.useState({
     tagsVisible: true,
@@ -24,38 +24,32 @@ const EditAccount = () => {
     youtube: '',
     twitter: '',
     name: '',
-    username: '',
-    ...user
+    username: ''
+    // ...user
   });
 
   React.useEffect(() => {
-    getUser();
+    HelperFunctions.getAsyncObjectData('user', ({ success, result }) => success && setState({ ...state, ...result }));
   }, []);
-
-  const getUser = () => {
-    HelperFunctions.getAsyncObjectData('user', ({ success, result }) => {
-      if (success) setState({ ...state, ...result });
-      // console.log('RESULT____', result);
-    });
-  };
 
   const updateUserDetails = () => {
     Keyboard.dismiss();
-    const { tagsVisible, ...rest } = state;
+    const { tagsVisible, ...payload } = state;
     // if (!whatsapp) return invalidLinkError('');
-    if (rest.facebook && !linkChecker(rest.facebook)) return invalidLinkError('facebook');
-    if (rest.instagram && !linkChecker(rest.instagram)) return invalidLinkError('instagram');
-    if (rest.linkedin && !linkChecker(rest.linkedin)) return invalidLinkError('linkedin');
-    if (rest.youtube && !linkChecker(rest.youtube)) return invalidLinkError('youtube');
-    if (rest.twitter && !linkChecker(rest.twitter)) return invalidLinkError('twitter');
+    if (payload.facebook && !linkChecker(payload.facebook)) return invalidLinkError('facebook');
+    if (payload.instagram && !linkChecker(payload.instagram)) return invalidLinkError('instagram');
+    if (payload.linkedin && !linkChecker(payload.linkedin)) return invalidLinkError('linkedin');
+    if (payload.youtube && !linkChecker(payload.youtube)) return invalidLinkError('youtube');
+    if (payload.twitter && !linkChecker(payload.twitter)) return invalidLinkError('twitter');
 
-    const payload = { ...rest };
+    // const payload = { ...rest };
 
     dispatch.Account.updateAccountDetails({
-      uid: user.uid || auth().currentUser.uid,
+      uid: state._id,
       payload,
-      callback: (resp) => {
-        // console.log('Response after updatin', resp);
+      callback: ({ result, success }) => {
+        if (!success) return HelperFunctions.Notify('Error updating account', result);
+        return HelperFunctions.storeAsyncObjectData('user', result, () => navigation.goBack());
       }
     });
   };
@@ -72,6 +66,8 @@ const EditAccount = () => {
   // const
   // console.log('Interests', user);
   const isInd = state && state.accountType === 'individual';
+
+  console.log('Statein terstsss', state.interests, state._id);
 
   return (
     <React.Fragment>
@@ -124,7 +120,7 @@ const EditAccount = () => {
         )}
 
         <Pressable
-          onPress={() => setState({ ...state, tagsVisible: !state.tagsVisible })}
+          // onPress={() => setState({ ...state, tagsVisible: !state.tagsVisible })}
           style={{
             flexDirection: 'row',
             alignItems: 'center',
@@ -134,10 +130,12 @@ const EditAccount = () => {
           }}
         >
           <Text style={{ fontSize: RFValue(12) }}>Add tags to your blog</Text>
-          <Icon name={state.tagsVisible ? 'chevron-up' : 'chevron-down'} size={RFValue(30)} />
+          {/* <Icon name={state.tagsVisible ? 'chevron-up' : 'chevron-down'} size={RFValue(30)} /> */}
         </Pressable>
         {state.tagsVisible ? (
-          <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginRight: RFValue(5) }}>
+          <View
+            style={{ flexDirection: 'row', flexWrap: 'wrap', marginRight: RFValue(5), marginVertical: RFValue(10) }}
+          >
             {CONSTANTS.INTERESTS.map((item) => (
               <Pressable
                 key={HelperFunctions.keyGenerator()}
@@ -168,43 +166,47 @@ const EditAccount = () => {
           </View>
         ) : null}
 
-        <Input
-          title="Linkedin profile link"
-          placeholder="https://linkedin.com/"
-          value={state.linkedin}
-          onChangeText={(linkedin) => setState({ ...state, linkedin })}
-        />
-        <Input
-          title="Youtube profile link"
-          placeholder="https://youtube.com/"
-          value={state.youtube}
-          onChangeText={(youtube) => setState({ ...state, youtube })}
-        />
-        <Input
-          title="Instagram profile link"
-          placeholder="https://instagram.com/"
-          value={state.instagram}
-          onChangeText={(instagram) => setState({ ...state, instagram })}
-        />
-        <Input
-          title="Facebook profile link"
-          placeholder="https://facebook.com/"
-          value={state.facebook}
-          onChangeText={(facebook) => setState({ ...state, facebook })}
-        />
-        <Input
-          title="Twitter profile link"
-          placeholder="https://twitter.com/"
-          value={state.twitter}
-          onChangeText={(twitter) => setState({ ...state, twitter })}
-        />
-        <Input
-          title="Your whatsapp number"
-          placeholder="Enter whatsapp number e.g +256xxxxx"
-          value={state.whatsapp}
-          onChangeText={(whatsapp) => setState({ ...state, whatsapp })}
-          number
-        />
+        {!isInd && (
+          <View>
+            <Input
+              title="Linkedin profile link"
+              placeholder="https://linkedin.com/"
+              value={state.linkedin}
+              onChangeText={(linkedin) => setState({ ...state, linkedin })}
+            />
+            <Input
+              title="Youtube profile link"
+              placeholder="https://youtube.com/"
+              value={state.youtube}
+              onChangeText={(youtube) => setState({ ...state, youtube })}
+            />
+            <Input
+              title="Instagram profile link"
+              placeholder="https://instagram.com/"
+              value={state.instagram}
+              onChangeText={(instagram) => setState({ ...state, instagram })}
+            />
+            <Input
+              title="Facebook profile link"
+              placeholder="https://facebook.com/"
+              value={state.facebook}
+              onChangeText={(facebook) => setState({ ...state, facebook })}
+            />
+            <Input
+              title="Twitter profile link"
+              placeholder="https://twitter.com/"
+              value={state.twitter}
+              onChangeText={(twitter) => setState({ ...state, twitter })}
+            />
+            <Input
+              title="Your whatsapp number"
+              placeholder="Enter whatsapp number e.g +256xxxxx"
+              value={state.whatsapp}
+              onChangeText={(whatsapp) => setState({ ...state, whatsapp })}
+              number
+            />
+          </View>
+        )}
         <Pressable
           onPress={updateUserDetails}
           style={{

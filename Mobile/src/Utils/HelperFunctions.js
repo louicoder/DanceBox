@@ -162,7 +162,7 @@ export const getAsyncObjectData = async (key, callback) => {
   try {
     const jsonValue = await AsyncStorage.getItem(key);
     // return callback ? callback(JSON.parse(jsonValue)) : jsonValue != null ? JSON.parse(jsonValue) : null;
-    // console.log('USERRRRRRRRRR', JSON.parse(jsonValue));
+    console.log('USERRRRRRRRRR', JSON.parse(jsonValue));
     return callback({ success: true, result: JSON.parse(jsonValue) });
   } catch (error) {
     // console.log('ERROR get storage', e);
@@ -224,4 +224,4 @@ export const shuffleArray = (array) => {
   return array;
 };
 
-export const getUser = (callback) => getAsyncObjectData('user', (res) => callback(res));
+export const getUser = (callback) => getAsyncObjectData('user', callback);

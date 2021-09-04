@@ -12,6 +12,7 @@ import Organisers from './Organisers';
 import EventsInMonth from './EventsInMonth';
 import StickyView from '../../Components/StickyView';
 import CommentBox from '../../Components/CommentBox';
+import { THEME_COLOR } from '../../Utils/Constants';
 
 const { width } = Dimensions.get('window');
 
@@ -23,81 +24,59 @@ const Home = ({ navigation, ...props }) => {
   const { profile } = useSelector((state) => state.User);
   const { blogs } = useSelector((state) => state.Blogs);
 
-  // console.log('PROFILE', user);
+  // console.log('IN MONTH', state.eventsInMonth);
   React.useEffect(() => {
     // getRandomOrganisers();
-    getEventsInMonth();
+    // getEventsInMonth();
   }, []);
 
-  const getEventsInMonth = (det) => {
-    let dt, mnth, yr, month;
+  // const getEventsInMonth = (det) => {
+  //   let dt, mnth, yr, month;
 
-    dt = new Date().toLocaleDateString('en-us').split('/');
-    mnth = dt[0].length === 1 ? `0${dt[0]}` : dt[0];
-    yr = dt[2];
-    month = `${yr}-${mnth}`;
+  //   dt = new Date().toLocaleDateString('en-us').split('/');
+  //   mnth = dt[0].length === 1 ? `0${dt[0]}` : dt[0];
+  //   yr = dt[2];
+  //   month = `${yr}-${mnth}`;
 
-    dispatch.Events.getEventsInMonth({
-      // month,
-      month: '05',
-      callback: ({ result, success }) => {
-        // console.log('HERE marked', result);
-        let dates = {};
-        if (success) {
-          result.map((evnt) => (dates = { ...dates, [evnt.startDate.slice(0, 10)]: { selected: true } }));
-          setState({ ...state, eventsInMonth: result });
-        }
-      }
-    });
-  };
+  //   dispatch.Events.getEventsInMonth({
+  //     // month,
+  //     month: '05',
+  //     callback: ({ result, success }) => {
+  //       // console.log('HERE marked', result);
+  //       let dates = {};
+  //       if (success) {
+  //         result.map((evnt) => (dates = { ...dates, [evnt.startDate.slice(0, 10)]: { selected: true } }));
+  //         setState({ ...state, eventsInMonth: result });
+  //       }
+  //     }
+  //   });
+  // };
 
   return (
-    // <SafeAreaView style={{ flex: 1 }}>
-    <View style={{ flexGrow: 1 }}>
-      {/* <StickyView>
-        <TextInput
-          style={{ height: RFValue(50), width: '100%', backgroundColor: '#000' }}
-          placeholder="Enter comment here..."
-        />
-      </StickyView> */}
-      {/* <CommentBox /> */}
-      <SafeAreaView
+    <View style={{ flex: 1 }}>
+      {/* <SafeAreaView style={{ flex: 1 }}> */}
+      <View
         style={{
-          flexDirection: 'row',
-          width: '100%',
-          justifyContent: 'space-between',
-          alignItems: 'center',
+          marginTop: useSafeAreaInsets().top,
+          marginBottom: RFValue(10),
+          // borderWidth: 1,
+          // backgroundColor: '#fff',
           paddingHorizontal: RFValue(10)
-          // marginTop: useSafeAreaInsets().top
         }}
       >
-        <View style={{ marginVertical: RFValue(10) }}>
-          <TextComp text="Dance Box" extStyles={{ fontSize: RFValue(30), fontWeight: '700', color: '#010203' }} />
-        </View>
-        <Ripple
-          rippleContainerBorderRadius={RFValue(25)}
-          rippleCentered
-          style={{
-            height: RFValue(40),
-            width: RFValue(40),
-            alignItems: 'center',
-            justifyContent: 'center',
-            borderRadius: RFValue(25),
-            backgroundColor: '#010203'
-          }}
-          onPress={() => navigation.toggleDrawer()}
-        >
-          <Icon name="menu" size={RFValue(20)} color="#fff" />
-        </Ripple>
-      </SafeAreaView>
+        <TextComp text="Dance Box" extStyles={{ fontSize: RFValue(30), fontWeight: '700', color: THEME_COLOR }} />
+      </View>
 
-      <ScrollView style={{ flex: 1, width: '100%', backgroundColor: '#aaaaaa80' }}>
-        <TopCategories navigation={navigation} />
+      <View style={{ flexGrow: 1 }}>
+        <ScrollView style={{ flex: 1, width: '100%', backgroundColor: '#eeeeee70' }}>
+          <TopCategories navigation={navigation} />
 
-        <Organisers navigation={navigation} />
+          <Organisers navigation={navigation} />
 
-        <EventsInMonth navigation={navigation} />
-      </ScrollView>
+          <EventsInMonth navigation={navigation} />
+        </ScrollView>
+      </View>
+      {/* </SafeAreaView> */}
     </View>
   );
 };

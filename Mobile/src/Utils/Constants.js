@@ -6,3 +6,9 @@ export const INTERESTS = [ 'Competition', 'Performance', 'Workshop', 'Festival',
 export const EVENTS_PIC = 'https://campusrec.fsu.edu/wp-content/uploads/2019/02/dance.jpg';
 
 export const THEME_COLOR = '#FA7C14';
+export const THEME_COLOR2 = '#e17012';
+export const THEME_COLOR3 = '#fca35b';
+export const THEME_COLOR4 = '#fdbe8a';
+export const THEME_COLOR5 = '#fff2e8';
+export const THEME_COLOR6 = '#af570e';
+export const THEME_COLOR7 = '#643208';

@@ -1,10 +1,11 @@
-const { BlogsModel } = require('../Models');
+const { BlogsModel, AccountModel } = require('../Models');
 
 const createBlog = async (req, res) => {
+  if (!req.body.authorId) return res.json({ success: false, result: 'Author is required but missing, try again' });
+  if (!req.body.description)
+    return res.json({ success: false, result: 'Description is required but missing, try again' });
   try {
-    const { title = '', description, owner, imageUrl = '', tags, owner: {} } = req.body;
-    const payload = { title, description, owner, imageUrl, tags, dateCreated: new Date().toISOString() };
-    const NewBlog = new BlogsModel(payload);
+    const NewBlog = new BlogsModel({ ...req.body, dateCreated: new Date().toISOString() });
     await NewBlog.save().then((result) => res.json({ success: true, result }));
   } catch (error) {
     return res.json({ success: false, result: error.message });
@@ -32,9 +33,18 @@ const getRandomBlogs = async (req, res) => {
 
 const getBlogsForSingleUser = async (req, res) => {
   if (!req.params.ownerUid) return res.json({ success: false, result: 'Owner uid is required but missing' });
-  const { ownerUid } = req.params;
+  const { ownerUid: authorId } = req.params;
   try {
-    await BlogsModel.find({ 'owner.uid': ownerUid }).then((result) => res.json({ success: true, result }));
+    await BlogsModel.find({ authorId }).then(async (resp) => {
+      // const result = await userFiller(resp, 'authorId');
+      let results = [];
+      for (const r of resp) {
+        const user = await AccountModel.findOne({ _id: authorId });
+        results.push({ ...r._doc, user });
+      }
+      // console.log('Events user---', results, authorId);
+      return res.json({ success: true, result: results });
+    });
   } catch (error) {
     return res.json({ success: false, result: error.message });
   }
@@ -42,7 +52,14 @@ const getBlogsForSingleUser = async (req, res) => {
 
 const allBlogs = async (req, res) => {
   try {
-    await BlogsModel.find().then((result) => res.json({ success: true, result }));
+    await BlogsModel.find().then(async (resp) => {
+      let results = [];
+      for (const r of resp) {
+        const user = await AccountModel.findOne({ _id: r._doc.authorId });
+        results.push({ ...r._doc, user });
+      }
+      return res.json({ success: true, result: results });
+    });
   } catch (error) {
     return res.json({ success: false, result: error.message });
   }

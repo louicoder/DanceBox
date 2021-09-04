@@ -58,11 +58,14 @@ const updateAccount = async (req, res) => {
   if (!Object.keys(req.body).length)
     return res.json({ success: true, result: 'Atleast one field required to update account' });
   if (!req.params.uid) return res.json({ success: true, result: 'User id required to update account' });
-  const { uid } = req.params;
+  const { uid: _id } = req.params;
+  console.log('Body', req.body);
   try {
-    const response = await AccountModel.updateOne({ uid }, users);
-    if (response.nModified === 0) return res.json({ success: false, result: 'Nothing was updated , try again' });
-    return res.json({ success: false, result: 'Account updated successfully' });
+    await AccountModel.updateOne({ _id }, req.body).then(async (response) => {
+      if (response.nModified < 1) return res.json({ success: false, result: 'Nothing was updated , try again' });
+      const result = await AccountModel.findOne({ _id });
+      return res.json({ success: true, result });
+    });
   } catch (error) {
     return res.json({ success: false, result: error.message });
   }

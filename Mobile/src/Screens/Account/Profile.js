@@ -19,7 +19,9 @@ const Profile = ({
   following,
   interests,
   companyAddress,
-  dateCreated
+  dateCreated,
+  _id: uid,
+  navigation: { navigate }
 }) => {
   const isInd = accountType === 'individual';
 
@@ -57,8 +59,8 @@ const Profile = ({
           Quick account actions:
         </Text>
         {[
-          { icon: 'solution1', label: 'All your blogs', onPress: () => null },
-          { icon: 'calendar', label: 'All your events', onPress: () => null },
+          { icon: 'solution1', label: 'All your blogs', onPress: () => navigate('MyBlogs', { uid }) },
+          { icon: 'calendar', label: 'All your events', onPress: () => navigate('MyEvents', { uid }) },
           { icon: 'deleteuser', label: 'Close my account', onPress: () => null },
           { icon: 'warning', label: 'Change account password', onPress: () => resetPassword() },
           { icon: 'poweroff', label: 'Logout', last: true, onPress: () => logout() }

@@ -132,6 +132,7 @@ const EventProfile = ({ navigation, route }) => {
 
         <Header
           {...event}
+          comments={state.comments}
           navigation={navigation}
           attendParticipate={attendParticipate}
           unattendUnparticipate={unattendUnparticipate}
@@ -141,23 +142,22 @@ const EventProfile = ({ navigation, route }) => {
         />
 
         <View style={{ paddingVertical: RFValue(10), flexGrow: 1, backgroundColor: '#fff' }}>
-          {state.comments && state.comments.length ? (
-            state.comments.map((item, index) => (
-              <SingleComment
-                key={item._id}
-                first={index === 0}
-                {...item}
-                navigation={navigation}
-                last={index + 1 === event.comments.length}
-                // goto={() => navigation.navigate('NewEventComment', { eventId: event._id })}
-              />
-            ))
-          ) : null}
-          {event.comments && !event.comments.length ? (
+          {state.comments.map((item, index) => (
+            <SingleComment
+              key={item._id}
+              first={index === 0}
+              {...item}
+              navigation={navigation}
+              last={index + 1 === event.comments.length}
+              // goto={() => navigation.navigate('NewEventComment', { eventId: event._id })}
+            />
+          ))}
+
+          {state.comments && !state.comments.length ? (
             <ComingSoon title="">
               <Pressable
                 style={{ alignItems: 'center', justifyContent: 'center' }}
-                onPress={() => navigation.navigate('NewEventComment', { eventId })}
+                onPress={() => setState({ ...state, commentShowing: true })}
               >
                 <DesignIcon name="chatbubble-ellipses-outline" pkg="io" size={RFValue(100)} color="#ccc" />
                 <Text style={{ textAlign: 'center', color: '#ccc', fontSize: RFValue(16) }}>

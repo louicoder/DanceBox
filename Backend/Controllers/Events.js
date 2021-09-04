@@ -1,58 +1,62 @@
-const { EventsModel } = require('../Models');
+const { userFiller } = require('../Helpers');
+const { EventsModel, AccountModel } = require('../Models');
 
 const createEvent = async (req, res) => {
-  // if(!req.body.title) return res.json({success:false, result: 'Description for the event is re'})
+  if (!req.body.authorId) return res.json({ success: false, result: 'Author Id is required but missing, trys again' });
+  if (!req.body.title) return res.json({ success: false, result: 'Blog title is required but missing, trys again' });
+  if (!req.body.description)
+    return res.json({ success: false, result: 'Blog description is required but missing, trys again' });
 
   try {
-    const {
-      owner,
-      title = '',
-      date,
-      time,
-      startDate,
-      endDate,
-      venue,
-      contact,
-      imageUrl,
-      description,
-      free,
-      price,
-      tags,
-      category,
-      ticketCompany,
-      judges = [],
-      judgingCriteria,
-      judgingNotes,
-      noOfJudges
-    } = req.body;
-    const payload = {
-      owner,
-      tags,
-      title,
-      date,
-      time,
-      contact,
-      imageUrl,
-      venue,
-      description,
-      free,
-      price,
-      startDate,
-      endDate,
-      category,
-      noOfJudges,
-      // dateCreated,
-      ticketCompany,
-      judges,
-      judgingCriteria,
-      judgingNotes,
-      attending: [],
-      participanting: [],
-      likes: [],
-      comments: [],
-      dateCreated: new Date().toISOString()
-    };
-    const NewEvent = new EventsModel(payload);
+    // const {
+    //   authorId,
+    //   title = '',
+    //   date,
+    //   time,
+    //   startDate,
+    //   endDate,
+    //   venue,
+    //   contact,
+    //   imageUrl,
+    //   description,
+    //   free,
+    //   price,
+    //   tags,
+    //   category,
+    //   ticketCompany,
+    //   judges = [],
+    //   judgingCriteria,
+    //   judgingNotes,
+    //   noOfJudges
+    // } = req.body;
+    // const payload = {
+    //   authorId,
+    //   tags,
+    //   title,
+    //   date,
+    //   time,
+    //   contact,
+    //   imageUrl,
+    //   venue,
+    //   description,
+    //   free,
+    //   price,
+    //   startDate,
+    //   endDate,
+    //   category,
+    //   noOfJudges,
+    //   // dateCreated,
+    //   ticketCompany,
+    //   judges,
+    //   judgingCriteria,
+    //   judgingNotes,
+    //   attending: [],
+    //   participanting: [],
+    //   likes: [],
+    //   comments: [],
+    //   dateCreated: new Date().toISOString()
+    // };
+    const NewEvent = new EventsModel({ ...req.body, dateCreated: new Date().toISOString(), likes: [] });
     await NewEvent.save().then((result) => res.json({ success: true, result }));
   } catch (error) {
     return res.json({ success: false, result: error.message });
@@ -200,9 +204,18 @@ const createEventComment = (req, res) => {
 
 const getEventsForSingleUser = async (req, res) => {
   if (!req.params.ownerUid) return res.json({ success: false, result: 'Owner uid is required but missing' });
-  const { ownerUid } = req.params;
+  const { ownerUid: authorId } = req.params;
   try {
-    await EventsModel.find({ 'owner.uid': ownerUid }).then((result) => res.json({ success: true, result }));
+    await EventsModel.find({ authorId }).then(async (resp) => {
+      // const result = await userFiller(resp, 'authorId');
+      let results = [];
+      for (const r of resp) {
+        const user = await AccountModel.findOne({ _id: authorId });
+        results.push({ ...r._doc, user });
+      }
+      console.log('Events user---', results, authorId);
+      return res.json({ success: true, result: results });
+    });
   } catch (error) {
     return res.json({ success: false, result: error.message });
   }
@@ -210,7 +223,14 @@ const getEventsForSingleUser = async (req, res) => {
 
 const allEvents = async (req, res) => {
   try {
-    await EventsModel.find().then((result) => res.json({ success: true, result }));
+    await EventsModel.find().then(async (resp) => {
+      let results = [];
+      for (const r of resp) {
+        const user = await AccountModel.findOne({ _id: r._doc.authorId });
+        results.push({ ...r._doc, user });
+      }
+      return res.json({ success: true, result: results });
+    });
   } catch (error) {
     return res.json({ success: false, result: error.message });
   }
@@ -224,10 +244,20 @@ const getEventsInMonth = async (req, res) => {
   try {
     await EventsModel.find(
       { startDate: { $regex: month, $options: 'i' } },
-      { title: 1, tags: 1, imageUrl: 1, price: 1, startDate: 1, dateCreated: 1, endDate: 1 }
+      {
+        title: 1,
+        tags: 1,
+        imageUrl: 1,
+        startDate: 1,
+        dateCreated: 1,
+        endDate: 1,
+        description: 1,
+        participating: 1,
+        attending: 1
+      }
     ).then((result) => {
       // console.log('RESULT', result);
-      res.json({ success: true, result });
+      return res.json({ success: true, result });
     });
 
     // const events = await EventsModel.find({ startDate: { $regex: month, $options: 'i' } })

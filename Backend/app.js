@@ -48,7 +48,7 @@ app.use(cors());
 // });
 
 // ROUTES IMPORTS
-const { BlogsRoute, EventsRoute, ReviewsRoute, AccountsRoute, CommentsRoute } = require('./Routes');
+const { BlogsRoute, EventsRoute, ReviewsRoute, AccountsRoute, CommentsRoute, TestingRoute } = require('./Routes');
 
 // ROUTES MIDDLEWARE CONNECTORS
 app.use('/api/blogs', BlogsRoute);
@@ -56,6 +56,7 @@ app.use('/api/events', EventsRoute);
 app.use('/api/reviews', ReviewsRoute);
 app.use('/api/accounts', AccountsRoute);
 app.use('/api/comments', CommentsRoute);
+app.use('/api/testing', TestingRoute);
 
 // app.post('/api/resize', async (req, res) => {
 //   try {

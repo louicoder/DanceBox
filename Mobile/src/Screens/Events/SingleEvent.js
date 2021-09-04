@@ -7,62 +7,23 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { CONSTANTS } from '../../Utils';
 
 const SingleEvent = ({
-  imageUrl,
-  price,
-  title,
-  attending,
-  venue,
-  startDate,
-  endDate,
-  comments,
-  dateCreated,
-  description,
-  judgingCriteria,
-  participating,
-  judgingNotes,
-  noOfJudges,
-  free,
-  header = true,
-  location,
-  amount,
-  owner,
+  user,
   likes,
   _id,
+  imageUrl,
+  title,
+  price,
+  attending,
+  participating,
+  description,
+  dateCreated,
   navigation: { navigate },
-  children,
   last,
   ...rest
 }) => {
-  // console.log('EVent owner');
-
-  const payload = {
-    imageUrl,
-    price,
-    title,
-    attending,
-    venue,
-    startDate,
-    endDate,
-    comments,
-    dateCreated,
-    judgingCriteria,
-    description,
-    participating,
-    judgingNotes,
-    noOfJudges,
-    free,
-    owner,
-    location,
-    amount,
-    likes,
-    eventId: _id,
-    _id
-  };
-
   return (
     <View style={{ marginBottom: !last ? RFValue(15) : 0, backgroundColor: '#fff' }}>
-      {header &&
-      owner && (
+      {user && (
         <View
           style={{
             flexDirection: 'row',
@@ -75,49 +36,61 @@ const SingleEvent = ({
           }}
         >
           <Image
-            source={{ uri: owner.imageUrl || CONSTANTS.DEFAULT_PROFILE }}
+            source={{ uri: user.imageUrl || CONSTANTS.DEFAULT_PROFILE }}
             style={{ height: RFValue(40), width: RFValue(40), borderRadius: RFValue(50) }}
           />
           <View style={{ flexGrow: 1, flexDirection: 'row', justifyContent: 'space-between' }}>
             <View style={{ paddingLeft: RFValue(10) }}>
-              <Text style={{ fontSize: RFValue(14) }}>{owner.name || owner.email}</Text>
+              <Text style={{ fontSize: RFValue(14), fontWeight: 'bold' }}>{`${user.companyName}`}</Text>
               <Text style={{ fontSize: RFValue(12), color: '#aaa' }}>{moment(dateCreated).fromNow()}</Text>
             </View>
-            <MaterialCommunityIcons name="dots-vertical" size={RFValue(20)} style={{}} />
+            {/* <MaterialCommunityIcons name="dots-vertical" size={RFValue(20)} style={{}} /> */}
           </View>
         </View>
       )}
 
-      <Pressable style={{ width: '100%', padding: RFValue(10) }} onPress={() => navigate('EventProfile', payload)}>
-        <Text style={{ fontSize: RFValue(18) }}>
-          {title && title.trim().slice(0, 18)}
-          {title && title.length > 18 && '...'}
-        </Text>
-        <Text style={{ fontSize: RFValue(14), marginVertical: RFValue(10) }}>
-          {description && description.trim().slice(0, 200)}
-          {description && description.length > 300 && '...'}
-        </Text>
-      </Pressable>
+      {title && (
+        <Pressable style={{ width: '100%', padding: RFValue(10) }} onPress={() => navigate('EventProfile', { _id })}>
+          {title && (
+            <Text style={{ fontSize: RFValue(18), fontWeight: 'bold' }}>
+              {title.trim().slice(0, 50)}
+              {title.length > 50 && '...'}
+            </Text>
+          )}
+          {/* <Text style={{ fontSize: RFValue(14), marginVertical: RFValue(10) }}>
+            {description && description.trim().slice(0, 200)}
+            {description && description.length > 300 && '...'}
+          </Text> */}
+        </Pressable>
+      )}
 
       {imageUrl ? (
-        <Pressable onPress={() => navigate('EventProfile', payload)}>
+        <Pressable onPress={() => navigate('EventProfile', { _id })}>
           <Image style={{ width: '100%', height: RFValue(300) }} resizeMode="cover" source={{ uri: imageUrl }} />
         </Pressable>
       ) : null}
-
-      <View style={{ padding: RFValue(10) }}>
-        <Text style={{ fontSize: RFValue(14), fontWeight: '600' }}>
+      {description && (
+        <View style={{ paddingHorizontal: RFValue(10) }}>
+          {/* <Text style={{ fontSize: RFValue(14), fontWeight: '600' }}>
           {moment(startDate).format('DD/MMMM/YYYY')} - {moment(endDate).format('DD/MMMM/YYYY')}
-        </Text>
-        <Text style={{ fontSize: RFValue(14), marginVertical: RFValue(3) }}>
-          {participating && participating.length} participants ・
-          <Text style={{}}>{attending && attending.length} attending</Text>
-        </Text>
-        <Text style={{ color: '#aaa' }}>
+        </Text> */}
+          <Text style={{ fontSize: RFValue(14), marginVertical: RFValue(15) }}>
+            {description && description.trim().slice(0, 200)}
+            {description && description.length > 300 && '...'}
+          </Text>
+
+          <Text style={{ fontSize: RFValue(16), marginBottom: RFValue(15), color: '#aaa' }}>
+            {participating && participating.length} participants ・
+            {attending && attending.length} going
+          </Text>
+
+          {/* <Text style={{ color: '#aaa', fontSize: RFValue(14) }}>
           {likes && likes.length} likes ・ {comments && comments.length} comments
-        </Text>
-      </View>
-      {children}
+        </Text> */}
+        </View>
+      )}
+
+      {/* {children} */}
     </View>
   );
 };

@@ -4,6 +4,7 @@ import { RFValue } from 'react-native-responsive-fontsize';
 import { useDispatch, useSelector } from 'react-redux';
 import OrganiserPreview from '../../Components/OrganiserPreview';
 import { HelperFunctions } from '../../Utils';
+import { THEME_COLOR7 } from '../../Utils/Constants';
 
 const Organisers = ({ navigation }) => {
   const [ organisers, setOrganisers ] = React.useState([]);
@@ -21,7 +22,7 @@ const Organisers = ({ navigation }) => {
     });
   };
 
-  return (
+  return randomOrganisers && randomOrganisers.length ? (
     <View style={{ width: '100%', paddingHorizontal: RFValue(10), backgroundColor: '#fff' }}>
       <View
         style={{
@@ -38,7 +39,7 @@ const Organisers = ({ navigation }) => {
             // marginHorizontal: RFValue(10),
             fontSize: RFValue(16),
             fontWeight: 'bold',
-            color: '#aaa'
+            color: THEME_COLOR7
           }}
         >
           Featured Event Companies:
@@ -51,7 +52,7 @@ const Organisers = ({ navigation }) => {
             style={{
               marginHorizontal: RFValue(10),
               fontSize: RFValue(14),
-              color: 'blue'
+              color: THEME_COLOR7
               // fontWeight: 'bold'
             }}
           >
@@ -64,7 +65,7 @@ const Organisers = ({ navigation }) => {
           <OrganiserPreview key={HelperFunctions.keyGenerator()} navigation={navigation} {...orgzr} />
         ))}
     </View>
-  );
+  ) : null;
 };
 
 export default Organisers;

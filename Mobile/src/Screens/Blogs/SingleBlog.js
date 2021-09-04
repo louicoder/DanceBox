@@ -22,6 +22,7 @@ const SingleBlog = ({
   last = false,
   children,
   header = true,
+  user,
   ...rest
 }) => {
   // console.log('LIKES::', rest);
@@ -35,15 +36,15 @@ const SingleBlog = ({
     likes,
     title,
     owner,
+    // user,
     _id
   };
 
-  // console.log('Lkes', likes.length);
   // const test = `sdfsdfsd {'\n'} new line created `;
+  const isInd = user && user.accountType === 'individual';
   return (
     <View style={{ marginBottom: last ? RFValue(marginBottom) : RFValue(15), backgroundColor: '#fff' }}>
-      {header &&
-      owner && (
+      {user && (
         <View
           style={{
             flexDirection: 'row',
@@ -56,51 +57,60 @@ const SingleBlog = ({
           }}
         >
           <Image
-            source={{ uri: owner.imageUrl || CONSTANTS.DEFAULT_PROFILE }}
+            source={{ uri: user.imageUrl || CONSTANTS.DEFAULT_PROFILE }}
             style={{ height: RFValue(30), width: RFValue(30), borderRadius: RFValue(50) }}
           />
           <View style={{ flexGrow: 1, flexDirection: 'row', justifyContent: 'space-between' }}>
             <View style={{ paddingLeft: RFValue(10) }}>
-              <Text style={{ fontSize: RFValue(14) }}>{owner.name || owner.email}</Text>
+              <Text style={{ fontSize: RFValue(14) }}>{`${isInd
+                ? user.name || user.username || user.email
+                : user.companyName}`}</Text>
               <Text style={{ fontSize: RFValue(12), color: '#aaa' }}>{moment(dateCreated).fromNow()}</Text>
             </View>
             {/* <MaterialCommunityIcons name="dots-vertical" size={RFValue(20)} style={{}} /> */}
           </View>
         </View>
       )}
-      <Pressable style={{ width: '100%', padding: RFValue(10) }} onPress={() => navigate('BlogProfile', payload)}>
-        <Text style={{ fontSize: RFValue(18) }}>
+      <Pressable
+        style={{ width: '100%', paddingVertical: RFValue(10) }}
+        onPress={() => navigate('BlogProfile', payload)}
+      >
+        <Text style={{ fontSize: RFValue(18), margin: RFValue(10), marginTop: 0, fontWeight: 'bold' }}>
           {title && title.trim().slice(0, 18)}
           {title && title.length > 18 && '...'}
         </Text>
-        <Text style={{ fontSize: RFValue(14), marginVertical: RFValue(10) }}>
+
+        {imageUrl ? (
+          <Pressable onPress={() => navigate('BlogProfile', payload)}>
+            <ImageBackground
+              source={{ uri: imageUrl }}
+              style={{ height: RFValue(250), width: '100%', backgroundColor: '#000' }}
+              resizeMode="cover"
+            >
+              <View
+                style={{
+                  flex: 1,
+                  alignItems: 'flex-end',
+                  padding: RFValue(10),
+                  justifyContent: 'space-between',
+                  flexDirection: 'row'
+                }}
+              >
+                {/* <Text style={{ fontSize: RFValue(30), color: '#fff', fontWeight: '700' }}>{price} /=</Text> */}
+                <View />
+              </View>
+            </ImageBackground>
+          </Pressable>
+        ) : null}
+
+        <Text style={{ fontSize: RFValue(14), margin: RFValue(10) }}>
           {description && description.trim().slice(0, 200)}
           {description && description.length > 300 && '...'}
         </Text>
       </Pressable>
-      {imageUrl ? (
-        <Pressable onPress={() => navigate('BlogProfile', payload)}>
-          <ImageBackground
-            source={{ uri: imageUrl }}
-            style={{ height: RFValue(250), width: '100%', backgroundColor: '#000' }}
-            resizeMode="cover"
-          >
-            <View
-              style={{
-                flex: 1,
-                alignItems: 'flex-end',
-                padding: RFValue(10),
-                justifyContent: 'space-between',
-                flexDirection: 'row'
-              }}
-            >
-              {/* <Text style={{ fontSize: RFValue(30), color: '#fff', fontWeight: '700' }}>{price} /=</Text> */}
-              <View />
-            </View>
-          </ImageBackground>
-        </Pressable>
-      ) : null}
-      {header && <CommentsLikeButtons comments={comments} likes={likes} type="blog" id={_id} />}
+
+      {/* {header && <CommentsLikeButtons comments={comments} likes={likes} type="blog" id={_id} />
+      } */}
     </View>
   );
 };

@@ -40,12 +40,9 @@ const BlogProfile = ({ navigation, route, ...props }) => {
 
   React.useEffect(
     () => {
-      const sub = navigation.addListener('focus', () => {});
+      // const sub = navigation.addListener('focus', () => {});
       getBlog();
       getComments();
-      // console.log('Route', route.params);
-
-      // return () => sub;
     },
     [ navigation ]
   );
@@ -58,7 +55,6 @@ const BlogProfile = ({ navigation, route, ...props }) => {
     dispatch.Blogs.getBlogComments({
       blogId: route.params._id,
       callback: ({ result, success }) => {
-        // console.log('Comments BLog-----', result);
         if (!success) return HelperFunctions.Notify('Erro getting comments', result);
         setState({ ...state, comments: result });
       }
@@ -68,7 +64,6 @@ const BlogProfile = ({ navigation, route, ...props }) => {
     dispatch.Blogs.getBlog({
       blogId: route.params._id,
       callback: (resp) => {
-        // console.log('BLog', resp.result);
         setBlog({ ...resp.result });
       }
     });
@@ -144,7 +139,7 @@ const BlogProfile = ({ navigation, route, ...props }) => {
               style={{ flex: 1, backgroundColor: '#eeeeee70', marginTop: RFValue(10) }}
               ListHeaderComponent={() => (
                 <View>
-                  <Blog {...blog} />
+                  <Blog {...blog} comments={state.comments} />
                   <View
                     style={{
                       backgroundColor: '#fff',

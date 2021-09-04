@@ -21,7 +21,7 @@ const Login = ({ navigation, route }) => {
     activeLogin: null,
     justCreated: false,
     passwordVisible: true,
-    email: 'musanje2010@gmail.com',
+    email: 'test4@test.com',
     password: 'password',
     followers: [],
     following: [],
@@ -46,12 +46,9 @@ const Login = ({ navigation, route }) => {
       password,
       callback: ({ success, result }) => {
         if (!success) return HelperFunctions.Notify('Error', result);
-        HelperFunctions.getAsyncObjectData('user', ({ success, result }) => {
-          if (!success) return HelperFunctions.Notify('Error', result);
-          return route.params.goToScreen
-            ? navigation.navigate(route.params.goToScreen, { screen: route.params.goToScreen })
-            : navigation.navigate('Home');
-        });
+        return route.params.goToScreen
+          ? navigation.navigate(route.params.goToScreen, { screen: route.params.goToScreen })
+          : navigation.navigate('Home');
       }
     });
   };

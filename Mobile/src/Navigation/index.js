@@ -42,6 +42,8 @@ import Drawer from '../Screens/Drawer';
 import FinishRegistration from '../Screens/FinishRegistration';
 import Splash from '../Screens/Splash';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import AllEvents from '../Screens/Account/AllEvents';
+import AllBlogs from '../Screens/Account/AllBlogs';
 
 const Stacks = createStackNavigator();
 const LoginStack = createStackNavigator();
@@ -78,7 +80,12 @@ const CalendarScreens = () => (
 
 const HomeScreens = ({ socket }) => (
   <HomeStack.Navigator screenOptions={{ header: (props) => null }} headerMode="screen">
-    <HomeStack.Screen name="Home" component={Home} socket={socket} />
+    <HomeStack.Screen
+      name="Home"
+      component={Home}
+      socket={socket}
+      options={{ header: () => null, cardStyle: { backgroundColor: '#fff' } }}
+    />
     <HomeStack.Screen
       name="BlogProfile"
       component={BlogProfile}
@@ -225,6 +232,16 @@ const AccountScreens = () => (
       name="NewEventComment"
       component={NewEventComment}
       options={{ header: (props) => <Header title="Add Event Comment" iconName="pencil" {...props} /> }}
+    />
+    <AccountStack.Screen
+      name="MyEvents"
+      component={AllEvents}
+      options={{ header: (props) => <Header title="All your events" iconName="pencil" {...props} /> }}
+    />
+    <AccountStack.Screen
+      name="MyBlogs"
+      component={AllBlogs}
+      options={{ header: (props) => <Header title="All your blogs" iconName="pencil" {...props} /> }}
     />
   </AccountStack.Navigator>
 );

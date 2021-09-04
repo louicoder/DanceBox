@@ -18,7 +18,10 @@ const OrganiserPreview = ({ companyName, followers, following, companyDescriptio
     >
       <Image source={{ uri: imageUrl || CONSTANTS.EVENTS_PIC }} style={{ width: RFValue(120), height: RFValue(120) }} />
       <View style={{ flexShrink: 1, paddingLeft: RFValue(10) }}>
-        <Text style={{ fontSize: RFValue(16), fontWeight: 'bold' }}>{companyName}</Text>
+        <Text style={{ fontSize: RFValue(16), fontWeight: 'bold' }}>
+          {companyName && companyName.slice(0, 20)}
+          {companyName && companyName.length > 20 && '...'}
+        </Text>
         <Text style={{ fontSize: RFValue(13), marginVertical: RFValue(5) }}>
           {companyDescription && companyDescription.slice(0, 150)}
           {companyDescription && companyDescription.length > 150 && '...'}
