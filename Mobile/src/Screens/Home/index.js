@@ -68,7 +68,10 @@ const Home = ({ navigation, ...props }) => {
       </View>
 
       <View style={{ flexGrow: 1 }}>
-        <ScrollView style={{ flex: 1, width: '100%', backgroundColor: '#eeeeee70' }}>
+        <ScrollView
+          style={{ flex: 1, width: '100%', backgroundColor: '#eeeeee70' }}
+          showsVerticalScrollIndicator={false}
+        >
           <TopCategories navigation={navigation} />
 
           <Organisers navigation={navigation} />

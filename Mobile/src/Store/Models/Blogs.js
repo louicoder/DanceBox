@@ -15,12 +15,9 @@ export default {
     }
   },
   effects: (dispatch) => ({
-    //
     async createBlog ({ payload, callback }, state) {
-      // console.log('PAYLOAD', payload);
       try {
         await AxiosClient.post('/blogs/create', payload).then(({ data }) => {
-          // console.log('DATA', data);
           dispatch.Blogs.setBlogs([ ...state.Blogs.blogs, data.result ]);
           callback(data);
         });
@@ -43,7 +40,6 @@ export default {
     async getUserBlogs ({ uid, callback }) {
       try {
         await AxiosClient.get(`/blogs/user/${uid}`).then(({ data }) => {
-          console.log('DATA blogs', data.result, uid);
           if (data.success) dispatch.Blogs.setUserBlogs(data.result);
           callback(data);
         });
@@ -72,7 +68,6 @@ export default {
     async getBlogComments ({ blogId, callback }, state) {
       try {
         await AxiosClient.get(`/comments/blog/${blogId}`).then(({ data }) => {
-          // console.log('Commetns', data);
           callback(data);
         });
       } catch (error) {

@@ -24,7 +24,7 @@ const EventsInMonth = ({ navigation }) => {
 
     dispatch.Events.getEventsInMonth({
       // month,
-      month: '05',
+      month: '09',
       callback: ({ result, success }) => {
         // console.log('HERE marked', result);
         let dates = {};
@@ -36,33 +36,46 @@ const EventsInMonth = ({ navigation }) => {
     });
   };
 
-  console.log('EVENTS IN MONTH', events);
+  // console.log('EVENTS IN MONTH', events);
   return (
     <View
       style={{
         width: '100%',
         marginTop: RFValue(10),
-        // flexDirection: 'row',
-        // justifyContent: 'space-between',
-        // flexWrap: 'wrap',
         backgroundColor: '#fff',
-        // paddingBottom: RFValue(10),
         paddingHorizontal: RFValue(10)
       }}
     >
       <Text
         style={{
-          // marginHorizontal: RFValue(10),
           marginVertical: RFValue(15),
           fontSize: RFValue(16),
           fontWeight: 'bold',
-          backgroundColor: '#fff',
-          color: '#aaa'
+          backgroundColor: '#fff'
+          // color: '#aaa'
         }}
       >
         Events happening this month:
       </Text>
-      {events && events.map((event) => <EventPreview key={HelperFunctions.keyGenerator()} {...event} />)}
+      {events && events.length ? (
+        events.map((event) => <EventPreview key={HelperFunctions.keyGenerator()} {...event} navigation={navigation} />)
+      ) : null}
+      {events && !events.length ? (
+        <Pressable
+          // onPress={() => navigation.navigate('AllOrganisers')}
+          style={{
+            height: RFValue(200),
+            paddingHorizontal: RFValue(10),
+            width: '100%',
+            justifyContent: 'center'
+          }}
+        >
+          <Text style={{ color: '#aaa', fontSize: RFValue(14) }}>
+            There are no events this month but be ssure to keep checking this space for any upcoming events in the
+            current month.
+          </Text>
+        </Pressable>
+      ) : null}
     </View>
   );
 };

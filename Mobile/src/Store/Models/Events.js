@@ -71,7 +71,6 @@ export default {
     },
 
     async getUserEvents ({ uid, callback }) {
-      console.log('USerid', uid);
       try {
         await AxiosClient.get(`/events/user/${uid}`).then(({ data }) => {
           if (data.success) dispatch.Events.setUserEvents(data.result);

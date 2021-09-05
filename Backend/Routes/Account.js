@@ -1,12 +1,14 @@
 const router = require('express').Router();
-const { AccountController } = require('../Controllers');
+const { AccountController: AC } = require('../Controllers');
 
-router.post('/create', AccountController.register);
-router.post('/login', AccountController.login);
-router.post('/update/:uid', AccountController.updateAccount);
-router.get('/organisers', AccountController.getOrganisers);
-router.get('/organisers/all', AccountController.getAllOrganisers);
-router.get('/account/:uid', AccountController.getUser);
-router.get('/:uid', AccountController.getAccount);
+router.post('/create', AC.register);
+router.post('/login', AC.login);
+router.post('/update/:uid', AC.updateAccount);
+router.get('/organisers', AC.getOrganisers);
+router.get('/organisers/all', AC.getAllOrganisers);
+router.get('/account/:uid', AC.getUser);
+router.post('/follow/:following', AC.followAccount);
+router.post('/unfollow/:follower', AC.unfollowAccount);
+router.get('/:uid', AC.getAccount);
 
 module.exports = router;

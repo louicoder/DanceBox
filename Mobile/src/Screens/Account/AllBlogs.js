@@ -12,7 +12,6 @@ const AllBlogs = ({ navigation }) => {
 
   React.useEffect(() => {
     HelperFunctions.getUser(({ result, success }) => {
-      console.log('User', result);
       if (success) {
         setUser(result);
         getUserBlogs(result._id);

@@ -7,6 +7,7 @@ import { useSelector } from 'react-redux';
 import { ComingSoon, Filters } from '../../Components';
 import LoadingModal from '../../Components/LoadingModal';
 import { HelperFunctions } from '../../Utils';
+import { THEME_COLOR } from '../../Utils/Constants';
 import SingleBlog from './SingleBlog';
 
 const Blogs = ({ navigation }) => {
@@ -43,11 +44,12 @@ const Blogs = ({ navigation }) => {
             marginVertical: RFValue(10)
           }}
         >
-          <Text style={{ fontSize: RFValue(30), fontWeight: '700' }}>Blogs</Text>
+          <Text style={{ fontSize: RFValue(30), fontWeight: '700', color: THEME_COLOR }}>Blogs</Text>
           <Pressable
-            onPress={() => navigation.toggleDrawer()}
+            onPress={() => navigation.navigate('NewBlog')}
             style={{
-              backgroundColor: '#000',
+              // backgroundColor: '#000',
+              backgroundColor: THEME_COLOR,
               width: RFValue(40),
               height: RFValue(40),
               borderRadius: RFValue(50),
@@ -55,7 +57,7 @@ const Blogs = ({ navigation }) => {
               justifyContent: 'center'
             }}
           >
-            <Icon name="menu" color="#fff" size={RFValue(20)} />
+            <Icon name="plus" color="#fff" size={RFValue(20)} />
           </Pressable>
         </View>
       </SafeAreaView>

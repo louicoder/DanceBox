@@ -67,8 +67,6 @@ const EditAccount = ({ navigation }) => {
   // console.log('Interests', user);
   const isInd = state && state.accountType === 'individual';
 
-  console.log('Statein terstsss', state.interests, state._id);
-
   return (
     <React.Fragment>
       <LoadingModal isVisible={loading.updateAccountDetails} />

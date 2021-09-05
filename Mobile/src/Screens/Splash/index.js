@@ -29,7 +29,6 @@ const Splash = ({ navigation: { navigate } }) => {
 
   const getUser = (uid) => {
     HelperFunctions.getAsyncObjectData('user', ({ error, result }) => {
-      console.log('USER======', result);
       if (error) {
         // return HelperFunctions.Notify('Error', error);
       }

@@ -44,6 +44,7 @@ import Splash from '../Screens/Splash';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AllEvents from '../Screens/Account/AllEvents';
 import AllBlogs from '../Screens/Account/AllBlogs';
+import { THEME_COLOR, THEME_COLOR2, THEME_COLOR3 } from '../Utils/Constants';
 
 const Stacks = createStackNavigator();
 const LoginStack = createStackNavigator();
@@ -251,8 +252,10 @@ const BottomStackScreens = ({ socket }) => (
   <BottomStack.Navigator
     shifting={false}
     screenOptions={{}}
-    activeColor="#ffffff"
-    inactiveColor="#ffffff70"
+    // activeColor="#ffffff"
+    // inactiveColor="#ffffff70"
+    activeColor="#fff"
+    inactiveColor="#eeeeee70"
     initialRouteName="Home"
     barStyle={{ backgroundColor: '#000' }}
     // labeled={false}

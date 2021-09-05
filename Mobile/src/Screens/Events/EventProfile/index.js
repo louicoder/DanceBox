@@ -95,7 +95,7 @@ const EventProfile = ({ navigation, route }) => {
     Keyboard.dismiss();
     dispatch.Events.createEventComment({
       eventId: user,
-      payload: { comment, authorId: user._id, type: 'event', id: route.params.eventId },
+      payload: { comment, authorId: user._id, type: 'event', id: route.params._id },
       callback: ({ result, success }) => {
         if (!success) return HelperFunctions.Notify('Error', result);
         let comments = [ ...state.comments ];
@@ -115,13 +115,15 @@ const EventProfile = ({ navigation, route }) => {
       }
     });
 
+  // console.log('PARMAS. comments', route.params);
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       {state.commentShowing && (
         <CommentBox close={() => setState({ ...state, commentShowing: false })} postComment={postComment} user={user} />
       )}
       <ScrollView
-        style={{ flex: 1, backgroundColor: '#eee' }}
+        style={{ flex: 1, backgroundColor: '#eeeeee70' }}
         // extraScrollHeight={useSafeAreaInsets().top}
       >
         {/* <LoadingModal
@@ -141,14 +143,14 @@ const EventProfile = ({ navigation, route }) => {
           showCommentBox={() => setState({ ...state, commentShowing: true })}
         />
 
-        <View style={{ paddingVertical: RFValue(10), flexGrow: 1, backgroundColor: '#fff' }}>
+        <View style={{ paddingVertical: RFValue(20), flexGrow: 1, backgroundColor: '#fff' }}>
           {state.comments.map((item, index) => (
             <SingleComment
               key={item._id}
               first={index === 0}
               {...item}
               navigation={navigation}
-              last={index + 1 === event.comments.length}
+              last={state.comments && index + 1 === state.comments.length}
               // goto={() => navigation.navigate('NewEventComment', { eventId: event._id })}
             />
           ))}

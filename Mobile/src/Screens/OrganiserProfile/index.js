@@ -18,23 +18,18 @@ import { useDispatch, useSelector } from 'react-redux';
 import { HelperFunctions } from '../../Utils';
 import { DesignIcon, IconWithText } from '../../Components';
 import moment from 'moment';
+import { EVENTS_PIC } from '../../Utils/Constants';
 
-const OrganiserProfile = ({ navigation, route: { params } }) => {
-  const [ state, setState ] = React.useState({ ...params, loading: false, fLoading: false });
-  const { user } = useSelector((state) => state.Account);
+const OrganiserProfile = ({ navigation, route }) => {
+  const [ state, setState ] = React.useState({ loading: false, fLoading: false, followers: [], _id: '' });
+  const [ user, setUser ] = React.useState({ _id: '', following: [] });
+  const loading = useSelector((state) => state.loading.effects.Account);
   const dispatch = useDispatch();
 
-  React.useEffect(
-    () => {
-      const sub = navigation.addListener('focus', () => {
-        getUser(params.id);
-        console.log('PArams', params.id);
-        // getOrganiser();
-      });
-      return () => sub;
-    },
-    [ navigation, params ]
-  );
+  React.useEffect(() => {
+    getOrganiser();
+    HelperFunctions.getUser(({ success, result }) => success && setUser(result));
+  }, []);
 
   const getOrganiserEvents = () => {
     //
@@ -53,26 +48,50 @@ const OrganiserProfile = ({ navigation, route: { params } }) => {
   //   });
   // };
 
-  const getUser = () => {
+  const getOrganiser = () => {
     dispatch.Account.getOrganiser({
-      uid: params.id,
-      callback: (res) => {
-        // console.log('RESULT profile', res);
-        if (!res.success) return alert('ERror');
-        setState({ ...state, ...res.result, dateCreated: new Date(res.result.dateCreated) });
+      uid: route.params.id,
+      callback: ({ success, result }) => {
+        if (!success) return HelperFunctions.Notify('ERror getting organiser info');
+        setState({ ...state, ...result, dateCreated: new Date(result.dateCreated).toISOString() });
       }
     });
   };
 
   const followUser = async () => {
-    //
+    dispatch.Account.followAccount({
+      follower: user._id,
+      following: state._id,
+      callback: ({ success, result }) => {
+        if (!success) return HelperFunctions.Notify('Error following user', result);
+        setState({ ...state, followers: [ ...state.followers, user._id ] });
+        updateAccount({ ...user, following: [ ...user.following, state._id ] });
+      }
+    });
   };
+
+  // console.log('Dispatch', state._id, user._id);
+
+  const updateAccount = (user) =>
+    HelperFunctions.storeAsyncObjectData('user', user, ({ result, success }) => {
+      if (!success) return Alert.alert('Error following user', result);
+    });
 
   const unfollowUser = async () => {
-    //
+    dispatch.Account.unfollowAccount({
+      follower: state._id,
+      following: user._id,
+      callback: ({ success, result }) => {
+        console.log('USEr- organiser', state.followers, user._id, success, result);
+
+        if (!success) return HelperFunctions.Notify('Error following user', result);
+        setState({ ...state, followers: state.followers.filter((r) => r !== user._id) });
+        updateAccount({ ...user, following: user.following.filter((r) => r !== state._id) });
+      }
+    });
   };
 
-  const followed = state.followers && state.followers.includes(user.uid);
+  const followed = state.followers && state.followers.includes(user._id);
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -84,29 +103,41 @@ const OrganiserProfile = ({ navigation, route: { params } }) => {
         >
           <ImageBackground
             source={{
-              uri: state.imageUrl
+              uri: state.imageUrl || EVENTS_PIC
             }}
             style={{ width: '100%', height: RFValue(300) }}
             resizeMode="cover"
           >
-            <Pressable
-              // onPress={followUnfollow}
-              style={{
-                paddingHorizontal: RFValue(20),
-                paddingVertical: RFValue(10),
-                backgroundColor: '#010203',
-                flexDirection: 'row',
-                alignItems: 'center',
-                position: 'absolute',
-                bottom: RFValue(10),
-                right: RFValue(10)
-              }}
-            >
-              <DesignIcon pkg="ft" name={followed ? 'user-check' : 'user-plus'} color="#fff" size={RFValue(20)} />
-              <Text style={{ color: '#fff', fontSize: RFValue(16), marginLeft: RFValue(10) }}>
-                {followed ? 'Unfollow' : 'Follow'}
-              </Text>
-            </Pressable>
+            {state &&
+            user &&
+            state._id !== user._id && (
+              <Pressable
+                onPress={() =>
+                  (!loading.followAccount || !loading.unfollowAccount) && followed ? unfollowUser() : followUser()}
+                style={{
+                  width: '35%',
+                  height: RFValue(40),
+                  backgroundColor: '#010203',
+                  flexDirection: 'row',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  position: 'absolute',
+                  bottom: RFValue(10),
+                  right: RFValue(10)
+                }}
+              >
+                {!loading.followAccount &&
+                  (!loading.unfollowAccount && (
+                    <DesignIcon pkg="ad" name={followed ? 'deleteuser' : 'adduser'} color="#fff" size={RFValue(20)} />
+                  ))}
+                {loading.followAccount || loading.unfollowAccount ? (
+                  <ActivityIndicator color="#fff" size={RFValue(24)} />
+                ) : null}
+                <Text style={{ color: '#fff', fontSize: RFValue(16), marginLeft: RFValue(10) }}>
+                  {followed ? 'Unfollow' : 'Follow'}
+                </Text>
+              </Pressable>
+            )}
           </ImageBackground>
           <View
             style={{
@@ -141,8 +172,9 @@ const OrganiserProfile = ({ navigation, route: { params } }) => {
               extStyles={{ marginTop: RFValue(20) }}
               name="users"
               pkg="ft"
-              text={`${state.followers && state.followers.length} followers ・ ${state.following &&
-                state.following.length} following`}
+              text={`${(state.followers && state.followers.length) || 0} followers ・ ${(state.following &&
+                state.following.length) ||
+                0} following`}
             />
             <IconWithText name="pin" text={`Located ・ ${state.companyAddress}`} />
             <IconWithText name="team" pkg="ad" text={state.companyType} />

@@ -8,54 +8,6 @@ const createEvent = async (req, res) => {
     return res.json({ success: false, result: 'Blog description is required but missing, trys again' });
 
   try {
-    // const {
-    //   authorId,
-    //   title = '',
-    //   date,
-    //   time,
-    //   startDate,
-    //   endDate,
-    //   venue,
-    //   contact,
-    //   imageUrl,
-    //   description,
-    //   free,
-    //   price,
-    //   tags,
-    //   category,
-    //   ticketCompany,
-    //   judges = [],
-    //   judgingCriteria,
-    //   judgingNotes,
-    //   noOfJudges
-    // } = req.body;
-    // const payload = {
-    //   authorId,
-    //   tags,
-    //   title,
-    //   date,
-    //   time,
-    //   contact,
-    //   imageUrl,
-    //   venue,
-    //   description,
-    //   free,
-    //   price,
-    //   startDate,
-    //   endDate,
-    //   category,
-    //   noOfJudges,
-    //   // dateCreated,
-    //   ticketCompany,
-    //   judges,
-    //   judgingCriteria,
-    //   judgingNotes,
-    //   attending: [],
-    //   participanting: [],
-    //   likes: [],
-    //   comments: [],
-    //   dateCreated: new Date().toISOString()
-    // };
     const NewEvent = new EventsModel({ ...req.body, dateCreated: new Date().toISOString(), likes: [] });
     await NewEvent.save().then((result) => res.json({ success: true, result }));
   } catch (error) {

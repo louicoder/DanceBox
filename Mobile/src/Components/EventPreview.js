@@ -4,11 +4,11 @@ import { RFValue } from 'react-native-responsive-fontsize';
 import { CONSTANTS } from '../Utils';
 import DesignIcon from './DesignIcon';
 
-const EventPreview = ({ title, description, participating, attending, imageUrl, ...rest }) => {
-  console.log('REST---', rest);
+const EventPreview = ({ title, description, participating, attending, imageUrl, navigation, _id, ...rest }) => {
+  // console.log('REST---', rest);
   return (
     <Pressable
-      onPress={() => navigation.navigate('OrganiserProfile', { id })}
+      onPress={() => navigation.navigate('EventProfile', { _id })}
       style={{
         width: '100%',
         flexDirection: 'row',

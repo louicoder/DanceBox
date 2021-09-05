@@ -44,13 +44,12 @@ const NewEvent = ({ navigation }) => {
   const [ imageLoading, setImageLoading ] = React.useState(false);
 
   const [ state, setState ] = React.useState({
-    title: 'Online battle callout 2021',
+    title: '',
     startDate: new Date(),
     endDate: new Date(),
     image: {},
-    venue: 'Kamwokya playground',
-    description:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Indicant pueri, in quibus ut in speculis natura cernitur. Magni enim aestimabat pecuniam non modo non contra leges, sed etiam legibus partam. Vitae autem degendae ratio maxime quidem illis placuit quieta. Sed eum qui audiebant, quoad poterant, defendebant sententiam suam. Duo Reges: constructio interrete. Nunc dicam de voluptate, nihil scilicet novi, ea tamen, quae te ipsum probaturum esse confidam. Itaque in rebus minime obscuris non multus est apud eos disserendi labor. Nescio quo modo praetervolavit oratio',
+    venue: '',
+    description: '',
     tags: [],
     tagsVisible: true,
     // date: moment(new Date()).format('YYYY-MM-DD'),
@@ -60,12 +59,11 @@ const NewEvent = ({ navigation }) => {
     modalVisible: false,
     modalComponent: 'startdate',
     // amount: 0,
-    judgingNotes:
-      'This battle will be strictly judged by the audience online and the results be available for everyone at any time to take a look',
-    judgingCriteria: 'Judges',
+    judgingNotes: '',
+    judgingCriteria: '',
     noOfJudges: 3,
     loading: false,
-    ticketCompany: 'Kafeero foundation'
+    ticketCompany: ''
     // dateTime: new Date().toString()
   });
 
@@ -119,7 +117,7 @@ const NewEvent = ({ navigation }) => {
           eventId,
           payload: { imageUrl },
           callback: (resp) => {
-            // console.log('REsp from update image', resp);
+            console.log('REsp from update image', resp);
             setImageLoading(false);
 
             if (!resp.success) return HelperFunctions.Notify('Error adding event photo', resp.result);
@@ -239,7 +237,7 @@ const NewEvent = ({ navigation }) => {
         ) : null}
 
         <View style={{ width: '100%', paddingHorizontal: RFValue(10), marginTop: RFValue(10), alignSelf: 'center' }}>
-          <Text style={{ fontSize: RFValue(14) }}>Enter title of the event:</Text>
+          <Text style={{ fontSize: RFValue(14) }}>Title of the event:</Text>
           <TextInput
             scrollEnabled={false}
             value={state.title}

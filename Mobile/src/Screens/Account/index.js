@@ -48,7 +48,7 @@ const Account = ({ navigation }) => {
   React.useEffect(
     () => {
       const sub = navigation.addListener('focus', () => {
-        console.log('Re-rendering account...------');
+        // console.log('Re-rendering account...------');
         getUser();
       });
       return () => sub;
@@ -76,7 +76,7 @@ const Account = ({ navigation }) => {
 
   const getUser = () =>
     HelperFunctions.getUser(({ result: user, success }) => {
-      console.log('Sucess user===', user, success);
+      // console.log('Sucess user===', user, success);
       if (success) setUser(user);
     });
 

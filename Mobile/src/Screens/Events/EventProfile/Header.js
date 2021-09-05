@@ -19,6 +19,7 @@ import { CONSTANTS, HelperFunctions } from '../../../Utils';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { IconWithText } from '../../../Components';
+import { THEME_COLOR2, THEME_COLOR4, THEME_COLOR5 } from '../../../Utils/Constants';
 
 const Header = ({
   likeHandler,
@@ -126,7 +127,8 @@ const Header = ({
           onPress={() => navigation.navigate('Voting', { user, eventId: _id })}
           style={{
             width: '100%',
-            backgroundColor: '#eee',
+            // backgroundColor: '#eee',
+            backgroundColor: THEME_COLOR4,
             height: RFValue(50),
             alignItems: 'center',
             justifyContent: 'center',
@@ -184,7 +186,8 @@ const Header = ({
             onPress={() => setVisible(!visible)}
             style={{
               flexDirection: 'row',
-              backgroundColor: '#eee',
+              // backgroundColor: '#eee',
+              backgroundColor: THEME_COLOR5,
               alignItems: 'center',
               justifyContent: 'space-between',
               padding: RFValue(10)
@@ -193,7 +196,7 @@ const Header = ({
             <Text style={{ fontSize: RFValue(16), fontWeight: 'bold' }}>
               {visible ? 'Close' : 'Tap to view'} judging criteria:
             </Text>
-            <Icon name={!visible ? 'chevron-down' : 'chevron-up'} size={RFValue(25)} color="#aaa" />
+            <Icon name={!visible ? 'chevron-down' : 'chevron-up'} size={RFValue(25)} color="#000" />
           </Pressable>
           {visible ? (
             <View style={{ padding: RFValue(10), borderWidth: 1, borderColor: '#eee', borderTopWidth: 0 }}>
@@ -229,7 +232,8 @@ const Header = ({
             onPress={showCommentBox}
             style={{
               flexGrow: 1,
-              backgroundColor: '#eee',
+              // backgroundColor: '#eee',
+              backgroundColor: THEME_COLOR5,
               marginLeft: RFValue(10),
               height: RFValue(40),
               justifyContent: 'center',

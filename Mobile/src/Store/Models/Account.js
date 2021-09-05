@@ -76,7 +76,6 @@ export default {
     async getOrganiser ({ uid, callback }) {
       try {
         await AxiosClient.get(`/accounts/${uid}`).then(({ data }) => {
-          // console.log('Data===', data, 'UID====', uid);
           callback(data);
         });
       } catch (error) {
@@ -114,6 +113,23 @@ export default {
         // console.log('USER EVENTS', events);
         // console.log('USER BLOGS', blogs);
         callback({ success: eventSucess && blogSucess, result: { events, blogs } });
+      } catch (error) {
+        return callback({ success: false, result: error.message });
+      }
+    },
+
+    async followAccount ({ follower, following, callback }) {
+      try {
+        await AxiosClient.post(`/accounts/follow/${following}`, { follower }).then(({ data }) => callback(data));
+      } catch (error) {
+        return callback({ success: false, result: error.message });
+      }
+    },
+
+    async unfollowAccount ({ follower, following, callback }) {
+      console.log('Folower- following', follower, following);
+      try {
+        await AxiosClient.post(`/accounts/unfollow/${follower}`, { following }).then(({ data }) => callback(data));
       } catch (error) {
         return callback({ success: false, result: error.message });
       }

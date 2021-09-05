@@ -16,7 +16,7 @@ const createComment = async (req, res) => {
   const payload = { authorId, comment, dateCreated: new Date().toISOString(), commentType: type.toLowerCase(), id };
   const comm = new CommentsModel(payload);
   try {
-    console.log('Reached comment');
+    console.log('Reached comment', req.body);
     await comm.save().then(async (result) => {
       const user = await AccountModel.findOne({ _id: authorId });
       console.log('RESULT', user._doc);
