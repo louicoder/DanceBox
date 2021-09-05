@@ -57,7 +57,7 @@ const SingleBlog = ({
           }}
         >
           <Image
-            source={{ uri: user.imageUrl || CONSTANTS.DEFAULT_PROFILE }}
+            source={{ uri: (user && user.imageUrl) || CONSTANTS.DEFAULT_PROFILE }}
             style={{ height: RFValue(30), width: RFValue(30), borderRadius: RFValue(50) }}
           />
           <View style={{ flexGrow: 1, flexDirection: 'row', justifyContent: 'space-between' }}>

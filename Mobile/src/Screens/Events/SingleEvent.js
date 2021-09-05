@@ -50,9 +50,12 @@ const SingleEvent = ({
       )}
 
       {title && (
-        <Pressable style={{ width: '100%', padding: RFValue(10) }} onPress={() => navigate('EventProfile', { _id })}>
+        <Pressable
+          style={{ width: '100%', paddingHorizontal: RFValue(10) }}
+          onPress={() => navigate('EventProfile', { _id })}
+        >
           {title && (
-            <Text style={{ fontSize: RFValue(18), fontWeight: 'bold' }}>
+            <Text style={{ fontSize: RFValue(20), fontWeight: 'bold' }}>
               {title.trim().slice(0, 50)}
               {title.length > 50 && '...'}
             </Text>
@@ -66,15 +69,19 @@ const SingleEvent = ({
 
       {imageUrl ? (
         <Pressable onPress={() => navigate('EventProfile', { _id })}>
-          <Image style={{ width: '100%', height: RFValue(300) }} resizeMode="cover" source={{ uri: imageUrl }} />
+          <Image
+            style={{ width: '100%', height: RFValue(300), marginTop: RFValue(15) }}
+            resizeMode="cover"
+            source={{ uri: imageUrl }}
+          />
         </Pressable>
       ) : null}
       {description && (
-        <View style={{ paddingHorizontal: RFValue(10) }}>
+        <Pressable style={{ paddingHorizontal: RFValue(10) }} onPress={() => navigate('EventProfile', { _id })}>
           {/* <Text style={{ fontSize: RFValue(14), fontWeight: '600' }}>
           {moment(startDate).format('DD/MMMM/YYYY')} - {moment(endDate).format('DD/MMMM/YYYY')}
         </Text> */}
-          <Text style={{ fontSize: RFValue(14), marginVertical: RFValue(15) }}>
+          <Text style={{ fontSize: RFValue(16), marginVertical: RFValue(15) }}>
             {description && description.trim().slice(0, 200)}
             {description && description.length > 300 && '...'}
           </Text>
@@ -87,7 +94,7 @@ const SingleEvent = ({
           {/* <Text style={{ color: '#aaa', fontSize: RFValue(14) }}>
           {likes && likes.length} likes ・ {comments && comments.length} comments
         </Text> */}
-        </View>
+        </Pressable>
       )}
 
       {/* {children} */}

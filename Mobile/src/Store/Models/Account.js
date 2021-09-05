@@ -102,6 +102,17 @@ export default {
       }
     },
 
+    async updatePassword ({ uid, password, callback }) {
+      try {
+        await AxiosClient.post(`/accounts/update/${uid}`, { password }).then(async ({ data }) => {
+          if (data.success) await HelperFunctions.storeAsyncObjectData('user', data.result, () => callback(data));
+          callback(data);
+        });
+      } catch (error) {
+        return callback({ success: false, result: error.message });
+      }
+    },
+
     async getUserEventsAndBlogs ({ uid, callback }) {
       try {
         const { data: { success: eventSucess, result: events } } = await AxiosClient.get(`/events/user/${uid}`).then();
@@ -127,7 +138,6 @@ export default {
     },
 
     async unfollowAccount ({ follower, following, callback }) {
-      console.log('Folower- following', follower, following);
       try {
         await AxiosClient.post(`/accounts/unfollow/${follower}`, { following }).then(({ data }) => callback(data));
       } catch (error) {

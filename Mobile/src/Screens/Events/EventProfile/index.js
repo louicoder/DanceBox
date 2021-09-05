@@ -126,12 +126,6 @@ const EventProfile = ({ navigation, route }) => {
         style={{ flex: 1, backgroundColor: '#eeeeee70' }}
         // extraScrollHeight={useSafeAreaInsets().top}
       >
-        {/* <LoadingModal
-          isVisible={
-            loading.likeEvent || loading.attendParticipate || loading.getEvent || loading.unattendUnparticipate
-          }
-        /> */}
-
         <Header
           {...event}
           comments={state.comments}
@@ -143,7 +137,13 @@ const EventProfile = ({ navigation, route }) => {
           showCommentBox={() => setState({ ...state, commentShowing: true })}
         />
 
-        <View style={{ paddingVertical: RFValue(20), flexGrow: 1, backgroundColor: '#fff' }}>
+        <View
+          style={{
+            paddingVertical: RFValue(state.comments && user && user._id ? 20 : 0),
+            flexGrow: 1,
+            backgroundColor: '#fff'
+          }}
+        >
           {state.comments.map((item, index) => (
             <SingleComment
               key={item._id}
@@ -155,7 +155,7 @@ const EventProfile = ({ navigation, route }) => {
             />
           ))}
 
-          {state.comments && !state.comments.length ? (
+          {user && state.comments && !state.comments.length ? (
             <ComingSoon title="">
               <Pressable
                 style={{ alignItems: 'center', justifyContent: 'center' }}

@@ -19,7 +19,7 @@ import { CONSTANTS, HelperFunctions } from '../../../Utils';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { IconWithText } from '../../../Components';
-import { THEME_COLOR2, THEME_COLOR4, THEME_COLOR5 } from '../../../Utils/Constants';
+import { THEME_COLOR2, THEME_COLOR3, THEME_COLOR4, THEME_COLOR5 } from '../../../Utils/Constants';
 
 const Header = ({
   likeHandler,
@@ -52,15 +52,17 @@ const Header = ({
   // const { user } = useSelector((state) => state.Account);
   const stato = useSelector((state) => state);
   const [ visible, setVisible ] = React.useState(false);
-  const [ user, setUser ] = React.useState(false);
+  const [ user, setUser ] = React.useState({ _id: '' });
   const [ comment, setComment ] = React.useState('posting something else here');
 
   React.useEffect(
     () => {
       // const sub =
       const sub = navigation.addListener('focus', async () => {
-        await HelperFunctions.getAsyncObjectData('user', ({ success, result }) => setUser(result));
+        await HelperFunctions.getUser(({ success, result }) => success && setUser(result));
       });
+
+      return () => sub;
     },
     [ navigation ]
   );
@@ -89,7 +91,8 @@ const Header = ({
         <IconWithText
           name="trending-up"
           pkg="ft"
-          text={`${attending && attending.length} going ・ ${participating && participating.length} participants`}
+          text={`${(attending && attending.length) || 0} going ・ ${(participating && participating.length) ||
+            0} participants`}
         />
         <IconWithText
           name="calendar"
@@ -123,12 +126,13 @@ const Header = ({
         />
         {/* End tags */}
 
-        <Pressable
+        {/* Go to voting page */}
+        {/* <Pressable
           onPress={() => navigation.navigate('Voting', { user, eventId: _id })}
           style={{
             width: '100%',
             // backgroundColor: '#eee',
-            backgroundColor: THEME_COLOR4,
+            backgroundColor: THEME_COLOR3,
             height: RFValue(50),
             alignItems: 'center',
             justifyContent: 'center',
@@ -136,8 +140,10 @@ const Header = ({
           }}
         >
           <Text style={{ fontSize: RFValue(16) }}>Go to Voting</Text>
-        </Pressable>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '100%', marginTop: RFValue(10) }}>
+        </Pressable> */}
+
+        {/* Attend and participate buttons */}
+        {/* <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '100%', marginTop: RFValue(10) }}>
           <Pressable
             onPress={() => (isAttending() ? unattendUnparticipate('unattend') : attendParticipate('attend'))}
             style={{
@@ -150,7 +156,6 @@ const Header = ({
               flexDirection: 'row'
             }}
           >
-            {/* <Icon name="map-marker" size={RFValue(30)} color="#fff" /> */}
             <Text style={{ fontSize: RFValue(16), color: '#fff', textAlign: 'center', marginLeft: RFValue(5) }}>
               {isAttending() ? 'Cancel Attendance' : '+ Attend'}
             </Text>
@@ -167,18 +172,17 @@ const Header = ({
               flexDirection: 'row'
             }}
           >
-            {/* <Icon name="account-plus" size={RFValue(30)} color="#fff" /> */}
             <Text style={{ fontSize: RFValue(16), color: '#fff', textAlign: 'center', marginLeft: RFValue(5) }}>
               {isParticipant() ? 'Cancel Participation' : '+ Participate'}
             </Text>
           </Pressable>
-        </View>
+        </View> */}
 
         <View
           style={{
             width: '100%',
             // borderWidth: 1,
-            marginTop: RFValue(10),
+            marginVertical: RFValue(10),
             borderColor: !visible ? 'transparent' : '#ddd'
           }}
         >
@@ -186,8 +190,8 @@ const Header = ({
             onPress={() => setVisible(!visible)}
             style={{
               flexDirection: 'row',
-              // backgroundColor: '#eee',
-              backgroundColor: THEME_COLOR5,
+              backgroundColor: '#eee',
+              // backgroundColor: THEME_COLOR5,
               alignItems: 'center',
               justifyContent: 'space-between',
               padding: RFValue(10)
@@ -211,38 +215,42 @@ const Header = ({
           ) : null}
         </View>
 
-        <Text style={{ fontSize: RFValue(14), marginVertical: RFValue(15) }}>Join the conversation below</Text>
-        <View
-          style={{ flexDirection: 'row', marginBottom: RFValue(15), width: '100%', justifyContent: 'space-between' }}
-        >
-          <View style={{ width: '10%' }}>
-            <Image
-              source={{ uri: (user && user.imageUrl) || CONSTANTS.DEFAULT_PROFILE }}
-              style={{
-                marginRight: RFValue(20),
-                width: RFValue(30),
-                height: RFValue(30),
-                borderRadius: RFValue(30),
-                marginTop: RFValue(5)
-              }}
-            />
-          </View>
-
-          <Pressable
-            onPress={showCommentBox}
-            style={{
-              flexGrow: 1,
-              // backgroundColor: '#eee',
-              backgroundColor: THEME_COLOR5,
-              marginLeft: RFValue(10),
-              height: RFValue(40),
-              justifyContent: 'center',
-              paddingHorizontal: RFValue(10)
-            }}
+        {user && user._id ? (
+          <Text style={{ fontSize: RFValue(14), marginVertical: RFValue(15) }}>Join the conversation below</Text>
+        ) : null}
+        {user && user._id ? (
+          <View
+            style={{ flexDirection: 'row', marginBottom: RFValue(15), width: '100%', justifyContent: 'space-between' }}
           >
-            <Text style={{ fontSize: RFValue(16), color: '#aaa' }}>Enter your comment...</Text>
-          </Pressable>
-        </View>
+            <View style={{ width: '10%' }}>
+              <Image
+                source={{ uri: (user && user.imageUrl) || CONSTANTS.DEFAULT_PROFILE }}
+                style={{
+                  marginRight: RFValue(20),
+                  width: RFValue(30),
+                  height: RFValue(30),
+                  borderRadius: RFValue(30),
+                  marginTop: RFValue(5)
+                }}
+              />
+            </View>
+
+            <Pressable
+              onPress={showCommentBox}
+              style={{
+                flexGrow: 1,
+                backgroundColor: '#eee',
+                // backgroundColor: THEME_COLOR5,
+                marginLeft: RFValue(10),
+                height: RFValue(40),
+                justifyContent: 'center',
+                paddingHorizontal: RFValue(10)
+              }}
+            >
+              <Text style={{ fontSize: RFValue(16), color: '#aaa' }}>Enter your comment...</Text>
+            </Pressable>
+          </View>
+        ) : null}
       </View>
     </View>
   );

@@ -33,7 +33,7 @@ const IconWithText = ({
         <DesignIcon name={name} pkg={pkg} size={size} color={color} extStyles={{ marginRight: 0 }} />
       </View>
       <View style={{ width: '85%' }}>
-        <Text style={{ fontSize: RFValue(16), color: !textExists ? '#aaa' : '#000' }}>
+        <Text style={[ { fontSize: RFValue(16), color: !textExists ? '#aaa' : '#000' }, textCntStyles ]}>
           {textExists ? text : 'No description'}
         </Text>
       </View>

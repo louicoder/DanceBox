@@ -58,9 +58,10 @@ const Account = ({ navigation }) => {
 
   const logout = () => {
     HelperFunctions.removeAsyncObjectData('user', () => {
+      setState({ ...state, passVisible: false });
       dispatch.Account.setUserDetails({});
       setUser({});
-      return navigation.navigate('Login', { loginMode: true });
+      // return navigation.navigate('Login', { loginMode: true });
     });
   };
 
@@ -135,7 +136,11 @@ const Account = ({ navigation }) => {
         <PasswordReset />
       </Modal> */}
       {state.passVisible ? (
-        <ResetPassword resetPassword={resetPassword} close={() => setState({ ...state, passVisible: false })} />
+        <ResetPassword
+          resetPassword={resetPassword}
+          close={() => setState({ ...state, passVisible: false })}
+          reset={logout}
+        />
       ) : null}
 
       <SafeAreaView style={{ flex: 1 }}>

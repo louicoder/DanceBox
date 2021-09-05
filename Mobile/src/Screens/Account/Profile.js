@@ -5,6 +5,14 @@ import { RFValue } from 'react-native-responsive-fontsize';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { IconWithText } from '../../Components';
 import { HelperFunctions } from '../../Utils';
+import {
+  THEME_COLOR2,
+  THEME_COLOR3,
+  THEME_COLOR4,
+  THEME_COLOR5,
+  THEME_COLOR6,
+  THEME_COLOR7
+} from '../../Utils/Constants';
 
 const Profile = ({
   accountType,
@@ -28,26 +36,33 @@ const Profile = ({
   return (
     <React.Fragment>
       <View style={{ backgroundColor: '#fff', marginTop: RFValue(10), padding: RFValue(10) }}>
-        <Text style={{ fontWeight: 'bold', marginVertical: RFValue(10), fontSize: RFValue(17), color: '#aaa' }}>
-          Account information:
+        <Text style={{ fontWeight: 'bold', marginVertical: RFValue(10), fontSize: RFValue(20), color: '#000' }}>
+          Account Information:
         </Text>
 
         <IconWithText
+          color={THEME_COLOR4}
           name="users"
           pkg="ft"
           text={`${followers && followers.length} followers ・ ${following && following.length} following`}
         />
-        {!isInd && <IconWithText name="pin" text={companyAddress} />}
-        {!isInd && <IconWithText name="team" text={companyType} pkg="ad" />}
+        {!isInd && <IconWithText color={THEME_COLOR4} name="pin" text={companyAddress} />}
+        {!isInd && <IconWithText color={THEME_COLOR4} name="team" text={companyType} pkg="ad" />}
 
-        {!isInd ? <IconWithText name="idcard" pkg="ad" text={companyDescription} /> : null}
+        {!isInd ? <IconWithText color={THEME_COLOR4} name="idcard" pkg="ad" text={companyDescription} /> : null}
         {isInd && interests ? (
-          <IconWithText name="tago" pkg="ad" text={interests.length ? interests.join(', ') : 'No interests'} />
+          <IconWithText
+            color={THEME_COLOR4}
+            name="tago"
+            pkg="ad"
+            text={interests.length ? interests.join(', ') : 'No interests'}
+          />
         ) : null}
         {!isInd && eventCategories && eventCategories.length ? (
-          <IconWithText name="tago" pkg="ad" text={eventCategories.join(', ')} />
+          <IconWithText color={THEME_COLOR4} name="tago" pkg="ad" text={eventCategories.join(', ')} />
         ) : null}
         <IconWithText
+          color={THEME_COLOR4}
           name="clockcircleo"
           pkg="ad"
           text={`Created ・ ${moment(dateCreated).fromNow()}`}
@@ -55,7 +70,7 @@ const Profile = ({
         />
       </View>
       <View style={{ marginTop: RFValue(10), backgroundColor: '#fff', padding: RFValue(10) }}>
-        <Text style={{ fontWeight: 'bold', marginVertical: RFValue(10), fontSize: RFValue(17), color: '#aaa' }}>
+        <Text style={{ fontWeight: 'bold', marginVertical: RFValue(10), fontSize: RFValue(20), color: '#000' }}>
           Quick account actions:
         </Text>
         {[
@@ -85,9 +100,17 @@ const Profile = ({
               text={label}
               extStyles={{ width: '90%', marginBottom: RFValue(3) }}
               onPress={onPress}
+              color={THEME_COLOR4}
+              // textCntStyles={{ fontWeight: 'bold' }}
               // size={24}
             />
-            <Icon name="chevron-right" size={RFValue(30)} style={{ borderWidth: 0 }} onPress={onPress} />
+            <Icon
+              name="chevron-right"
+              size={RFValue(30)}
+              style={{ borderWidth: 0 }}
+              onPress={onPress}
+              color={THEME_COLOR4}
+            />
           </Pressable>
         ))}
       </View>

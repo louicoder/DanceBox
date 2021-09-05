@@ -53,24 +53,6 @@ const Login = ({ navigation, route }) => {
     });
   };
 
-  // const checkNavigationScreen = () =>
-
-  const switchError = (errorCode) => {
-    // console.log(errorCode);
-    switch (errorCode) {
-      case 'auth/invalid-email':
-        return 'The email is invalid or badly formatted';
-      case 'auth/user-disabled':
-        return "The user's accont is disabled.";
-      case 'auth/user-not-found':
-        return 'The does not exist on the platform or has been deleted.';
-      case 'auth/wrong-password':
-        return 'The login credentials do not match, try again.';
-      default:
-        return 'An error occured. Try again.';
-    }
-  };
-
   React.useEffect(
     () => {
       setState({ ...state, loginMode: route.params.loginMode || true });

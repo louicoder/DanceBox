@@ -27,7 +27,7 @@ const register = async (req, res) => {
 
 const login = async (req, res) => {
   if (!req.body.email) return res.json({ success: false, result: 'Email address is required but missing, try again' });
-  if (!req.body.password) return res.json({ success: false, result: 'Password is required but missing, try again' });
+  // if (!req.body.password) return res.json({ success: false, result: 'Password is required but missing, try again' });
   const { email, password } = req.body;
 
   try {
@@ -59,9 +59,13 @@ const updateAccount = async (req, res) => {
     return res.json({ success: true, result: 'Atleast one field required to update account' });
   if (!req.params.uid) return res.json({ success: true, result: 'User id required to update account' });
   const { uid: _id } = req.params;
-  console.log('Body', req.body);
+  const { password = '', ...rest } = req.body;
+
+  let payload = { ...rest };
+  if (password) payload = { ...payload, password: hashPassword(password) };
+  // console.log('Body', req.body);
   try {
-    await AccountModel.updateOne({ _id }, req.body).then(async (response) => {
+    await AccountModel.updateOne({ _id }, payload).then(async (response) => {
       if (response.nModified < 1) return res.json({ success: false, result: 'Nothing was updated , try again' });
       const result = await AccountModel.findOne({ _id });
       return res.json({ success: true, result });

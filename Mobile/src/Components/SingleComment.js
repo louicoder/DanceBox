@@ -17,13 +17,16 @@ const SingleComment = ({
   _id,
   blog,
   user,
+  extStyles,
   ...rest
 }) => {
   return (
-    <View style={{ paddingTop: first ? RFValue(10) : 0, borderWidth: 0, marginBottom: RFValue(20) }}>
+    <View style={[ { backgroundColor: '#fff' }, extStyles ]}>
       <View
         style={{
           width: '100%',
+          paddingBottom: RFValue(30),
+          paddingTop: first ? RFValue(20) : 0,
           // maBottom: RFValue(15),
           flexDirection: 'row',
           paddingHorizontal: RFValue(10),

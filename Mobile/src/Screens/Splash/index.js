@@ -24,11 +24,20 @@ const Splash = ({ navigation: { navigate } }) => {
     // } else {
     //   navigate('Login');
     // }
-    getUser();
+    // getUser();
+    HelperFunctions.getUser(({ success, result }) => {
+      // console.log('RESULT===---', result);
+      if (success) {
+        dispatch.Account.setUserDetails(result);
+        // return HelperFunctions.Notify('Error', error);
+      }
+      // if (!result) return navigate('Login');
+      navigate('Home');
+    });
   }, []);
 
   const getUser = (uid) => {
-    HelperFunctions.getAsyncObjectData('user', ({ error, result }) => {
+    HelperFunctions.getUser(({ error, result }) => {
       if (error) {
         // return HelperFunctions.Notify('Error', error);
       }

@@ -47,9 +47,15 @@ const BlogProfile = ({ navigation, route, ...props }) => {
     [ navigation ]
   );
 
-  React.useEffect(() => {
-    HelperFunctions.getUser(({ success, result }) => success && setUser(result));
-  }, []);
+  React.useEffect(
+    () => {
+      const sub = navigation.addListener('focus', () =>
+        HelperFunctions.getUser(({ success, result }) => success && setUser(result))
+      );
+      return () => sub;
+    },
+    [ navigation ]
+  );
 
   const getComments = () =>
     dispatch.Blogs.getBlogComments({
@@ -140,36 +146,38 @@ const BlogProfile = ({ navigation, route, ...props }) => {
               ListHeaderComponent={() => (
                 <View>
                   <Blog {...blog} comments={state.comments} />
-                  <View
-                    style={{
-                      backgroundColor: '#fff',
-                      width: '100%',
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      paddingHorizontal: RFValue(10),
-                      paddingVertical: RFValue(15)
-                    }}
-                  >
-                    <Image
-                      source={{ uri: user.imageUrl || DEFAULT_PROFILE }}
-                      style={{ width: RFValue(30), height: RFValue(30), borderRadius: 50, marginRight: RFValue(20) }}
-                    />
-                    <Pressable
-                      onPress={() => setState({ ...state, commentShowing: true })}
+                  {user && user._id ? (
+                    <View
                       style={{
-                        backgroundColor: '#eee',
-                        flexGrow: 1,
+                        backgroundColor: '#fff',
+                        width: '100%',
                         flexDirection: 'row',
-                        height: RFValue(40),
+                        alignItems: 'center',
                         paddingHorizontal: RFValue(10),
-                        justifyContent: 'space-between',
-                        alignItems: 'center'
+                        paddingVertical: RFValue(15)
                       }}
                     >
-                      <Text style={{ color: '#aaa', fontSize: RFValue(14) }}>Leave your comment...</Text>
-                      {state.commentShowing && <DesignIcon name="close" color="#aaa" />}
-                    </Pressable>
-                  </View>
+                      <Image
+                        source={{ uri: (user && user.imageUrl) || DEFAULT_PROFILE }}
+                        style={{ width: RFValue(30), height: RFValue(30), borderRadius: 50, marginRight: RFValue(20) }}
+                      />
+                      <Pressable
+                        onPress={() => setState({ ...state, commentShowing: true })}
+                        style={{
+                          backgroundColor: '#eee',
+                          flexGrow: 1,
+                          flexDirection: 'row',
+                          height: RFValue(40),
+                          paddingHorizontal: RFValue(10),
+                          justifyContent: 'space-between',
+                          alignItems: 'center'
+                        }}
+                      >
+                        <Text style={{ color: '#aaa', fontSize: RFValue(14) }}>Leave your comment...</Text>
+                        {state.commentShowing && <DesignIcon name="close" color="#aaa" />}
+                      </Pressable>
+                    </View>
+                  ) : null}
                 </View>
               )}
               // ListFooterComponent={}
@@ -178,8 +186,10 @@ const BlogProfile = ({ navigation, route, ...props }) => {
               showsVerticalScrollIndicator={false}
               renderItem={({ item, index }) => (
                 <SingleComment
+                  // extStyles={{ paddingTop: index === 0 ? RFValue(15) : 0 }}
                   {...item}
                   last={index + 1 === state.comments.length}
+                  first={index === 0}
                   navigation={navigation}
                   _id={state._id}
                   blog={item}

@@ -3,14 +3,14 @@ import { View, Text, TextInput, Image } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { useSelector } from 'react-redux';
 import { Button, DesignIcon, PasswordInput, StickyView } from '../../../Components';
-import { DEFAULT_PROFILE } from '../../../Utils/Constants';
+import { DEFAULT_PROFILE, THEME_COLOR3 } from '../../../Utils/Constants';
 
 const CommentBox = ({ postComment, close, user }) => {
   const loading = useSelector((state) => state.loading.effects.Events);
   const [ comment, setComment ] = React.useState('');
   return (
     <StickyView>
-      <View style={{ width: '100%', backgroundColor: '#fcb072', paddingHorizontal: RFValue(10) }}>
+      <View style={{ width: '100%', backgroundColor: THEME_COLOR3, paddingHorizontal: RFValue(10), zIndex: 50 }}>
         <View
           style={{
             marginVertical: RFValue(15),
