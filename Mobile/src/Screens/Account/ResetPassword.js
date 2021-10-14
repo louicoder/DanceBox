@@ -35,7 +35,7 @@ const ResetPassword = ({ resetPassword, close, reset }) => {
 
   return (
     <StickyView>
-      <View style={{ width: '100%', backgroundColor: THEME_COLOR3, paddingHorizontal: RFValue(10) }}>
+      <View style={{ width: '100%', backgroundColor: '#fff', paddingHorizontal: RFValue(10) }}>
         <View
           style={{
             marginVertical: RFValue(15),

@@ -23,8 +23,8 @@ const EventsInMonth = ({ navigation }) => {
     month = `${yr}-${mnth}`;
 
     dispatch.Events.getEventsInMonth({
-      // month,
-      month: '09',
+      month,
+      // month: '09',
       callback: ({ result, success }) => {
         // console.log('HERE marked', result);
         let dates = {};

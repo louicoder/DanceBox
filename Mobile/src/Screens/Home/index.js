@@ -57,7 +57,7 @@ const Home = ({ navigation, ...props }) => {
       {/* <SafeAreaView style={{ flex: 1 }}> */}
       <View
         style={{
-          marginTop: useSafeAreaInsets().top,
+          marginTop: useSafeAreaInsets().top + RFValue(10),
           marginBottom: RFValue(10),
           // borderWidth: 1,
           // backgroundColor: '#fff',
@@ -66,6 +66,7 @@ const Home = ({ navigation, ...props }) => {
       >
         <TextComp text="Dance Box" extStyles={{ fontSize: RFValue(30), fontWeight: '700', color: THEME_COLOR }} />
       </View>
+      {/* </SafeAreaView> */}
 
       <View style={{ flexGrow: 1 }}>
         <ScrollView
@@ -79,7 +80,6 @@ const Home = ({ navigation, ...props }) => {
           <EventsInMonth navigation={navigation} />
         </ScrollView>
       </View>
-      {/* </SafeAreaView> */}
     </View>
   );
 };

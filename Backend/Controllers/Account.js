@@ -47,7 +47,6 @@ const getAccount = async (req, res) => {
   const { uid } = req.params;
   try {
     const result = await AccountModel.findOne({ _id: uid });
-    console.log('REsult', result);
     return res.json({ success: true, result });
   } catch (error) {
     return res.json({ success: false, result: error.message });

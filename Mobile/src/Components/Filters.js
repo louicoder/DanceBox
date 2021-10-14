@@ -10,7 +10,7 @@ const Filters = ({ filters = [ 'This week', 'This month', 'Next month', 'This ye
   return (
     <ScrollView
       horizontal
-      style={{ height: RFValue(40), paddingHorizontal: RFValue(10) }}
+      style={{ height: RFValue(20), paddingHorizontal: RFValue(10) }}
       showsHorizontalScrollIndicator={false}
     >
       {filters.map((period, index) => (
@@ -23,7 +23,8 @@ const Filters = ({ filters = [ 'This week', 'This month', 'Next month', 'This ye
             justifyContent: 'center',
             marginRight: RFValue(10),
             borderRadius: RFValue(20),
-            flexDirection: 'row'
+            flexDirection: 'row',
+            height: RFValue(35)
           }}
           onPress={() => setState(index)}
         >

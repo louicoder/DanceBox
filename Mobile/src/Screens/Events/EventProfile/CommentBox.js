@@ -20,16 +20,31 @@ const CommentBox = ({ postComment, close, user }) => {
           }}
         >
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <Image
-              source={{ uri: user.imageUrl || DEFAULT_PROFILE }}
-              style={{
-                width: RFValue(25),
-                height: RFValue(25),
-                borderRadius: 50,
-                // borderWidth: 1,
-                marginRight: RFValue(25)
-              }}
-            />
+            {user && user.imageUrl ? (
+              <Image
+                source={{ uri: user.imageUrl || DEFAULT_PROFILE }}
+                style={{
+                  width: RFValue(25),
+                  height: RFValue(25),
+                  borderRadius: 50,
+                  // borderWidth: 1,
+                  marginRight: RFValue(25)
+                }}
+              />
+            ) : (
+              <View
+                style={{
+                  height: RFValue(25),
+                  width: RFValue(25),
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  borderRadius: 30,
+                  backgroundColor: '#eee'
+                }}
+              >
+                <DesignIcon name="user" size={20} color="#aaa" pkg="ad" />
+              </View>
+            )}
             <Text style={{ fontSize: RFValue(16) }}>Leave your comment</Text>
           </View>
           <DesignIcon name="close" onPress={close} />

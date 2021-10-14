@@ -9,24 +9,28 @@ const io = require('socket.io')(server, {
   }
 });
 
+let users = [];
+let votes = [];
+
 io.on('connection', (socket) => {
-  console.log('Socket connected', socket.id);
+  socket.on('join server', (usr) => {
+    // socket.to('server', { users });
+    users = [ ...users, { ...usr.user, socket: socket.id } ];
+    io.emit('new user', users);
+  });
+
+  socket.on('vote', (usr) => {
+    votes = [ ...votes, usr ];
+    io.emit('new vote', votes);
+  });
 
   socket.on('disconnect', (args) => {
     console.log('Socket disconnected', args);
+    users = users.filter((usr) => usr.socket !== socket.id);
+    io.emit('new user', users);
   });
-
-  socket.on('join', (usr) => {
-    let users = [];
-    users = !users.find((u) => u.user._id === usr.usr._id) && [ ...users, usr ];
-    socket.join(usr.room);
-    // socket.emit('users', users.filter((r) => r.room === usr.room));
-    console.log('joined  room', users.length);
-    io.to(usr.room).emit('users', [ ...users, usr.user ]);
-  });
-
-  // socket.emit('join');
 });
+
 // const path = require('path');
 const cors = require('cors');
 // const logger = require('morgan');

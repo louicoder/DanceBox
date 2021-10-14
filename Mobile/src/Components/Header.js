@@ -3,9 +3,20 @@ import { View, Text, StatusBar, SafeAreaView, Platform } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import DesignIcon from './DesignIcon';
 import IconComp from './Icon';
 
-const Header = ({ back = true, navigation, showNotif = false, iconName = 'bell-outline', title, ...props }) => {
+const Header = ({
+  back = true,
+  navigation,
+  showRightIcon = false,
+  rightIconName = 'bell-outline',
+  rightIconOnPress,
+  rightIconPkg,
+  rightIconSize = 24,
+  title,
+  ...props
+}) => {
   return (
     // <SafeAreaView>
     <View
@@ -29,7 +40,15 @@ const Header = ({ back = true, navigation, showNotif = false, iconName = 'bell-o
       <View style={{ flexGrow: 1, alignItems: 'flex-start', paddingHorizontal: RFValue(10) }}>
         <Text style={{ fontSize: RFValue(18), fontWeight: 'bold' }}>{title}</Text>
       </View>
-      {showNotif ? <Icon name={iconName} onPress={() => null} extStyles={{ opacity: 0 }} size={RFValue(25)} /> : null}
+      {showRightIcon ? (
+        <DesignIcon
+          name={rightIconName}
+          onPress={rightIconOnPress}
+          pkg={rightIconPkg}
+          // extStyles={{ opacity: 0 }}
+          size={RFValue(rightIconSize)}
+        />
+      ) : null}
     </View>
     // </SafeAreaView>
   );

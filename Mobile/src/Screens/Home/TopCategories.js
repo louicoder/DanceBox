@@ -28,7 +28,7 @@ const TopCategories = ({ navigation: { navigate } }) => {
         }}
       >
         {[
-          { title: 'Events', icon: 'calendar-text', onPress: () => navigate('Events') },
+          { title: 'Calendar', icon: 'calendar-text', onPress: () => navigate('Calendar') },
           { title: 'Classes', icon: 'account-group', onPress: () => null },
           { title: 'Trending', icon: 'trending-up', onPress: () => null },
           { title: 'Ticketing', icon: 'tag', onPress: () => null },
@@ -57,9 +57,7 @@ const TopCategories = ({ navigation: { navigate } }) => {
                   )}
           >
             <Icon name={icon} size={RFValue(40)} />
-            <Text style={{ fontSize: RFValue(12), color: '#000', fontWeight: 'bold', marginVertical: RFValue(0) }}>
-              {title}
-            </Text>
+            <Text style={{ fontSize: RFValue(14), color: '#000', marginVertical: RFValue(0) }}>{title}</Text>
           </Pressable>
         ))}
       </View>

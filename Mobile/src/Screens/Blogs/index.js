@@ -47,17 +47,17 @@ const Blogs = ({ navigation }) => {
           <Text style={{ fontSize: RFValue(30), fontWeight: '700', color: THEME_COLOR }}>Blogs</Text>
           <Pressable
             onPress={() => navigation.navigate('NewBlog')}
+            // onPress={() => Alert.alert('Coming soon', 'This feature is fully coming soon, look out for more updates')}
             style={{
-              // backgroundColor: '#000',
               backgroundColor: THEME_COLOR,
-              width: RFValue(40),
-              height: RFValue(40),
+              width: RFValue(35),
+              height: RFValue(35),
               borderRadius: RFValue(50),
               alignItems: 'center',
               justifyContent: 'center'
             }}
           >
-            <Icon name="plus" color="#fff" size={RFValue(20)} />
+            <Icon name="plus" color="#fff" size={RFValue(25)} />
           </Pressable>
         </View>
       </SafeAreaView>
@@ -91,6 +91,7 @@ const Blogs = ({ navigation }) => {
         </Text>
         <Icon name="plus" color="#fff" size={RFValue(20)} />
       </Pressable>
+
       <View style={{ height: RFValue(40), marginVertical: RFValue(10) }}>
         <Filters />
       </View>

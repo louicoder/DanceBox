@@ -157,10 +157,30 @@ const BlogProfile = ({ navigation, route, ...props }) => {
                         paddingVertical: RFValue(15)
                       }}
                     >
-                      <Image
-                        source={{ uri: (user && user.imageUrl) || DEFAULT_PROFILE }}
-                        style={{ width: RFValue(30), height: RFValue(30), borderRadius: 50, marginRight: RFValue(20) }}
-                      />
+                      {user && user.imageUrl ? (
+                        <Image
+                          source={{ uri: user && user.imageUrl }}
+                          style={{
+                            width: RFValue(30),
+                            height: RFValue(30),
+                            borderRadius: 50,
+                            marginRight: RFValue(20)
+                          }}
+                        />
+                      ) : (
+                        <View
+                          style={{
+                            width: RFValue(30),
+                            height: RFValue(30),
+                            borderRadius: 50,
+                            backgroundColor: '#eee',
+                            alignItems: 'center',
+                            justifyContent: 'center'
+                          }}
+                        >
+                          <DesignIcon name="user" pkg="ad" size={20} color="#aaa" />
+                        </View>
+                      )}
                       <Pressable
                         onPress={() => setState({ ...state, commentShowing: true })}
                         style={{

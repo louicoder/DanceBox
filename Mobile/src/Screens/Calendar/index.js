@@ -5,10 +5,12 @@ import { Calendar, CalendarList, Agenda } from 'react-native-calendars';
 import { RFValue } from 'react-native-responsive-fontsize';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useDispatch, useSelector } from 'react-redux';
+import EventPreview from '../../Components/EventPreview';
+import { HelperFunctions } from '../../Utils';
 // import LoadingModal from '../../Components/LoadingModal';
 
 const { width } = Dimensions.get('window');
-const CalendarComponent = () => {
+const CalendarComponent = ({ navigation }) => {
   const vacation = { key: 'vacation', color: 'red', selectedDotColor: 'blue' };
   const massage = { key: 'massage', color: 'blue', selectedDotColor: 'light-blue' };
   const workout = { key: 'workout', color: 'green' };
@@ -100,53 +102,54 @@ const CalendarComponent = () => {
               <Text style={{ fontSize: RFValue(16), fontWeight: 'bold' }}>All events in this month:</Text>
             </View>
           )}
-          style={{ paddingHorizontal: RFValue(0), marginTop: RFValue(10), flexGrow: 1, backgroundColor: '#fff' }}
+          style={{ paddingHorizontal: RFValue(10), marginTop: RFValue(10), flexGrow: 1, backgroundColor: '#fff' }}
           data={state.events}
           keyExtractor={() => Math.random().toString(36).slice(2)}
-          renderItem={({ item: { imageUrl: uri, title, price, startDate, dateCreated }, index }) => (
-            <View
-              style={{
-                width: '100%',
-                height: RFValue(100),
-                marginBottom: index + 1 === state.events.length ? 0 : RFValue(10),
-                backgroundColor: '#eeeeee50',
-                flexDirection: 'row',
-                justifyContent: 'space-between'
-              }}
-            >
-              <Image
-                resizeMode="cover"
-                source={{ uri: uri || 'https://complianz.io/wp-content/uploads/2019/03/placeholder-300x202.jpg' }}
-                style={{ width: RFValue(100), height: RFValue(100) }}
-              />
-              <View
-                style={{ marginLeft: RFValue(10), flexGrow: 1, paddingVertical: RFValue(10), justifyContent: 'center' }}
-              >
-                <Text style={{ fontSize: RFValue(16), fontWeight: 'bold' }}>
-                  {title && title.slice(0, 18)}
-                  {title && title.length > 18 && '...'}
-                </Text>
-                <Text style={{ fontSize: RFValue(14) }}>Fee ・ {price ? price : '0'}/=</Text>
-                {/* <Text style={{ fontSize: RFValue(12), color: '#aaa', paddingVertical: RFValue(0) }}>
-                Date: {startDate}
-              </Text> */}
-                <Text style={{ fontSize: RFValue(12), color: '#aaa' }}>Created ・ {moment(dateCreated).fromNow()}</Text>
-                <View
-                  style={{
-                    position: 'absolute',
-                    right: RFValue(5),
-                    bottom: RFValue(30),
-                    backgroundColor: '#010203',
-                    padding: RFValue(15),
-                    borderRadius: 30
-                  }}
-                >
-                  <Text style={{ color: '#fff', fontSize: RFValue(18), fontWeight: 'bold' }}>
-                    {startDate.split('-')[2]}
-                  </Text>
-                </View>
-              </View>
-            </View>
+          renderItem={({ item, index }) => (
+            <EventPreview key={HelperFunctions.keyGenerator()} {...item} navigation={navigation} />
+            // <View
+            //   style={{
+            //     width: '100%',
+            //     height: RFValue(100),
+            //     marginBottom: index + 1 === state.events.length ? 0 : RFValue(10),
+            //     backgroundColor: '#eeeeee50',
+            //     flexDirection: 'row',
+            //     justifyContent: 'space-between'
+            //   }}
+            // >
+            //   <Image
+            //     resizeMode="cover"
+            //     source={{ uri: uri || 'https://complianz.io/wp-content/uploads/2019/03/placeholder-300x202.jpg' }}
+            //     style={{ width: RFValue(100), height: RFValue(100) }}
+            //   />
+            //   <View
+            //     style={{ marginLeft: RFValue(10), flexGrow: 1, paddingVertical: RFValue(10), justifyContent: 'center' }}
+            //   >
+            //     <Text style={{ fontSize: RFValue(16), fontWeight: 'bold' }}>
+            //       {title && title.slice(0, 18)}
+            //       {title && title.length > 18 && '...'}
+            //     </Text>
+            //     <Text style={{ fontSize: RFValue(14) }}>Fee ・ {price ? price : '0'}/=</Text>
+            //     {/* <Text style={{ fontSize: RFValue(12), color: '#aaa', paddingVertical: RFValue(0) }}>
+            //     Date: {startDate}
+            //   </Text> */}
+            //     <Text style={{ fontSize: RFValue(12), color: '#aaa' }}>Created ・ {moment(dateCreated).fromNow()}</Text>
+            //     <View
+            //       style={{
+            //         position: 'absolute',
+            //         right: RFValue(5),
+            //         bottom: RFValue(30),
+            //         backgroundColor: '#010203',
+            //         padding: RFValue(15),
+            //         borderRadius: 30
+            //       }}
+            //     >
+            //       <Text style={{ color: '#fff', fontSize: RFValue(18), fontWeight: 'bold' }}>
+            //         {startDate.split('-')[2]}
+            //       </Text>
+            //     </View>
+            //   </View>
+            // </View>
           )}
         />
       ) : null}

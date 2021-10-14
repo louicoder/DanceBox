@@ -9,7 +9,7 @@ import FO from 'react-native-vector-icons/FontAwesome';
 import FT from 'react-native-vector-icons/Feather';
 import { RFValue } from 'react-native-responsive-fontsize';
 
-const DesignIcon = ({ pkg, name, size = 25, color, extStyles, onPress }) => {
+const DesignIcon = ({ pkg, name, size = 24, color, extStyles, onPress }) => {
   const RenderPackage = ({ pkg }) => {
     switch (pkg) {
       case 'mc':

@@ -2,7 +2,7 @@ import React from 'react';
 import { useEffect } from 'react';
 import { View, Text, Image, ActivityIndicator } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
-import LOGO from '../../assets/dancebox-logo.jpg';
+import LOGO from '../../assets/Logo.jpg';
 import { useDispatch, useSelector } from 'react-redux';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
@@ -72,15 +72,15 @@ const Splash = ({ navigation: { navigate } }) => {
       <View style={{ width: '100%', alignItems: 'center', justifyContent: 'center' }}>
         <Image
           style={{
-            width: RFValue(100),
-            height: RFValue(100),
+            width: RFValue(300),
+            height: RFValue(300),
             // borderWidth: RFValue(5),
             borderColor: '#fff',
             padding: RFValue(5)
           }}
           source={LOGO}
         />
-        <Text style={{ color: '#010203', fontSize: RFValue(30), fontWeight: 'bold' }}>Dance Box</Text>
+        {/* <Text style={{ color: '#010203', fontSize: RFValue(30), fontWeight: 'bold' }}>Dance Box</Text> */}
       </View>
       <View style={{ position: 'absolute', bottom: RFValue(30) }}>
         {loading.getUserDetails && <ActivityIndicator color="#000" />}

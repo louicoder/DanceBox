@@ -42,14 +42,16 @@ const Profile = ({
 
         <IconWithText
           color={THEME_COLOR4}
-          name="users"
-          pkg="ft"
+          name="addusergroup"
+          pkg="ad"
           text={`${followers && followers.length} followers ・ ${following && following.length} following`}
         />
-        {!isInd && <IconWithText color={THEME_COLOR4} name="pin" text={companyAddress} />}
+        {!isInd && <IconWithText color={THEME_COLOR4} name="map-pin" pkg="ft" text={companyAddress} />}
         {!isInd && <IconWithText color={THEME_COLOR4} name="team" text={companyType} pkg="ad" />}
 
-        {!isInd ? <IconWithText color={THEME_COLOR4} name="idcard" pkg="ad" text={companyDescription} /> : null}
+        {!isInd ? (
+          <IconWithText color={THEME_COLOR4} name="timeline-text-outline" pkg="mc" text={companyDescription} />
+        ) : null}
         {isInd && interests ? (
           <IconWithText
             color={THEME_COLOR4}
@@ -77,9 +79,9 @@ const Profile = ({
           { icon: 'solution1', label: 'All your blogs', onPress: () => navigate('MyBlogs', { uid }) },
           { icon: 'calendar', label: 'All your events', onPress: () => navigate('MyEvents', { uid }) },
           { icon: 'deleteuser', label: 'Close my account', onPress: () => null },
-          { icon: 'warning', label: 'Change account password', onPress: () => resetPassword() },
+          { icon: 'shield-alert', label: 'Change account password', onPress: () => resetPassword(), pkg: 'mc' },
           { icon: 'poweroff', label: 'Logout', last: true, onPress: () => logout() }
-        ].map(({ label, icon, last, onPress }) => (
+        ].map(({ label, icon, last, onPress, pkg }) => (
           <Pressable
             key={HelperFunctions.keyGenerator()}
             onPress={onPress}
@@ -95,7 +97,7 @@ const Profile = ({
             }}
           >
             <IconWithText
-              pkg={'ad'}
+              pkg={pkg || 'ad'}
               name={icon}
               text={label}
               extStyles={{ width: '90%', marginBottom: RFValue(3) }}

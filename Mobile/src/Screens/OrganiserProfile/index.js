@@ -60,7 +60,7 @@ const OrganiserProfile = ({ navigation, route }) => {
 
   const followUser = async () => {
     dispatch.Account.followAccount({
-      follower: user._id,
+      follower: user && user._id,
       following: state._id,
       callback: ({ success, result }) => {
         if (!success) return HelperFunctions.Notify('Error following user', result);
@@ -80,9 +80,9 @@ const OrganiserProfile = ({ navigation, route }) => {
   const unfollowUser = async () => {
     dispatch.Account.unfollowAccount({
       follower: state._id,
-      following: user._id,
+      following: user && user._id,
       callback: ({ success, result }) => {
-        console.log('USEr- organiser', state.followers, user._id, success, result);
+        // console.log('USEr- organiser', state.followers, user._id, success, result);
 
         if (!success) return HelperFunctions.Notify('Error following user', result);
         setState({ ...state, followers: state.followers.filter((r) => r !== user._id) });
@@ -91,7 +91,7 @@ const OrganiserProfile = ({ navigation, route }) => {
     });
   };
 
-  const followed = state.followers && state.followers.includes(user._id);
+  const followed = state.followers && state.followers.includes(user && user._id);
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -211,7 +211,7 @@ const OrganiserProfile = ({ navigation, route }) => {
                     extStyles={{ marginBottom: RFValue(15) }}
                     name={social}
                     pkg="fa"
-                    text={`Visit ${social} profile`}
+                    text={state[social]}
                   />
                 ) : null
             )}

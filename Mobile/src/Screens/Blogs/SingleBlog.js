@@ -1,11 +1,12 @@
 import moment from 'moment';
 import React from 'react';
-import { View, Text, ImageBackground, Pressable, Image } from 'react-native';
+import { View, Text, ImageBackground, Pressable, Image, ActivityIndicator } from 'react-native';
+// import { ActivityIndicator } from 'react-native-paper';
 import { RFValue } from 'react-native-responsive-fontsize';
 import Icon from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { CommentsLikeButtons } from '../../Components';
-import { CONSTANTS } from '../../Utils';
+import { CommentsLikeButtons, DesignIcon } from '../../Components';
+import { CONSTANTS, HelperFunctions } from '../../Utils';
 
 const SingleBlog = ({
   imageUrl,
@@ -26,6 +27,7 @@ const SingleBlog = ({
   ...rest
 }) => {
   // console.log('LIKES::', rest);
+  const [ shareLoading, setShareLoading ] = React.useState(false);
 
   const payload = {
     imageUrl,
@@ -40,6 +42,14 @@ const SingleBlog = ({
     _id
   };
 
+  const shareBlog = () => {
+    setShareLoading(true);
+    HelperFunctions.getsharableBase64((res) => {
+      setShareLoading(false);
+      console.log('Shareable base64', res);
+    });
+  };
+
   // const test = `sdfsdfsd {'\n'} new line created `;
   const isInd = user && user.accountType === 'individual';
   return (
@@ -52,22 +62,41 @@ const SingleBlog = ({
             justifyContent: 'space-between',
             // height: RFValue(50),
             padding: RFValue(10),
-
+            // borderWidth: 1,
             width: '100%'
           }}
         >
-          <Image
-            source={{ uri: (user && user.imageUrl) || CONSTANTS.DEFAULT_PROFILE }}
-            style={{ height: RFValue(30), width: RFValue(30), borderRadius: RFValue(50) }}
-          />
-          <View style={{ flexGrow: 1, flexDirection: 'row', justifyContent: 'space-between' }}>
+          {user && user.imageUrl ? (
+            <Image
+              source={{ uri: (user && user.imageUrl) || CONSTANTS.DEFAULT_PROFILE }}
+              style={{ height: RFValue(30), width: RFValue(30), borderRadius: RFValue(50) }}
+            />
+          ) : (
+            <View
+              style={{
+                width: RFValue(30),
+                height: RFValue(30),
+                borderRadius: 50,
+                backgroundColor: '#eee',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+            >
+              <DesignIcon name="user" pkg="ad" size={20} color="#aaa" />
+            </View>
+          )}
+          <View style={{ flexGrow: 1, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
             <View style={{ paddingLeft: RFValue(10) }}>
               <Text style={{ fontSize: RFValue(14) }}>{`${isInd
                 ? user.name || user.username || user.email
                 : user.companyName}`}</Text>
               <Text style={{ fontSize: RFValue(12), color: '#aaa' }}>{moment(dateCreated).fromNow()}</Text>
             </View>
-            {/* <MaterialCommunityIcons name="dots-vertical" size={RFValue(20)} style={{}} /> */}
+            {shareLoading ? (
+              <ActivityIndicator size={RFValue(16)} />
+            ) : (
+              <DesignIcon name="share-a" pkg="fot" size={20} color="#010203" onPress={shareBlog} />
+            )}
           </View>
         </View>
       )}

@@ -3,6 +3,7 @@ import React from 'react';
 import { View, Text, Image, Pressable } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { useDispatch, useSelector } from 'react-redux';
+import { DesignIcon } from '.';
 import { CONSTANTS } from '../Utils';
 
 const SingleComment = ({
@@ -35,12 +36,27 @@ const SingleComment = ({
         // key={() => HelperFunctions.keyGenerator()}
       >
         <View style={{ width: '15%' }}>
-          <Image
-            source={{
-              uri: user.imageUrl || CONSTANTS.DEFAULT_PROFILE
-            }}
-            style={{ width: RFValue(30), height: RFValue(30), borderRadius: RFValue(100) }}
-          />
+          {user && user.imageUrl ? (
+            <Image
+              source={{
+                uri: user.imageUrl || CONSTANTS.DEFAULT_PROFILE
+              }}
+              style={{ width: RFValue(30), height: RFValue(30), borderRadius: RFValue(100) }}
+            />
+          ) : (
+            <View
+              style={{
+                height: RFValue(35),
+                width: RFValue(35),
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: 40,
+                backgroundColor: '#eee'
+              }}
+            >
+              <DesignIcon name="user" size={20} color="#aaa" pkg="ad" />
+            </View>
+          )}
         </View>
         <View style={{ width: '80%' }}>
           {user && (
@@ -52,8 +68,8 @@ const SingleComment = ({
               )}
             </Text>
           )}
-          <Text style={{ color: '#aaaaaa', fontSize: RFValue(13) }}>{moment(dateCreated).fromNow()}</Text>
-          <Text style={{ paddingVertical: RFValue(6), fontSize: RFValue(14) }}>{comment}</Text>
+          <Text style={{ color: '#aaaaaa', fontSize: RFValue(12) }}>{moment(dateCreated).fromNow()}</Text>
+          <Text style={{ paddingVertical: RFValue(6), fontSize: RFValue(13) }}>{comment}</Text>
         </View>
       </View>
       {/* {last && (

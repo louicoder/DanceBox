@@ -5,9 +5,10 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import DesignIcon from './DesignIcon';
 
 const IconWithText = ({
+  fontSize,
   name,
   pkg,
-  size = RFValue(25),
+  size = 24,
   text,
   color = '#aaa',
   onPress,
@@ -30,10 +31,10 @@ const IconWithText = ({
       }}
     >
       <View style={{}}>
-        <DesignIcon name={name} pkg={pkg} size={size} color={color} extStyles={{ marginRight: 0 }} />
+        <DesignIcon name={name} pkg={pkg} size={RFValue(size)} color={color} extStyles={{ marginRight: 0 }} />
       </View>
       <View style={{ width: '85%' }}>
-        <Text style={[ { fontSize: RFValue(16), color: !textExists ? '#aaa' : '#000' }, textCntStyles ]}>
+        <Text style={[ { fontSize: RFValue(15), color: !textExists ? '#aaa' : '#000' }, textCntStyles ]}>
           {textExists ? text : 'No description'}
         </Text>
       </View>

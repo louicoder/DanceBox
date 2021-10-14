@@ -18,7 +18,7 @@ import CommentsLikeButtons from '../../../Components/CommentsLikeButtons';
 import { CONSTANTS, HelperFunctions } from '../../../Utils';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { IconWithText } from '../../../Components';
+import { DesignIcon, IconWithText } from '../../../Components';
 import { THEME_COLOR2, THEME_COLOR3, THEME_COLOR4, THEME_COLOR5 } from '../../../Utils/Constants';
 
 const Header = ({
@@ -127,7 +127,7 @@ const Header = ({
         {/* End tags */}
 
         {/* Go to voting page */}
-        {/* <Pressable
+        <Pressable
           onPress={() => navigation.navigate('Voting', { user, eventId: _id })}
           style={{
             width: '100%',
@@ -140,7 +140,7 @@ const Header = ({
           }}
         >
           <Text style={{ fontSize: RFValue(16) }}>Go to Voting</Text>
-        </Pressable> */}
+        </Pressable>
 
         {/* Attend and participate buttons */}
         {/* <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '100%', marginTop: RFValue(10) }}>
@@ -222,17 +222,33 @@ const Header = ({
           <View
             style={{ flexDirection: 'row', marginBottom: RFValue(15), width: '100%', justifyContent: 'space-between' }}
           >
-            <View style={{ width: '10%' }}>
-              <Image
-                source={{ uri: (user && user.imageUrl) || CONSTANTS.DEFAULT_PROFILE }}
-                style={{
-                  marginRight: RFValue(20),
-                  width: RFValue(30),
-                  height: RFValue(30),
-                  borderRadius: RFValue(30),
-                  marginTop: RFValue(5)
-                }}
-              />
+            <View style={{ width: '10%', marginRight: RFValue(10) }}>
+              {user && user.imageUrl ? (
+                <Image
+                  source={{ uri: (user && user.imageUrl) || CONSTANTS.DEFAULT_PROFILE }}
+                  style={{
+                    marginRight: RFValue(20),
+                    width: RFValue(30),
+                    height: RFValue(30),
+                    borderRadius: RFValue(30),
+                    marginTop: RFValue(5)
+                  }}
+                />
+              ) : (
+                <View
+                  style={{
+                    height: RFValue(40),
+                    width: RFValue(40),
+                    alignItems: 'center',
+                    marginRight: RFValue(20),
+                    justifyContent: 'center',
+                    borderRadius: 30,
+                    backgroundColor: '#eee'
+                  }}
+                >
+                  <DesignIcon name="user" size={25} color="#aaa" pkg="ad" />
+                </View>
+              )}
             </View>
 
             <Pressable

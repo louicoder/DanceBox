@@ -107,7 +107,7 @@ const NewBlog = ({ navigation }) => {
   const createBlog = async () => {
     Keyboard.dismiss();
     if (!state.title) return HelperFunctions.Notify('Error', 'Please add a title for your blog post');
-    if (!state.decription || !state.description.length > 50)
+    if (!state.description || !state.description.length > 50)
       return HelperFunctions.Notify('Error', 'The description of your blog post is very short');
     setState({ ...state, loading: true });
 

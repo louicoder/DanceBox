@@ -65,8 +65,8 @@ const Events = ({ navigation, ...props }) => {
                 // onPress={() => Alert.alert('Coming soon', 'This feature is fully coming soon, look out for more updates')}
                 style={{
                   backgroundColor: THEME_COLOR,
-                  width: RFValue(40),
-                  height: RFValue(40),
+                  width: RFValue(35),
+                  height: RFValue(35),
                   borderRadius: RFValue(50),
                   alignItems: 'center',
                   justifyContent: 'center'

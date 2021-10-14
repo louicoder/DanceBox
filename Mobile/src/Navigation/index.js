@@ -45,6 +45,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AllEvents from '../Screens/Account/AllEvents';
 import AllBlogs from '../Screens/Account/AllBlogs';
 import { THEME_COLOR, THEME_COLOR2, THEME_COLOR3 } from '../Utils/Constants';
+import { DesignIcon } from '../Components';
+import { CONSTANTS } from '../Utils';
 
 const Stacks = createStackNavigator();
 const LoginStack = createStackNavigator();
@@ -110,7 +112,19 @@ const HomeScreens = ({ socket }) => (
     <HomeStack.Screen
       name="OrganiserProfile"
       component={OrganiserProfile}
-      options={{ header: (props) => <Header title="Organiser" iconName="pencil" {...props} /> }}
+      options={{
+        header: (props) => (
+          <Header
+            title="Organiser"
+            iconName="pencil"
+            {...props}
+            rightIconName="share-a"
+            rightIconPkg="fot"
+            showRightIcon
+            rightIconSize={18}
+          />
+        )
+      }}
     />
     <HomeStack.Screen
       name="AllOrganisers"
@@ -254,10 +268,11 @@ const BottomStackScreens = ({ socket }) => (
     screenOptions={{}}
     // activeColor="#ffffff"
     // inactiveColor="#ffffff70"
-    activeColor="#fff"
-    inactiveColor="#eeeeee70"
+    activeColor={THEME_COLOR}
+    inactiveColor="#fff"
     initialRouteName="Home"
-    barStyle={{ backgroundColor: '#000' }}
+    barStyle={{ backgroundColor: '#010203', height: RFValue(70) }}
+
     // labeled={false}
   >
     <BottomStack.Screen
@@ -266,6 +281,7 @@ const BottomStackScreens = ({ socket }) => (
       component={HomeScreens}
       options={() => ({
         tabBarIcon: ({ color }) => <Ionicons color={color} name="home-outline" size={RFValue(20)} />
+        // tabBarIcon: ({ color }) => <DesignIcon color={color} name="home" pkg="fa" size={RFValue(20)} />
       })}
     />
 
@@ -275,6 +291,7 @@ const BottomStackScreens = ({ socket }) => (
       component={EventScreens}
       options={() => ({
         tabBarIcon: ({ color }) => <Ionicons color={color} name="calendar-outline" size={RFValue(20)} />
+        // tabBarIcon: ({ color }) => <DesignIcon color={color} name="calendar" pkg="ad" />
       })}
     />
     <BottomStack.Screen
@@ -296,7 +313,8 @@ const BottomStackScreens = ({ socket }) => (
       name="Account"
       component={AccountScreens}
       options={() => ({
-        tabBarIcon: ({ color }) => <FeatherIcons color={color} name="user" size={RFValue(20)} />
+        // tabBarIcon: ({ color }) => <FeatherIcons color={color} name="user" size={RFValue(20)} />
+        tabBarIcon: ({ color }) => <DesignIcon color={color} name="user" size={RFValue(20)} pkg="ad" />
       })}
     />
   </BottomStack.Navigator>

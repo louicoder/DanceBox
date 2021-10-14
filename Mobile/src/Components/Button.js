@@ -28,7 +28,7 @@ const Button = ({ title, onPress, extStyles, noBg = false, textStyles, loading =
       <Text
         style={[
           {
-            fontSize: RFValue(16),
+            fontSize: RFValue(14),
             color: '#023e8a',
             textAlign: 'center',
             marginLeft: loading ? RFValue(10) : 0,

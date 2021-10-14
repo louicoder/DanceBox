@@ -3,6 +3,8 @@ import { launchImageLibrary } from 'react-native-image-picker';
 import { request, check, PERMISSIONS } from 'react-native-permissions';
 import Storage from '@react-native-firebase/storage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Share from 'react-native-share';
+import RNFetchBlob from 'rn-fetch-blob';
 
 // const Storage = storage();
 export const keyGenerator = () => Math.random().toString(36).slice(2);
@@ -220,6 +222,24 @@ export const shuffleArray = (array) => {
   }
 
   return array;
+};
+
+export const shareEXtention = async (message, files, callback) => {
+  await Share.open({ message, urls: [ files ] })
+    .then((result) => callback({ success: true, result }))
+    .catch((error) => console.log('Something went wrong--', error.message));
+};
+
+export const getsharableBase64 = async (uri, callback) => {
+  await RNFetchBlob.fetch('GET', uri)
+    .then((resp) => {
+      if (resp.info().status == 200) {
+        return callback({ success: true, result: `data:image/jpeg;base64,${resp.base64()}` });
+      } else {
+        return callback({ success: false, result: err });
+      }
+    })
+    .catch((err) => callback({ success: false, result: err }));
 };
 
 export const getUser = (callback) => getAsyncObjectData('user', callback);
