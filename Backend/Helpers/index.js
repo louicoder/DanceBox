@@ -65,6 +65,11 @@ const userFiller = async (array, field = '_id') => {
   }
 };
 
+const pickRandomArrayElements = (arr, count = 7) => {
+  let _arr = [ ...arr ];
+  return [ ...Array(count) ].map(() => _arr.splice(Math.floor(Math.random() * _arr.length), 1)[0]);
+};
+
 // const commentsFiller = async (_id, type, authorId) => {
 //   try {
 //     let query = { _id, type };
@@ -86,6 +91,7 @@ module.exports = {
   validateToken,
   hashPassword,
   decodePassword,
-  userFiller
+  userFiller,
+  pickRandomArrayElements
   // commentsFiller
 };

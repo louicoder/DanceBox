@@ -24,10 +24,10 @@ export default {
     //
     async createUserAccount ({ payload, callback }) {
       try {
-        await AxiosClient.post('/accounts/create', payload).then(({ data }) => {
+        await AxiosClient.post('/accounts/create', payload).then(async ({ data }) => {
           if (data.success) {
             dispatch.Account.setUserDetails(data.result.user);
-            HelperFunctions.storeAsyncObjectData('user', data.result.user, (res) => callback(res));
+            await HelperFunctions.storeAsyncObjectData('user', data.result.user, (res) => callback(res));
           }
           return callback(data);
         });
@@ -38,10 +38,11 @@ export default {
 
     async login ({ email, password, callback }) {
       try {
-        await AxiosClient.post('/accounts/login', { email, password }).then(({ data }) => {
+        await AxiosClient.post('/accounts/login', { email, password }).then(async ({ data }) => {
           if (data.success) {
             dispatch.Account.setUserDetails(data.result.user);
-            HelperFunctions.storeAsyncObjectData('user', data.result.user, callback);
+            console.log('USER Login', data);
+            await HelperFunctions.storeAsyncObjectData('user', data.result.user, callback);
           }
           callback(data);
         });
@@ -52,7 +53,7 @@ export default {
 
     async getRandomOrganisers (callback) {
       try {
-        await AxiosClient.get(`/accounts/organisers`).then(({ data }) => {
+        await AxiosClient.get(`/accounts/organisers/random`).then(({ data }) => {
           dispatch.Account.setRandomOrganisers(data.result);
           // console.log('Orgainserss', data.result);
           callback(data);

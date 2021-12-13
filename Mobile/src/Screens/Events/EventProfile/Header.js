@@ -47,6 +47,7 @@ const Header = ({
   eventId,
   postComment,
   showCommentBox,
+  event,
   ...rest
 }) => {
   // const { user } = useSelector((state) => state.Account);
@@ -88,6 +89,22 @@ const Header = ({
       <View style={{ paddingHorizontal: RFValue(10) }}>
         <Text style={{ fontSize: RFValue(25), marginVertical: RFValue(15), fontWeight: 'bold' }}>{title}</Text>
 
+        {/* Go to voting page */}
+        <Pressable
+          onPress={() => navigation.navigate('Voting', { user, eventId: _id, event })}
+          style={{
+            width: '100%',
+            // backgroundColor: '#eee',
+            backgroundColor: THEME_COLOR3,
+            height: RFValue(50),
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginBottom: RFValue(15)
+          }}
+        >
+          <Text style={{ fontSize: RFValue(16) }}>Go to Voting</Text>
+        </Pressable>
+
         <IconWithText
           name="trending-up"
           pkg="ft"
@@ -125,22 +142,6 @@ const Header = ({
           extStyles={{ paddingHorizontal: 0 }}
         />
         {/* End tags */}
-
-        {/* Go to voting page */}
-        <Pressable
-          onPress={() => navigation.navigate('Voting', { user, eventId: _id })}
-          style={{
-            width: '100%',
-            // backgroundColor: '#eee',
-            backgroundColor: THEME_COLOR3,
-            height: RFValue(50),
-            alignItems: 'center',
-            justifyContent: 'center',
-            marginTop: RFValue(10)
-          }}
-        >
-          <Text style={{ fontSize: RFValue(16) }}>Go to Voting</Text>
-        </Pressable>
 
         {/* Attend and participate buttons */}
         {/* <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '100%', marginTop: RFValue(10) }}>

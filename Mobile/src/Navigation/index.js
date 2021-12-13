@@ -205,7 +205,19 @@ const EventScreens = () => (
     <EventStack.Screen
       name="Voting"
       component={Voting}
-      options={{ header: (props) => <Header title="Event Voting" iconName="pencil" {...props} /> }}
+      options={(props) => ({
+        header: () => (
+          <Header
+            title="Event Voting"
+            iconName="pencil"
+            {...props}
+            showRightIcon
+            rightIconName="plus"
+            rightIconPkg="ad"
+            rightIconOnPress={() => props.route.params.openModal()}
+          />
+        )
+      })}
     />
   </EventStack.Navigator>
 );

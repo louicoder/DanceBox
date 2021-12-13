@@ -11,23 +11,69 @@ const io = require('socket.io')(server, {
 
 let users = [];
 let votes = [];
+// let partcipants = [];
+let rooms = [];
+let participants = [];
 
 io.on('connection', (socket) => {
-  socket.on('join server', (usr) => {
-    // socket.to('server', { users });
-    users = [ ...users, { ...usr.user, socket: socket.id } ];
-    io.emit('new user', users);
+  socket.on('join-server', (usr) => {
+    socket.join(usr.room);
+    const userObj = { socket: socket.id, id: usr.deviceId, room: usr.room };
+    if (rooms.indexOf(usr.room) === -1) rooms.push(usr.room);
+    if (users.map((u) => u.id).indexOf(socket.id) === -1) users.push(userObj);
+    const parts = participants.filter((u) => u.room === usr.room);
+
+    const userz = users.filter((u) => u.room === usr.room);
+    const votez = votes.filter((v) => v.room === usr.room);
+
+    io.to(usr.room).emit('update', { users: userz, participants: parts });
+    io.to(usr.room).emit('new-votes', votez);
+  });
+
+  socket.on('add-participant', (usr) => {
+    console.log('LEAVING ROOM--------', usr);
+    participants.push({ ...usr, votes: [] });
+    const parts = participants.filter((u) => u.room === usr.room);
+    const userz = users.filter((u) => u.room === usr.room);
+    io.to(usr.room).emit('update', { participants: parts, users: userz });
+    const votez = votes.filter((v) => v.room === usr.room);
+    io.to(usr.room).emit('new-votes', votez);
+    // usr.callback();
+  });
+
+  socket.on('remove-participant', (usr) => {
+    participants = participants.filter((p) => p.id !== usr.id);
+    const parts = participants.filter((p) => p.room === usr.room);
+    const userz = users.filter((u) => u.room === usr.room);
+    const votez = votes.filter((v) => v.room === usr.room);
+    io.to(usr.room).emit('update', { participants: parts, users: userz });
+    io.to(usr.room).emit('new-votes', votez);
+  });
+
+  socket.on('leave-room', ({ deviceId, roomId }) => {
+    socket.leave(roomId);
+    rooms = rooms.filter((r) => r !== roomId);
+    users = users.filter((u) => u.id !== deviceId);
+    const userz = users.filter((u) => u.room === roomId);
+    const parts = participants.filter((u) => u.room === roomId);
+    io.to(roomId).emit('update', { users: userz, participants: parts });
+    const votez = votes.filter((v) => v.room === roomId);
+    io.to(roomId).emit('new-votes', votez);
+    socket.disconnect();
   });
 
   socket.on('vote', (usr) => {
-    votes = [ ...votes, usr ];
-    io.emit('new vote', votes);
+    console.log('Voting', usr);
+    // participants.map(r => r.id === usr.voted ? ({ ...r, votes: [...r.votes, usr.voter] }) : r);
+    votes.push(usr);
+    const votez = votes.filter((v) => v.room === usr.room);
+    io.to(usr.room).emit('new-votes', votez);
   });
 
   socket.on('disconnect', (args) => {
     console.log('Socket disconnected', args);
-    users = users.filter((usr) => usr.socket !== socket.id);
-    io.emit('new user', users);
+    // users = users.filter((usr) => usr.id !== socket.id);
+    // io.to('server').emit('new-user', users);
   });
 });
 

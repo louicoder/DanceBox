@@ -7,6 +7,8 @@ require('dotenv').config();
 // Prod
 // DB_CONNECTION_STRING
 
+// local
+
 const connectWithRetry = () =>
   mongoose
     .connect(process.env.DB_CONNECTION_STRING, {

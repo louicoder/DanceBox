@@ -9,13 +9,14 @@ import {
   Platform,
   ScrollView,
   Alert,
-  Keyboard
+  Keyboard,
+  Dimensions
 } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import Ripple from 'react-native-material-ripple';
 import { RFValue } from 'react-native-responsive-fontsize';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { ComingSoon, CommentsLikeButtons, DesignIcon, SingleComment } from '../../../Components';
+import { BottomSheet, ComingSoon, CommentsLikeButtons, DesignIcon, SingleComment } from '../../../Components';
 import Modal from '../../../Components/Modal';
 import { CONSTANTS, HelperFunctions } from '../../../Utils';
 import SingleEvent from '../SingleBlog';
@@ -26,17 +27,18 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Comments from './Comments';
 import CommentBox from './CommentBox';
 import { DEFAULT_PROFILE } from '../../../Utils/Constants';
+import { useKeyboard } from '../../../Utils/useKeyboardHeight';
 
+const { height } = Dimensions.get('window');
 const BlogProfile = ({ navigation, route, ...props }) => {
-  // const [ state, setState ] = React.useState({ ...route.params, comment: '' });
-  const [ modal, setModal ] = React.useState(false);
   const dispatch = useDispatch();
   const [ blog, setBlog ] = React.useState({});
   const loading = useSelector((state) => state.loading.effects.Blogs);
   // const { user } = useSelector((state) => state.Account);
-  const [ state, setState ] = React.useState({ comments: [], commentShowing: false });
+  const [ state, setState ] = React.useState({ comments: [], commentShowing: false, isVisible: true });
   const [ user, setUser ] = React.useState({});
   // const { activeBlog } = useSelector((state) => state.Blogs);
+  const [ KeyHeight ] = useKeyboard();
 
   React.useEffect(
     () => {
@@ -52,6 +54,7 @@ const BlogProfile = ({ navigation, route, ...props }) => {
       const sub = navigation.addListener('focus', () =>
         HelperFunctions.getUser(({ success, result }) => success && setUser(result))
       );
+      console.log('USER', user);
       return () => sub;
     },
     [ navigation ]
@@ -128,6 +131,20 @@ const BlogProfile = ({ navigation, route, ...props }) => {
     );
   };
 
+  const openModal = React.useCallback(
+    () => {
+      setState({ ...state, isVisible: true });
+    },
+    [ setState ]
+  );
+
+  const closeModal = React.useCallback(
+    () => {
+      setState({ ...state, isVisible: false });
+    },
+    [ setState ]
+  );
+
   return (
     <View style={{ flex: 1 }}>
       {state.commentShowing && (
@@ -137,7 +154,12 @@ const BlogProfile = ({ navigation, route, ...props }) => {
         extraScrollHeight={useSafeAreaInsets().top}
         style={{ flex: 1, backgroundColor: '#eeeeee70' }}
       > */}
-      <LoadingModal isVisible={loading.getBlog || loading.likeBlog} />
+      {/* <LoadingModal isVisible={loading.getBlog || loading.likeBlog} /> */}
+      <BottomSheet isVisible={state.isVisible} closeModal={closeModal}>
+        <View style={{ height, paddingTop: useSafeAreaInsets().top }}>
+          <Text>This is the best show coming through</Text>
+        </View>
+      </BottomSheet>
       {blog && (
         <View style={{ flex: 1 }}>
           <View style={{ flexGrow: 1, borderWidth: 0 }}>
@@ -182,7 +204,7 @@ const BlogProfile = ({ navigation, route, ...props }) => {
                         </View>
                       )}
                       <Pressable
-                        onPress={() => setState({ ...state, commentShowing: true })}
+                        onPress={openModal}
                         style={{
                           backgroundColor: '#eee',
                           flexGrow: 1,

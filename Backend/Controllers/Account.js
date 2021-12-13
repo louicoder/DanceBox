@@ -1,5 +1,5 @@
 const { AccountModel } = require('../Models');
-const { hashPassword, decodePassword, createToken } = require('../Helpers');
+const { hashPassword, decodePassword, createToken, pickRandomArrayElements } = require('../Helpers');
 require('dotenv').config();
 
 const register = async (req, res) => {
@@ -120,11 +120,16 @@ const unfollowAccount = async (req, res) => {
   }
 };
 
-const getOrganisers = async (req, res) => {
+const getRandomOrganisers = async (req, res) => {
   try {
-    await AccountModel.aggregate([ { $sample: { size: 3 } }, { $match: { accountType: 'company' } } ]).then((result) =>
-      res.json({ success: true, result })
-    );
+    // await AccountModel.aggregate([ { $sample: { size: 3 } }, { $match: { accountType: 'company' } } ]).then((result) =>
+    //   res.json({ success: true, result })
+    // );
+
+    await AccountModel.find({ accountType: 'company' }).then((result) => {
+      const organisers = pickRandomArrayElements(result, 2);
+      res.json({ success: true, result: organisers });
+    });
   } catch (error) {
     return res.json({ success: false, result: error.message });
   }
@@ -153,7 +158,7 @@ module.exports = {
   login,
   updateAccount,
   getAccount,
-  getOrganisers,
+  getRandomOrganisers,
   getAllOrganisers,
   getUser,
   followAccount,

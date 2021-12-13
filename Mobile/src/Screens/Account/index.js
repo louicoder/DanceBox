@@ -48,19 +48,19 @@ const Account = ({ navigation }) => {
   React.useEffect(
     () => {
       const sub = navigation.addListener('focus', () => {
-        // console.log('Re-rendering account...------');
         getUser();
       });
       return () => sub;
     },
     [ navigation ]
   );
+  console.log('Re-rendering account...USER', user);
 
   const logout = () => {
     HelperFunctions.removeAsyncObjectData('user', () => {
       setState({ ...state, passVisible: false });
       dispatch.Account.setUserDetails({});
-      setUser({});
+      // setUser({});
       // return navigation.navigate('Login', { loginMode: true });
     });
   };

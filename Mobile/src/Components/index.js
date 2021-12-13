@@ -14,6 +14,8 @@ import StickyView from './StickyView';
 import PasswordInput from './PasswordInput';
 import CommentBox from './CommentBox';
 import Modal from './Modal';
+import Input from './Input';
+import BottomSheet from './BottomSheet';
 
 export {
   IconComp,
@@ -31,5 +33,7 @@ export {
   StickyView,
   PasswordInput,
   CommentBox,
-  Modal
+  Modal,
+  BottomSheet,
+  Input
 };

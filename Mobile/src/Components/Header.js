@@ -44,7 +44,7 @@ const Header = ({
         <DesignIcon
           name={rightIconName}
           onPress={rightIconOnPress}
-          pkg={rightIconPkg}
+          pkg={rightIconPkg || 'mc'}
           // extStyles={{ opacity: 0 }}
           size={RFValue(rightIconSize)}
         />

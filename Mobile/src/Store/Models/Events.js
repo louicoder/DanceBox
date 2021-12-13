@@ -31,19 +31,6 @@ export default {
       }
     },
 
-    async getEvent (callback) {
-      try {
-        await AxiosClient.get('/events/all').then(({ data }) => {
-          if (data.success) {
-            dispatch.Events.setEvents(data.result);
-          }
-          callback(data);
-        });
-      } catch (error) {
-        return callback({ success: false, result: error.message });
-      }
-    },
-
     async getEvents (callback) {
       try {
         await AxiosClient.get('/events/all').then(({ data }) => {

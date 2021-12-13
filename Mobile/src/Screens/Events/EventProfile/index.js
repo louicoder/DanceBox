@@ -128,6 +128,7 @@ const EventProfile = ({ navigation, route }) => {
       >
         <Header
           {...event}
+          event={event}
           comments={state.comments}
           navigation={navigation}
           attendParticipate={attendParticipate}
