@@ -1,153 +1,111 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, SafeAreaView, StatusBar, Image, Alert, Keyboard, Pressable } from 'react-native';
-import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
-import Button from '../../Components/Button';
-import Input from '../../Components/Input';
-import PasswordInput from '../../Components/PasswordInput';
-import LOGO from '../../assets/dancebox-logo.jpg';
-import { useSelector, useDispatch } from 'react-redux';
-import LoadingModal from '../../Components/LoadingModal';
-import { HelperFunctions } from '../../Utils';
+import { View, Text, Dimensions, Pressable } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { RFValue } from 'react-native-responsive-fontsize';
+import { Input, Password, Buton, Typo, LoginReg } from '../../Components';
+// import Icon from '../../assets/blob.svg';
+import { useDispatch, useSelector } from 'react-redux';
+import { getAsyncStorage, showAlert, validateEmail, ValidateEmail } from '../../Utils/HelperFunctions';
+import { HEIGHT, WIDTH } from '../../Utils/Constants';
+import { GoogleSignin, GoogleSigninButton, statusCodes } from '@react-native-google-signin/google-signin';
 
-import firestore from '@react-native-firebase/firestore';
+// 635333492136-j1lfb3u3m52rfh1d30gqtfu8p4cnbj1q.apps.googleusercontent.com
+GoogleSignin.configure({
+  webClientId: '635333492136-j1lfb3u3m52rfh1d30gqtfu8p4cnbj1q.apps.googleusercontent.com' // client ID of type WEB for your server(needed to verify user ID and offline access)
+});
 
-const Login = ({ navigation, route }) => {
-  const dispatch = useDispatch();
-  const statex = useSelector((state) => state.Account);
-  const loading = useSelector((state) => state.loading.effects.Account);
+const { height, width } = Dimensions.get('window');
+const Login = ({ navigation }) => {
   const [ state, setState ] = React.useState({
-    loginMode: true,
-    activeLogin: null,
-    justCreated: false,
-    passwordVisible: true,
-    email: 'test4@test.com',
+    email: 'musanje2010@gmail.com',
     password: 'password',
-    followers: [],
-    following: [],
-    facebook: '',
-    linkedin: '',
-    twitter: '',
-    whatsapp: '',
-    instagram: '',
-    interests: [],
-    // accountType: state.activeLogin,
-    accountType: 'individual',
-    imageUrl: ''
+    passVisible: false
   });
+  const loading = useSelector((state) => state.loading.effects.Account);
+  const dispatch = useDispatch();
 
-  // console.log('Ladoinf', loading);
+  React.useEffect(() => {
+    // login();
+    // getAsyncStorage('user', (res) => console.log('STorage key', res));
+  }, []);
 
-  const loginHandler = () => {
-    Keyboard.dismiss();
+  const googleSignin = async () => {
+    try {
+      // await GoogleSignin.hasPlayServices();
+      // const info = await GoogleSignin.signIn();
+      // console.warn({ userInfo: info });
+      // setUserInfo(info);
+      const { idToken, ...rest } = await GoogleSignin.signIn();
+
+      console.log('REsuer', rest);
+      // Create a Google credential with the token
+      const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+
+      // Sign-in the user with the credential
+      return auth().signInWithCredential(googleCredential);
+    } catch (error) {
+      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+        console.log('ERror', 'SIGN_IN_CANCELLED');
+        // user cancelled the login flow
+      } else if (error.code === statusCodes.IN_PROGRESS) {
+        console.log('ERror', 'IN_PROGRESS');
+        // operation (e.g. sign in) is in progress already
+      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+        console.log('ERror', 'PLAY_SERVICES_NOT_AVAILABLE');
+        // play services not available or outdated
+      } else {
+        console.log('ERror', 'Other error');
+
+        // some other error happened
+      }
+    }
+  };
+
+  const login = () => {
     const { email, password } = state;
+    if (!email) return showAlert('Email missing', 'Password is required to continue, try again', '', 'top');
+    if (!password) return showAlert('Password missing', 'Password is required to continue, try again', '', 'top');
+    if (!validateEmail(email))
+      return showAlert('Invalid email', 'Please enter a valid email in order to continue', '', 'top');
+
     dispatch.Account.login({
       email,
       password,
-      callback: ({ success, result }) => {
-        if (!success) return HelperFunctions.Notify('Error', result);
-        return route.params.goToScreen
-          ? navigation.navigate(route.params.goToScreen, { screen: route.params.goToScreen })
-          : navigation.navigate('Home');
+      callback: (res) => {
+        console.log('RES from login', res);
+        if (!res.success) return showAlert('Error logging in', res.result);
+        return navigation.navigate('Main', { screen: 'Home' });
       }
     });
   };
+  // const setter = React.useCallback(() => {
 
-  React.useEffect(
-    () => {
-      setState({ ...state, loginMode: route.params.loginMode || true });
-      // console.log('USER===', route.params);
-    },
-    [ navigation ]
-  );
-
-  const createAccountHandler = () => {
-    Keyboard.dismiss();
-    if (!state.email || !HelperFunctions.validateEmail(state.email) || !state.password)
-      return HelperFunctions.Notify(
-        'Error creating account',
-        'Make sure the Email and password are in a valid format and try again'
-      );
-    const { loginMode, activeLogin, justCreated, passwordVisible, ...payload } = state;
-
-    dispatch.Account.createUserAccount({
-      payload,
-      callback: ({ success, result }) => {
-        if (!success) return HelperFunctions.Notify('Error signing up', result);
-        return navigation.navigate('Interests');
-      }
-    });
-  };
+  // }, [setState])
 
   return (
-    <React.Fragment>
-      <LoadingModal isVisible={loading.createUserAccount || loading.signIn} />
-      <SafeAreaView style={{ flex: 1, backgroundColor: 'transparent', backgroundColor: 'transparent' }}>
-        <KeyboardAwareScrollView style={{ flex: 1 }} keyboardShouldPersistTaps="handled">
-          <View
-            style={{
-              height: RFPercentage(100),
-              backgroundColor: '#fff',
-              paddingHorizontal: RFValue(15),
-              justifyContent: 'center'
-            }}
-          >
-            <Image
-              source={LOGO}
-              style={{ width: RFValue(100), height: RFValue(100), marginBottom: RFValue(20), alignSelf: 'center' }}
-            />
-
-            <Text style={{ fontSize: RFValue(25), marginBottom: RFValue(15), textAlign: 'center', fontWeight: 'bold' }}>
-              {state.loginMode ? 'Login to your' : 'Create new'} account
-            </Text>
-
-            <Text style={{ fontSize: RFValue(14), marginVertical: 10 }}>
-              {state.loginMode ? (
-                'Enter the details below to login into your Dancebox account.'
-              ) : (
-                'Enter the details below to create your new account with Dancebox'
-              )}
-            </Text>
-
-            <Input
-              placeholder="Enter your email address"
-              value={state.email}
-              onChangeText={(email) => setState({ ...state, email })}
-            />
-
-            <PasswordInput
-              placeholder="Enter your password"
-              secure={state.passwordVisible}
-              value={state.password}
-              switchPasswordVisibility={() => setState({ ...state, passwordVisible: !state.passwordVisible })}
-              onChangeText={(password) => setState({ ...state, password })}
-            />
-
-            <Button
-              loading={loading.login}
-              extStyles={{ backgroundColor: '#010203' }}
-              title={state.loginMode ? 'Login' : 'Create account'}
-              onPress={() => (state.loginMode ? loginHandler() : createAccountHandler())}
-              textStyles={{ color: '#fff', borderWidth: 0 }}
-            />
-            <Pressable
-              onPress={() => setState({ ...state, loginMode: !state.loginMode })}
-              style={{
-                paddingVertical: RFValue(10),
-                borderTopWidth: 1,
-                borderTopColor: '#ddd',
-                marginTop: RFValue(15)
-              }}
-            >
-              <Text style={{ fontSize: RFValue(14), fontWeight: '600', color: '#010203', alignSelf: 'center' }}>
-                {state.loginMode ? 'Not registered?' : 'Already registered?'}{' '}
-                <Text style={{ color: 'rgb(0,0,255)' }}>{state.loginMode ? 'Register' : 'Login'}</Text>
-              </Text>
-            </Pressable>
-          </View>
-        </KeyboardAwareScrollView>
-      </SafeAreaView>
-    </React.Fragment>
+    <View style={{ flex: 1 }}>
+      {/* <Icon
+        width={width * 4}
+        height={height * 2}
+        style={{
+          position: 'absolute',
+          top: RFValue(-(7 / 10 * HEIGHT)),
+          left: RFValue(-(4 / 9 * HEIGHT)),
+          // transform: [ { rotateX: '90deg' } ],
+          zIndex: -30
+          // backgroundColor: 'red'
+        }}
+        // fill="#000"
+      /> */}
+      <LoginReg
+        optionOnPress={() => navigation.navigate('Signup')}
+        showForgot
+        loading={loading.login}
+        loginOrRegister={login}
+        setState={(field, value) => setState((r) => ({ ...r, [field]: value }))}
+        {...state}
+      />
+    </View>
   );
 };
 

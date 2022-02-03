@@ -1,10 +1,15 @@
 import { Alert, Linking, Platform } from 'react-native';
-import { launchImageLibrary } from 'react-native-image-picker';
+import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import { request, check, PERMISSIONS } from 'react-native-permissions';
 import Storage from '@react-native-firebase/storage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Share from 'react-native-share';
 import RNFetchBlob from 'rn-fetch-blob';
+import { showMessage } from 'react-native-flash-message';
+import { RFValue } from 'react-native-responsive-fontsize';
+import { TINY_PNG_TOKEN, TINY_PNG_URL } from '@env';
+import axios from 'axios';
+import { STORAGE } from './Constants';
 
 // const Storage = storage();
 export const keyGenerator = () => Math.random().toString(36).slice(2);
@@ -120,7 +125,7 @@ export const CHECK_GALLERY_PERMISSIONS = async (callback) => {
       })
     ).then(
       async (res) =>
-        res === 'granted'
+        res === 'granted' || res === 'limited'
           ? callback({ success: true, result: res })
           : await request(
               Platform.select({
@@ -243,3 +248,167 @@ export const getsharableBase64 = async (uri, callback) => {
 };
 
 export const getUser = (callback) => getAsyncObjectData('user', callback);
+
+export const abbreviateNumber = (number, fix = 1, caps = false) => {
+  const num = parseInt(number);
+  // if (typeof num !== Number)
+  //   return Alert.alert('Not a number', 'the value parse to be converted is not a number, try again');
+
+  const SYM = caps ? [ '', 'K', 'M', 'B', 'T', 'P', 'E' ] : [ '', 'k', 'm', 'b', 't', 'p', 'e' ];
+
+  // what tier? (determines SI symbol)
+  var tier = (Math.log10(Math.abs(num)) / 3) | 0;
+
+  // if zero, we don't need a suffix
+  if (tier == 0) return number;
+
+  // get suffix and determine scale
+  var suffix = SYM[tier];
+  var scale = Math.pow(10, tier * 3);
+
+  // scale the number
+  var scaled = number / scale;
+
+  // format number and add suffix
+  return scaled.toFixed(fix) + suffix;
+};
+
+export const uploadImageToFirebase = async (storagePath, image, setProgress, setError, callback) => {
+  try {
+    const uploadTask = STORAGE.ref().child(storagePath).putString(image, 'base64', { contentType: 'image/png' });
+    uploadTask.on(
+      'state_changed',
+      (snapshot) => setProgress(Math.ceil(snapshot.bytesTransferred / snapshot.totalBytes * 100)),
+      (error) => setError(error),
+      () => uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => callback(downloadURL))
+    );
+  } catch (error) {
+    setError(error.message);
+  }
+};
+
+export const deleteFirebaseImage = async (url, callback) => {
+  await STORAGE.refFromURL(url)
+    .delete()
+    .then(() => callback({ success: true, result: 'deleted image successfully' }))
+    .catch((error) => {
+      // console.log('ERrror here', error);
+      callback({ success: true, result: error.message });
+    });
+};
+
+export const imageCompression = async (image, setState, onComplete, onError) => {
+  setState((r) => ({ ...r, loading: true }));
+  try {
+    await compressImages(
+      [].concat(image),
+      (res) => {
+        setState((r) => ({ ...r, progress: 100, text: 'Now uploading your image...', showing: false, loading: false }));
+        // setLoading(false);
+        // TODO: upload to firebase::
+        onComplete(res);
+      },
+      (error) => {
+        setState((r) => ({ ...r, loading: false }));
+        onError(error.message);
+        showAlert(
+          'Error optimizing photo',
+          `Something went wrong while trying to optimize your photo, try again! :: ${error}`
+        );
+      },
+      (up) => setState((r) => ({ ...r, progress: up, text: 'Optimising your image', showing: true, loading: true })),
+      (down) =>
+        setState((r) => ({ ...r, progress: down, text: 'Finishing optimization', showing: true, loading: true }))
+    );
+  } catch (error) {
+    setState((r) => ({ ...r, loading: false }));
+    onError(error.message);
+    return showAlert(
+      'Error compressing image',
+      `There was an error when we tried to optimize your selected photo. The Error is ours:: ${error.message}`
+    );
+  }
+};
+
+export const showAlert = (message, description, type, position, duration = 4500) =>
+  showMessage({
+    message,
+    description,
+    type: type || 'info',
+    position: position || 'top',
+    duration,
+    titleStyle: { fontFamily: 'Roboto-Bold', fontSize: RFValue(17) },
+    textStyle: { fontFamily: 'Roboto-Regular', fontSize: RFValue(14) }
+  });
+
+export const takePhoto = () => {
+  launchCamera({ saveToPhotos: true }, (res) => {
+    console.log('RES from camera', res);
+    if (!res.assets)
+      return showAlert(
+        'Error taking photo',
+        'No photo was taken from the camera and therefore the operation was cancelled',
+        'danger',
+        'bottom'
+      );
+    // return callback({
+    //   success: false,
+    //   result: 'No photo was taken from the camera and therefore the operation was cancelled'
+    // });
+    // return showAlert(
+    //   'Camera error',
+    //   'No photos were taken because something went wrong, please take the photo again'
+    // );
+    return callback({ success: true, result: res.assets[0] });
+  });
+};
+
+export const compressImage = async (photo, progressCallback, callback) => {
+  const { uri, ...rest } = photo;
+  console.log('TOKEN', TINY_PNG_TOKEN, TINY_PNG_URL);
+  try {
+    const path = uri.replace('file://', '');
+    const formData = RNFetchBlob.wrap(path);
+    const Authorization = `Basic ${TINY_PNG_TOKEN}`;
+    const headers = { Authorization, 'Content-Type': 'application/json' };
+
+    let base;
+
+    // Compress image tinypng {size: null, url}
+    await RNFetchBlob.fetch('POST', TINY_PNG_URL, headers, formData)
+      .uploadProgress((written, total) =>
+        progressCallback({
+          progress: Math.ceil(written / total * 100),
+          progressText: 'Optimizing your photo, please wait..'
+        })
+      )
+      .then((comp) => (base = comp.json()));
+
+    // Get resized image in base64.
+    await RNFetchBlob.fetch('GET', base.output.url, headers)
+      .progress((recieved, total) =>
+        progressCallback({ progress: Math.ceil(recieved / total * 100), progressText: 'Almost done, please wait..' })
+      )
+      .then((img) => (base = { base64: `data:image/png;base64,${img.base64()}`, ...rest }));
+
+    // TODO: Incase we need to separate images into thumbs of different sizes , then uncomment below
+    // if (base.output.size <= 300000) {
+    //   // size is in kilobites 300,000 KBs
+    //   await RNFetchBlob.fetch('GET', base.output.url, headers)
+    //     .progress({ count: 10 }, (recieved, total) => downloadProgress(recieved / total))
+    //     .then((img) => images.push(img.base64()));
+    // } else {
+    //   // :TODO: If we need to create size section below handles that
+    //   const payload = JSON.stringify({ resize: { method: 'cover', width: 700, height: 700 } });
+    //   await RNFetchBlob.fetch('POST', base.output.url, headers, payload)
+    //     .progress({ count: 10 }, (recieved, total) => downloadProgress(recieved / total))
+    //     .then((result) => images.push(result.data));
+    // }
+
+    progressCallback({ progress: 0, progressText: '' });
+    return callback(base);
+  } catch (error) {
+    console.log('Error optimizing', error.message);
+    return showAlert('Error happened when trying to transform the image', error.message);
+  }
+};

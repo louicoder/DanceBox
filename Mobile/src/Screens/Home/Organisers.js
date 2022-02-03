@@ -12,7 +12,7 @@ const Organisers = ({ navigation }) => {
   const { randomOrganisers } = useSelector((state) => state.Account);
   // const { randomOrganisers } = useSelector((state) => state.Account);
   React.useEffect(() => {
-    getRandomOrganisers();
+    // getRandomOrganisers();
   }, []);
 
   const getRandomOrganisers = () => {

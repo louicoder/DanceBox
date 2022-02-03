@@ -22,14 +22,12 @@ export default {
   },
   effects: (dispatch) => ({
     //
-    async createUserAccount ({ payload, callback }) {
+    async signup ({ payload, callback }) {
       try {
-        await AxiosClient.post('/accounts/create', payload).then(async ({ data }) => {
-          if (data.success) {
-            dispatch.Account.setUserDetails(data.result.user);
-            await HelperFunctions.storeAsyncObjectData('user', data.result.user, (res) => callback(res));
-          }
-          return callback(data);
+        await QUERIES.createUserAccount(payload, (res) => {
+          console.log('RESULT in effects', JSON.stringify(res.result));
+          if (res.success) dispatch.Account.setUserDetails(JSON.stringify(res.result));
+          callback(res);
         });
       } catch (error) {
         return callback({ success: false, result: error.message });
@@ -95,9 +93,13 @@ export default {
       }
     },
 
-    async updateAccountDetails ({ uid, payload, callback }) {
+    async updateAccountDetails ({ uid, payload, callback }, state) {
       try {
-        await AxiosClient.post(`/accounts/update/${uid}`, payload).then(({ data }) => callback(data));
+        // await AxiosClient.post(`/accounts/update/${uid}`, payload).then(({ data }) => callback(data));
+        await QUERIES.updateDoc('users', uid, payload, (res) => {
+          if (res.success) dispatch.Account.setUserDetails({ ...state.Account.user, ...res.result });
+          callback(res);
+        });
       } catch (error) {
         return callback({ success: false, result: error.message });
       }

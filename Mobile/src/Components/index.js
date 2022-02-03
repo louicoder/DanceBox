@@ -1,6 +1,7 @@
 import IconComp from './Icon';
 import Text from './Text';
 import Button from './Button';
+import Buton from './Button';
 import HeaderLinker from './HeaderLinker';
 import ComingSoon from './ComingSoon';
 import CommentsLikeButtons from './CommentsLikeButtons';
@@ -12,10 +13,16 @@ import OrganiserPreview from './OrganiserPreview';
 import LoginPlaceholder from './LoginPlaceholder';
 import StickyView from './StickyView';
 import PasswordInput from './PasswordInput';
+import Password from './Password';
 import CommentBox from './CommentBox';
 import Modal from './Modal';
 import Input from './Input';
 import BottomSheet from './BottomSheet';
+import Typo from './Typo';
+import LoginReg from './LoginReg';
+import TextArea from './TextArea';
+import Select from './Select';
+import ScrollBubbles from './ScrollBubbles';
 
 export {
   IconComp,
@@ -35,5 +42,12 @@ export {
   CommentBox,
   Modal,
   BottomSheet,
-  Input
+  Input,
+  Buton,
+  Typo,
+  LoginReg,
+  Password,
+  TextArea,
+  Select,
+  ScrollBubbles
 };

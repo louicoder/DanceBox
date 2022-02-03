@@ -70,7 +70,7 @@ const DesignIcon = ({
       case 'ev':
         return HOC(props, EV);
       default:
-        return HOC(props, MC);
+        return HOC(props, AD);
     }
   };
 

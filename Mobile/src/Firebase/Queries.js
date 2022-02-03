@@ -11,14 +11,14 @@ export const signIn = async (email, password, callback) => {
       callback({ success: true, uid: account.user.uid });
     }
   } catch (error) {
-    callback({ error: error.code, doc: undefined });
+    callback({ success: false, doc: error.message });
   }
 };
 
 export const createUserAccount = async ({ email, password, ...payload }, callback) =>
   await AUTH.createUserWithEmailAndPassword(email, password)
-    .then(async (doc) => await createDocWithId('Users', doc.user.uid, { ...payload, email }, callback))
-    .catch((error) => callback({ error: error.message }));
+    .then((doc) => callback({ success: true, result: doc.user }))
+    .catch((error) => callback({ success: false, result: error.message }));
 
 export const getDoc = async (collection, doc, callback) => {
   try {
@@ -70,11 +70,38 @@ export const createDoc = async (collection, payload, callback) => {
 export const updateDoc = async (collection, docId, payload, callback) => {
   await DB.doc(`${collection}/${docId}`)
     .set(payload, { merge: true })
-    .then(async (resp) => {
-      // console.log('REsp from update', resp);
-      await DB.doc(`${collection}/${docId}`)
-        .get()
-        .then((snapshot) => callback({ error: undefined, doc: snapshot.data() }));
-    })
-    .catch((error) => callback({ error, doc: undefined }));
+    .then(
+      async () =>
+        await DB.doc(`${collection}/${docId}`)
+          .get()
+          .then((snapshot) => callback({ success: true, result: snapshot.data() }))
+    )
+    .catch((error) => callback({ success: false, result: error.message }));
+};
+
+// This function returns all documents that exist in the passed array.
+export const getMultipleDocuments = async (field, collection, docsArray) => {
+  const splitArray = getArraychunks(docsArray, 10);
+  try {
+    let results = [];
+    for (const docs of splitArray) {
+      const response = await DB.collection(collection).where(field, 'in', docs).get();
+      if (response._docs) {
+        const result = [ ...response._docs.map((doc) => ({ ...doc.data(), id: doc.id })) ];
+        results = [ ...results, ...result ];
+      }
+    }
+    return results;
+  } catch (error) {
+    return Alert.alert('Error', error.message);
+  }
+};
+
+// Splits array of n-size into size of 10 since its the limit for firestore in operator in the above function
+const getArraychunks = (array, size) => {
+  var results = [];
+  while (array.length) {
+    results.push(array.splice(0, size));
+  }
+  return results;
 };

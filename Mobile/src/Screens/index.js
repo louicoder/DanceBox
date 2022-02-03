@@ -21,6 +21,9 @@ import Calendar from './Calendar';
 import OrganiserProfile from './OrganiserProfile';
 import AllOrganisers from './AllOrganisers';
 import Voting from './Voting';
+import Intro from './Intro';
+import Signup from './Signup';
+import AddProfilePhoto from './AddProfilePhoto';
 
 export {
   Home,
@@ -45,5 +48,8 @@ export {
   Calendar,
   OrganiserProfile,
   AllOrganisers,
-  Voting
+  Voting,
+  Intro,
+  Signup,
+  AddProfilePhoto
 };

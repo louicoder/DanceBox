@@ -32,7 +32,7 @@ const TopCategories = ({ navigation: { navigate } }) => {
           { title: 'Classes', icon: 'account-group', onPress: () => null },
           { title: 'Trending', icon: 'trending-up', onPress: () => null },
           { title: 'Ticketing', icon: 'tag', onPress: () => null },
-          { title: 'Blogs', icon: 'card-text', onPress: () => navigate('BlogScreens') },
+          { title: 'Community', icon: 'card-text', onPress: () => navigate('BlogScreens') },
           { title: 'Fitness', icon: 'weight-lifter', onPress: () => null }
         ].map(({ title, icon, onPress }) => (
           <Pressable

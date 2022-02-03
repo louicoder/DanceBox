@@ -1,56 +1,60 @@
 import React from 'react';
-import { View, Text, StatusBar, SafeAreaView, Platform } from 'react-native';
+import { View, Text, Platform } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import DesignIcon from './DesignIcon';
-import IconComp from './Icon';
+import { DesignIcon, Typo } from '.';
+import Styles from './Styles';
 
 const Header = ({
-  back = true,
-  navigation,
-  showRightIcon = false,
-  rightIconName = 'bell-outline',
-  rightIconOnPress,
-  rightIconPkg,
-  rightIconSize = 24,
+  onBackPress,
+  leftComp: LeftComponent,
   title,
-  ...props
+  rightComp: RightComponent,
+  navigation,
+  backEnabled = true,
+  extStyles
 }) => {
   return (
-    // <SafeAreaView>
     <View
       style={{
-        flexDirection: 'row',
-        borderBottomWidth: 1,
-        borderBottomColor: '#eee',
-        height: RFValue(50),
-        alignItems: 'center',
+        width: '100%',
+        height: useSafeAreaInsets().top + RFValue(60),
         paddingHorizontal: RFValue(10),
-        marginTop: useSafeAreaInsets().top
+        ...extStyles
       }}
     >
-      {back ? (
-        <Icon
-          name={Platform.OS === 'ios' ? 'chevron-left' : 'arrow-left'}
-          size={RFValue(30)}
-          onPress={() => navigation.goBack()}
-        />
-      ) : null}
-      <View style={{ flexGrow: 1, alignItems: 'flex-start', paddingHorizontal: RFValue(10) }}>
-        <Text style={{ fontSize: RFValue(18), fontWeight: 'bold' }}>{title}</Text>
+      <View style={{ height: useSafeAreaInsets().top, backgroundColor: 'transparent' }} />
+      <View
+        style={{
+          width: '100%',
+          height: RFValue(60),
+          flexDirection: 'row',
+          alignItems: 'center'
+          // paddingHorizontal: RFValue(10),
+          // paddingLeft: RFValue(5),
+          // backgroundColor: '#fff'
+          // ...extStyles
+        }}
+      >
+        {backEnabled && (
+          <View style={{ marginRight: RFValue(10) }}>
+            <DesignIcon
+              color="#010203"
+              // withBorder
+              backColor="transparent"
+              name={Platform.select({ ios: 'chevron-left', android: 'arrow-left' })}
+              pkg="mc"
+              size={30}
+              onPress={() => (onBackPress ? onBackPress() : navigation.goBack())}
+            />
+          </View>
+        )}
+        <View style={{ flexGrow: 1 }}>
+          {LeftComponent ? <LeftComponent /> : <Typo text={title} size={20} style={{ fontWeight: 'bold' }} />}
+        </View>
+        <View style={{}}>{RightComponent ? <RightComponent /> : null}</View>
       </View>
-      {showRightIcon ? (
-        <DesignIcon
-          name={rightIconName}
-          onPress={rightIconOnPress}
-          pkg={rightIconPkg || 'mc'}
-          // extStyles={{ opacity: 0 }}
-          size={RFValue(rightIconSize)}
-        />
-      ) : null}
     </View>
-    // </SafeAreaView>
   );
 };
 

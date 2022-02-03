@@ -4,7 +4,7 @@ import Ripple from 'react-native-material-ripple';
 import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { Button, ComingSoon, Text as TextComp } from '../../Components';
+import { Button, ComingSoon, DesignIcon, ScrollBubbles, Text as TextComp, Typo } from '../../Components';
 import TopCategories from './TopCategories';
 import { CONSTANTS, HelperFunctions } from '../../Utils';
 import { useDispatch, useSelector } from 'react-redux';
@@ -12,7 +12,7 @@ import Organisers from './Organisers';
 import EventsInMonth from './EventsInMonth';
 import StickyView from '../../Components/StickyView';
 import CommentBox from '../../Components/CommentBox';
-import { THEME_COLOR } from '../../Utils/Constants';
+import { BROWN, INTERESTS, THEME_COLOR } from '../../Utils/Constants';
 
 const { width } = Dimensions.get('window');
 
@@ -52,6 +52,10 @@ const Home = ({ navigation, ...props }) => {
   //   });
   // };
 
+  const selectBubble = React.useCallback((selectedBubble) => setState({ ...state, selectedBubble }), [
+    state.selectedBubble
+  ]);
+
   return (
     <View style={{ flex: 1 }}>
       {/* <SafeAreaView style={{ flex: 1 }}> */}
@@ -61,10 +65,30 @@ const Home = ({ navigation, ...props }) => {
           marginBottom: RFValue(10),
           // borderWidth: 1,
           // backgroundColor: '#fff',
-          paddingHorizontal: RFValue(10)
+          paddingHorizontal: RFValue(10),
+          flexDirection: 'row',
+          alignItems: 'center'
         }}
       >
-        <TextComp text="Dance Box" extStyles={{ fontSize: RFValue(30), fontWeight: '700', color: THEME_COLOR }} />
+        <View
+          style={{
+            height: RFValue(35),
+            width: RFValue(35),
+            borderRadius: 50,
+            backgroundColor: BROWN,
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}
+        >
+          <DesignIcon name="user" pkg="ad" />
+        </View>
+        <View style={{ flexGrow: 1, marginLeft: RFValue(10) }}>
+          <Typo text="Welcome back," size={14} />
+          <Typo text="username" size={14} style={{ fontWeight: 'bold', textTransform: 'capitalize' }} />
+        </View>
+        <DesignIcon withBorder={false} name="bell-outline" pkg="mc" widthHeight={35} />
+        <DesignIcon withBorder={false} name="dots-vertical" pkg="mc" widthHeight={35} />
+        {/* <DesignIcon name="user" pg="ad" /> */}
       </View>
       {/* </SafeAreaView> */}
 

@@ -8,6 +8,7 @@ import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import { HelperFunctions } from '../../Utils';
 import axios from 'axios';
+import { showMessage } from 'react-native-flash-message';
 
 const AUTH = auth();
 let sub;
@@ -17,28 +18,17 @@ const Splash = ({ navigation: { navigate } }) => {
   const { user } = useSelector((state) => state.Account);
 
   useEffect(() => {
-    // if (AUTH.currentUser && AUTH.currentUser.uid) {
-    //   const { uid, ...rest } = AUTH.currentUser;
-    //   if (uid) getUser(uid);
-    //   else navigate('Login');
-    // } else {
-    //   navigate('Login');
-    // }
-    getUser();
-    // HelperFunctions.getUser(({ success, result }) => {
-    //   // console.log('RESULT===---', result);
-    //   if (success) {
-    //     dispatch.Account.setUserDetails(result);
-    //     // return HelperFunctions.Notify('Error', error);
-    //   }
-    //   // if (!result) return navigate('Login');
-    //   navigate('Home');
-    // });
+    // getUser();
+    showMessage({
+      message: 'Hello World',
+      description: 'This is our second message',
+      type: 'success'
+    });
   }, []);
 
   const getUser = async () => {
     await HelperFunctions.getUser(({ error, result }) => {
-      console.log('Splash=====', result);
+      // console.log('Splash=====', result);
       if (error) {
         // return HelperFunctions.Notify('Error', error);
       }

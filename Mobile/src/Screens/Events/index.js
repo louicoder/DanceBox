@@ -6,11 +6,12 @@ import { RFValue } from 'react-native-responsive-fontsize';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
-import { Filters } from '../../Components';
+import { Buton, DesignIcon, Filters, ScrollBubbles } from '../../Components';
 import LoadingModal from '../../Components/LoadingModal';
 import Modal from '../../Components/Modal';
+import { Input } from '../../Components';
 import { HelperFunctions } from '../../Utils';
-import { THEME_COLOR } from '../../Utils/Constants';
+import { BROWN, GRAY, INTERESTS, THEME_COLOR, WHITE } from '../../Utils/Constants';
 import SingleEvent from './SingleEvent';
 
 const Events = ({ navigation, ...props }) => {
@@ -44,62 +45,69 @@ const Events = ({ navigation, ...props }) => {
 
   // console.log('Events', events && events[0]);
   return (
-    <React.Fragment>
-      <LoadingModal isVisible={loading.getEvents} />
-      <SafeAreaView style={{ flex: 1 }}>
-        <View style={{ flex: 1 }}>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              paddingHorizontal: RFValue(10),
-              marginVertical: RFValue(10)
-            }}
-          >
-            <Text style={{ fontSize: RFValue(30), fontWeight: '700', color: THEME_COLOR }}>Events</Text>
-            {user &&
-            user.accountType === 'company' && (
-              <Pressable
-                onPress={() => navigation.navigate('NewEvent')}
-                // onPress={() => Alert.alert('Coming soon', 'This feature is fully coming soon, look out for more updates')}
-                style={{
-                  backgroundColor: THEME_COLOR,
-                  width: RFValue(35),
-                  height: RFValue(35),
-                  borderRadius: RFValue(50),
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }}
-              >
-                <Icon name="plus" color="#fff" size={RFValue(25)} />
-              </Pressable>
+    <View style={{ flex: 1, borderWidth: 0 }}>
+      <Buton
+        title="Create Event"
+        extStyles={{
+          position: 'absolute',
+          bottom: RFValue(10),
+          zIndex: 30,
+          // width: 0.4 * WIDTH,
+          height: RFValue(40),
+          right: RFValue(8),
+          backgroundColor: THEME_COLOR
+        }}
+      >
+        <DesignIcon name="calendar" color={WHITE} style={{ marginRight: RFValue(10) }} />
+      </Buton>
+
+      <View
+        style={{
+          flexDirection: 'row',
+          height: RFValue(30),
+          // borderWidth: 1,
+          // width: '100%',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          marginHorizontal: RFValue(10),
+          // paddingLeft: RFValue(10),
+          backgroundColor: BROWN,
+          marginBottom: RFValue(15),
+          borderBottomWidth: 1,
+          borderColor: GRAY,
+          paddingRight: 0,
+          // position: 'relative',
+          zIndex: 50
+        }}
+      >
+        <DesignIcon name="magnify" pkg="mc" extStyles={{ marginHorizontal: RFValue(10) }} />
+        <Input
+          extStyles={{ height: RFValue(30), marginBottom: 0, flexShrink: 1 }}
+          extInputStyles={{ height: RFValue(30), marginTop: 0, borderWidth: 0, paddingLeft: 0 }}
+          placeholder="search community events..."
+        />
+        {/* :TODO: suggestions drop down */}
+      </View>
+
+      <View style={{ flexGrow: 1, zIndex: 10 }}>
+        {events && events.length ? (
+          <FlatList
+            showsVerticalScrollIndicator={false}
+            style={{ flex: 1 }}
+            data={events}
+            keyExtractor={() => HelperFunctions.keyGenerator()}
+            renderItem={({ item, index }) => (
+              <SingleEvent last={index + 1 === events.length} {...item} {...props} navigation={navigation} />
             )}
+          />
+        ) : null}
+        {events && !events.length ? (
+          <View style={{ flex: 1, backgroundColor: WHITE, alignItems: 'center', justifyContent: 'center' }}>
+            <Text>No events yet, keep checking...</Text>
           </View>
-          <View style={{ height: RFValue(40), marginVertical: RFValue(10) }}>
-            <Filters />
-          </View>
-          <View style={{ flexGrow: 1 }}>
-            {events && events.length ? (
-              <FlatList
-                showsVerticalScrollIndicator={false}
-                style={{ flex: 1, backgroundColor: '#eeeeee90' }}
-                data={events}
-                keyExtractor={() => HelperFunctions.keyGenerator()}
-                renderItem={({ item, index }) => (
-                  <SingleEvent last={index + 1 === events.length} {...item} {...props} navigation={navigation} />
-                )}
-              />
-            ) : null}
-            {events && !events.length ? (
-              <View style={{ flex: 1, backgroundColor: '#eee', alignItems: 'center', justifyContent: 'center' }}>
-                <Text>No events yet, keep checking...</Text>
-              </View>
-            ) : null}
-          </View>
-        </View>
-      </SafeAreaView>
-    </React.Fragment>
+        ) : null}
+      </View>
+    </View>
   );
 };
 
