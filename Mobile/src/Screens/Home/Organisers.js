@@ -71,13 +71,14 @@ const Organisers = ({ navigation }) => {
         showsHorizontalScrollIndicator={false}
         style={{ paddingVertical: RFValue(0), borderWidth: 0 }}
       >
-        {DANCE_STYLES.map((r) => (
+        {DANCE_STYLES.map((r, i) => (
           <Pressable
             style={{
               width: 0.6 * WIDTH,
               height: 0.6 * WIDTH,
               backgroundColor: WHITE,
-              marginRight: RFValue(5)
+              marginLeft: RFValue(5)
+              // marginLeft: i === 0 ? RFValue(10) : 0
               // ...SHADOW
               // shadowColor: '#ccc',
               // shadowRadius: RFValue(2),
