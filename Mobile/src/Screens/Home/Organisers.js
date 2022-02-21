@@ -74,8 +74,8 @@ const Organisers = ({ navigation }) => {
         {DANCE_STYLES.map((r) => (
           <Pressable
             style={{
-              width: 0.5 * WIDTH,
-              height: 0.5 * WIDTH,
+              width: 0.6 * WIDTH,
+              height: 0.6 * WIDTH,
               backgroundColor: WHITE,
               marginRight: RFValue(5)
               // ...SHADOW
@@ -105,8 +105,8 @@ const Organisers = ({ navigation }) => {
                 paddingBottom: RFValue(5)
               }}
             >
-              <Typo text={r.title} color={WHITE} size={16} style={{ fontWeight: 'bold' }} />
-              <Typo text="240k followers" color={QUARTER_WHITE} size={12} />
+              <Typo text={r.title} color={WHITE} size={20} style={{ fontWeight: 'bold', marginBottom: RFValue(2) }} />
+              <Typo text="240k followers" color={QUARTER_WHITE} size={14} />
             </LinearGradient>
           </Pressable>
         ))}
