@@ -3,6 +3,7 @@ import _FIRESTORE from '@react-native-firebase/firestore';
 import _STORAGE from '@react-native-firebase/storage';
 import _MESSAGING from '@react-native-firebase/messaging';
 import _AUTH from '@react-native-firebase/auth';
+import { RFValue } from 'react-native-responsive-fontsize';
 
 export const DEFAULT_PROFILE =
   'https://firebasestorage.googleapis.com/v0/b/dancebox-309908.appspot.com/o/profilepic-default.jpg?alt=media&token=76da5163-cd96-492c-bd67-b0def69215c8';
@@ -89,4 +90,28 @@ export const FIRESTORE = _FIRESTORE();
 export const MESSAGING = _MESSAGING();
 export const AUTH = _AUTH();
 
+export const SHADOW = {
+  shadowColor: '#000',
+  shadowOffset: { width: 0, height: RFValue(5) },
+  shadowRadius: 8,
+  shadowOpacity: 0.5
+};
+
 // export { WIDTH, HEIGHT };
+
+export const DANCE_STYLES = [
+  { title: 'Break dance', image: 'https://guide2uganda.ug/wp-content/uploads/2019/08/Dance-Break-1-750x504.jpg' },
+  { title: 'Contemporary', image: 'https://independent.co.ug/wp-content/uploads/2016/08/Kaweesa.jpg' },
+  { title: 'Capoela', image: 'https://rioandlearn.com/wp-content/uploads/2013/08/Capoeira.jpg' },
+  {
+    title: 'Traditional',
+    image:
+      'https://whyy.org/wp-content/uploads/2017/07/spirit-of-uganda-photo-by-dan-ozminkowski-image-235-1-768x431.jpg'
+  },
+  {
+    title: 'House',
+    image:
+      'https://entebbenews.net/wp-content/uploads/2020/12/GLOBALLY-RENOWED-DANCE-GROUP-GHETTO-KIDS-MEET-%E2%80%98JERUSALEMA-STAR-MASTER-KG-IN-UGANDA-1.jpg'
+  },
+  { title: 'Krump', image: 'https://i.ytimg.com/vi/EbrQI0S9oAE/sddefault.jpg' }
+];

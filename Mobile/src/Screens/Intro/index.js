@@ -1,44 +1,72 @@
 import * as React from 'react';
-import { View, useWindowDimensions } from 'react-native';
+import { View, useWindowDimensions, Pressable } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { TabView, SceneMap } from 'react-native-tab-view';
 import { Buton, Typo } from '../../Components';
-import { HALF_BROWN, HEIGHT, TWO_THIRD_WIDTH, WIDTH } from '../../Utils/Constants';
+import { HALF_BROWN, HEIGHT, TWO_THIRD_WIDTH, WHITE, WIDTH } from '../../Utils/Constants';
 import { keyGenerator } from '../../Utils/HelperFunctions';
+import Image from 'react-native-fast-image';
+import Dance from '../../assets/dance1.jpg';
+import Calendar from '../../assets/calendar.jpg';
+import Community from '../../assets/community.jpg';
 
-const Route = () => (
+const Route = (image, styles, title, caption) => (
   <View style={{ flex: 1, backgroundColor: '#fff' }}>
     <View
       style={{
-        height: 2.5 / 3 * HEIGHT,
+        height: HEIGHT
         // borderWidth: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-        paddingHorizontal: RFValue(15)
+        // alignItems: 'center',
+        // justifyContent: 'center'
+        // paddingHorizontal: RFValue(15)
+        // backgroundColor: 'green'
       }}
     >
       <View
         style={{
-          height: TWO_THIRD_WIDTH,
-          width: TWO_THIRD_WIDTH,
-          backgroundColor: HALF_BROWN,
-          borderRadius: TWO_THIRD_WIDTH
+          // borderWidth: 1,
+          height: '100%',
+          width: '100%',
+          backgroundColor: HALF_BROWN
+          // borderRadius: TWO_THIRD_WIDTH
         }}
-      />
-      <Typo
-        text="Some text here to spice things up before we begin anything"
-        style={{ marginVertical: RFValue(20), textAlign: 'center' }}
-        size={18}
-      />
+      >
+        <Image source={image} style={{ width: '100%', height: '100%' }} resizeMode="cover" />
+      </View>
+
+      <View
+        style={{
+          position: 'absolute',
+          bottom: useSafeAreaInsets().bottom + RFValue(100),
+          paddingHorizontal: RFValue(10)
+          // borderWidth: 1
+        }}
+      >
+        <Typo text={title} style={{ marginVertical: RFValue(0), fontWeight: 'bold', ...styles }} size={25} />
+        <Typo text={caption} style={{ marginVertical: RFValue(0), ...styles }} size={16} />
+      </View>
     </View>
   </View>
 );
 
 const renderScene = SceneMap({
-  first: Route,
-  second: Route,
-  third: Route
+  first: () =>
+    Route(
+      Dance,
+      {},
+      'Connect with Dancers globally',
+      'Signup and connect with other dancers allover the continent, do not miss the vibes'
+    ),
+  second: () =>
+    Route(Calendar, { color: WHITE }, 'Create dance events', 'Create events and let people know so they can attend'),
+  third: () =>
+    Route(
+      Community,
+      { color: WHITE },
+      'Join the community online',
+      'Join the dance community online and get in touch with other dances'
+    )
 });
 
 let delay = 2000;
@@ -81,31 +109,45 @@ export default function Intro ({ navigation }) {
           alignItems: 'center',
           width: '100%',
           bottom: useSafeAreaInsets().bottom,
-          paddingHorizontal: RFValue(15)
+          paddingHorizontal: RFValue(15),
+          flexDirection: 'row',
+          justifyContent: 'space-between'
         }}
       >
+        <Pressable
+          style={{
+            opacity: index > 0 ? 1 : 0,
+            backgroundColor: 'transparent',
+            padding: RFValue(10),
+            borderRadius: RFValue(20)
+          }}
+          onPress={() => (index > 0 ? setIndex(index - 1) : null)}
+        >
+          <Typo text="Back" style={{ fontWeight: 'bold' }} size={16} color={index === 0 ? '#000' : '#fff'} />
+        </Pressable>
         <View
           style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginVertical: RFValue(10) }}
         >
           {[ 0, 1, 2 ].map((r, i) => (
-            <Typo key={keyGenerator()} text="●" color={index === i ? '#000000' : '#00000030'} />
+            <Typo
+              style={{ marginHorizontal: RFValue(2) }}
+              key={keyGenerator()}
+              text="●"
+              color={index === i ? '#000000' : '#00000030'}
+            />
           ))}
         </View>
-        <Buton
-          title="Login to your account"
-          extStyles={{ marginVertical: RFValue(5) }}
-          onPress={() => navigation.navigate('Login')}
-        />
-        <Buton
-          title="Create account"
-          extStyles={{ marginVertical: RFValue(5) }}
-          onPress={() => navigation.navigate('Login')}
-        />
-        {/* <Buton
-          title="Continue with google"
-          extStyles={{ marginVertical: RFValue(5) }}
-          onPress={() => navigation.navigate('Login')}
-        /> */}
+        <Pressable
+          style={{ backgroundColor: 'transparent', padding: RFValue(10), borderRadius: RFValue(20) }}
+          onPress={() => (index < 2 ? setIndex(index + 1) : navigation.navigate('Signup'))}
+        >
+          <Typo
+            text={index === 2 ? 'Finish' : 'Next'}
+            style={{ fontWeight: 'bold' }}
+            size={16}
+            color={index === 0 ? '#000' : '#fff'}
+          />
+        </Pressable>
       </View>
     </View>
   );

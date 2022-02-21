@@ -3,7 +3,7 @@ import { View, Text, Pressable } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { Buton, Input, Password, Typo } from '.';
-import { BLUE, GREEN, HEIGHT, WIDTH, BLACK, WHITE } from '../Utils/Constants';
+import { BLUE, GREEN, HEIGHT, WIDTH, BLACK, WHITE, BROWN } from '../Utils/Constants';
 
 const LoginReg = ({
   showForgot = false,
@@ -32,11 +32,7 @@ const LoginReg = ({
       />
       <Typo
         text={
-          login ? (
-            'Sign into your account'
-          ) : (
-            'Create your account and start enjyoing the benefits of My Musawo Health care platform.'
-          )
+          login ? 'Sign into your account' : 'Create your account and start enjyoing the benefits of DanceBox platform.'
         }
         style={{ marginVertical: RFValue(10), marginBottom: RFValue(30) }}
         size={14}
@@ -45,7 +41,7 @@ const LoginReg = ({
         placeholder="Email address"
         placeHolderTextColor="#00000050"
         extStyles={{}}
-        extInputStyles={{}}
+        extInputStyles={{ backgroundColor: BROWN }}
         onChangeText={(email) => setState('email', email)}
         value={email}
         title="Email address"
@@ -59,7 +55,9 @@ const LoginReg = ({
         placeHolderTextColor="#00000050"
         passButtonColor="#010203"
         passVisible={visible}
+        extInputStyles={{ backgroundColor: BROWN }}
         togglePassword={() => setVisible((r) => !r)}
+        buttonStyles={{ backgroundColor: BROWN, borderWidth: 0 }}
       />
 
       {showForgot ? (

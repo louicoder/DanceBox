@@ -149,7 +149,7 @@ const BlogScreens = () => (
             title="Community Discussions"
             backEnabled={false}
             {...props}
-            rightComp={() => <DesignIcon name="bookmark-outline" pkg="mc" color="green" />}
+            rightComp={() => <DesignIcon name="plus" pkg="ad" color="green" />}
           />
         ),
         cardStyle: { backgroundColor: WHITE }
@@ -209,12 +209,7 @@ const EventScreens = () => (
       component={Events}
       options={{
         header: (props) => (
-          <Header
-            title="Community Events"
-            backEnabled={false}
-            {...props}
-            rightComp={() => <DesignIcon name="bookmark-outline" pkg="mc" />}
-          />
+          <Header title="Events" backEnabled={false} {...props} rightComp={() => <DesignIcon name="plus" pkg="ad" />} />
         ),
         cardStyle: { backgroundColor: WHITE }
       }}
@@ -331,7 +326,7 @@ const BottomStackScreens = ({ socket }) => (
       name="Events"
       component={EventScreens}
       options={() => ({
-        tabBarIcon: ({ color }) => <DesignIcon color={color} name="calendar-outline" size={RFValue(20)} pkg="io" />
+        tabBarIcon: ({ color }) => <DesignIcon color={color} name="calendar-outline" pkg="io" />
         // tabBarIcon: ({ color }) => <DesignIcon color={color} name="calendar" pkg="ad" />
       })}
     />
@@ -342,14 +337,14 @@ const BottomStackScreens = ({ socket }) => (
       options={() => ({
         tabBarLabel: 'Community',
         // tabBarIcon: ({ color }) => <Ionicons color={color} name="chatbox-ellipses-outline" size={RFValue(20)} />
-        tabBarIcon: ({ color }) => <DesignIcon name="team" pkg="ad" color={color} size={25} />
+        tabBarIcon: ({ color }) => <DesignIcon name="message1" pkg="ad" color={color} />
       })}
     />
     <BottomStack.Screen
       name="Favorites"
       component={SearchScreens}
       options={() => ({
-        tabBarIcon: ({ color }) => <DesignIcon color={color} name="bookmark" size={RFValue(20)} pkg="io" />
+        tabBarIcon: ({ color, focused }) => <DesignIcon color={color} name="bookmark" pkg="fa" />
       })}
     />
     <BottomStack.Screen
@@ -357,7 +352,7 @@ const BottomStackScreens = ({ socket }) => (
       component={AccountScreens}
       options={() => ({
         // tabBarIcon: ({ color }) => <FeatherIcons color={color} name="user" size={RFValue(20)} />
-        tabBarIcon: ({ color }) => <DesignIcon color={color} name="user" size={RFValue(20)} pkg="ad" />
+        tabBarIcon: ({ color }) => <DesignIcon color={color} name="user" pkg="ad" />
       })}
     />
   </BottomStack.Navigator>
@@ -365,9 +360,9 @@ const BottomStackScreens = ({ socket }) => (
 );
 
 const AllStacks = (props) => (
-  <Stacks.Navigator screenOptions={{}} initialRouteName="Home" headerMode="screen">
+  <Stacks.Navigator screenOptions={{}} initialRouteName="Splash" headerMode="screen">
     {/* <Stacks.Screen name="Home" component={DrawerScreens} options={{ header: () => null }} {...props} /> */}
-    <Stacks.Screen name="Home" component={BottomStackScreens} options={{ header: () => null }} {...props} />
+    <Stacks.Screen name="Main" component={BottomStackScreens} options={{ header: () => null }} {...props} />
     <Stacks.Screen
       name="FinishRegistration"
       component={FinishRegistration}
@@ -401,7 +396,7 @@ const AllStacks = (props) => (
     <Stacks.Screen
       name="Signup"
       component={Signup}
-      options={{ header: (props) => <Header title="Create Account" {...props} /> }}
+      options={{ header: (props) => <Header title="Create Account" {...props} backEnabled={false} /> }}
       {...props}
     />
     <Stacks.Screen name="Calendar" component={CalendarScreens} options={{ header: () => null }} {...props} />

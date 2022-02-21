@@ -48,13 +48,16 @@ const Events = ({ navigation, ...props }) => {
     <View style={{ flex: 1, borderWidth: 0 }}>
       <Buton
         title="Create Event"
+        onPress={() => navigation.navigate('NewEvent')}
         extStyles={{
           position: 'absolute',
           bottom: RFValue(10),
           zIndex: 30,
           // width: 0.4 * WIDTH,
           height: RFValue(40),
+          borderRadius: RFValue(80),
           right: RFValue(8),
+          paddingHorizontal: RFValue(15),
           backgroundColor: THEME_COLOR
         }}
       >
@@ -73,7 +76,7 @@ const Events = ({ navigation, ...props }) => {
           // paddingLeft: RFValue(10),
           backgroundColor: BROWN,
           marginBottom: RFValue(15),
-          borderBottomWidth: 1,
+          // borderBottomWidth: 1,
           borderColor: GRAY,
           paddingRight: 0,
           // position: 'relative',

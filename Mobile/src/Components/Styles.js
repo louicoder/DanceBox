@@ -6,11 +6,11 @@ export default StyleSheet.create({
     margin: 0
   },
   input: {
-    height: RFValue(45),
+    height: RFValue(40),
     fontSize: RFValue(14),
     // backgroundColor: '#eee',
     // borderColor: '#ccc',
-    borderWidth: 1,
+    // borderWidth: 1,
     // borderLeftWidth: 2,
     // borderRightWidth: 2,
     marginVertical: RFValue(5),
@@ -32,7 +32,7 @@ export default StyleSheet.create({
     borderColor: '#010203',
     width: '15%',
     // backgroundColor: '#dddddd70',
-    height: RFValue(45),
+    height: RFValue(40),
     alignItems: 'center',
     justifyContent: 'center'
   }),

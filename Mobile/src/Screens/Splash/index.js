@@ -9,8 +9,9 @@ import firestore from '@react-native-firebase/firestore';
 import { HelperFunctions } from '../../Utils';
 import axios from 'axios';
 import { showMessage } from 'react-native-flash-message';
+import { AUTH } from '../../Utils/Constants';
 
-const AUTH = auth();
+// const AUTH = auth();
 let sub;
 const Splash = ({ navigation: { navigate } }) => {
   const dispatch = useDispatch();
@@ -18,15 +19,26 @@ const Splash = ({ navigation: { navigate } }) => {
   const { user } = useSelector((state) => state.Account);
 
   useEffect(() => {
-    // getUser();
-    showMessage({
-      message: 'Hello World',
-      description: 'This is our second message',
-      type: 'success'
-    });
+    getUser();
+    // showMessage({
+    //   message: 'Hello World',
+    //   description: 'This is our second message',
+    //   type: 'success'
+    // });
+    // setTimeout(() => {
+    //   return navigate('Intro');
+    // }, 2000);
   }, []);
 
   const getUser = async () => {
+    if (!AUTH.currentUser) return navigation.navigate('Login');
+    return dispatch.Account.getUserDetails({
+      uid: AUTH.currentUser.uid,
+      callback: (res) => {
+        if (!res.success) return navigate('Login');
+        navigate('Main', { screen: 'Home' });
+      }
+    });
     await HelperFunctions.getUser(({ error, result }) => {
       // console.log('Splash=====', result);
       if (error) {
@@ -34,7 +46,7 @@ const Splash = ({ navigation: { navigate } }) => {
       }
       // if (!result) return navigate('Login');
       dispatch.Account.setUserDetails(result);
-      return navigate('Home');
+      // return navigate('Itro');
     });
   };
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Dimensions, ScrollView, Image, Text, Alert, ImageBackground, Pressable, TextInput } from 'react-native';
+import { View, Dimensions, ScrollView, Text, Alert, ImageBackground, Pressable, TextInput } from 'react-native';
 import Ripple from 'react-native-material-ripple';
 import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -12,6 +12,7 @@ import Organisers from './Organisers';
 import EventsInMonth from './EventsInMonth';
 import StickyView from '../../Components/StickyView';
 import CommentBox from '../../Components/CommentBox';
+import Image from 'react-native-fast-image';
 import { BROWN, INTERESTS, THEME_COLOR } from '../../Utils/Constants';
 
 const { width } = Dimensions.get('window');
@@ -29,6 +30,8 @@ const Home = ({ navigation, ...props }) => {
     // getRandomOrganisers();
     // getEventsInMonth();
   }, []);
+
+  console.log('USER', user);
 
   // const getEventsInMonth = (det) => {
   //   let dt, mnth, yr, month;
@@ -80,30 +83,34 @@ const Home = ({ navigation, ...props }) => {
             justifyContent: 'center'
           }}
         >
-          <DesignIcon name="user" pkg="ad" />
+          {user && user.photoURL ? (
+            <Image
+              source={{ uri: user.photoURL }}
+              style={{ width: '100%', height: '100%', borderRadius: RFValue(100) }}
+            />
+          ) : (
+            <DesignIcon name="user" pkg="ad" />
+          )}
         </View>
         <View style={{ flexGrow: 1, marginLeft: RFValue(10) }}>
-          <Typo text="Welcome back," size={14} />
-          <Typo text="username" size={14} style={{ fontWeight: 'bold', textTransform: 'capitalize' }} />
+          <Typo text="Welcome back," size={12} />
+          <Typo text={user.userName || user.email} size={12} style={{ fontWeight: 'normal', textTransform: 'none' }} />
         </View>
-        <DesignIcon withBorder={false} name="bell-outline" pkg="mc" widthHeight={35} />
+        {/* <DesignIcon withBorder={false} name="bell-outline" pkg="mc" widthHeight={35} /> */}
         <DesignIcon withBorder={false} name="dots-vertical" pkg="mc" widthHeight={35} />
         {/* <DesignIcon name="user" pg="ad" /> */}
       </View>
       {/* </SafeAreaView> */}
 
-      <View style={{ flexGrow: 1 }}>
-        <ScrollView
-          style={{ flex: 1, width: '100%', backgroundColor: '#eeeeee70' }}
-          showsVerticalScrollIndicator={false}
-        >
-          <TopCategories navigation={navigation} />
+      <ScrollView style={{ flexGrow: 1, width: '100%', backgroundColor: '#fff' }} showsVerticalScrollIndicator={false}>
+        <TopCategories navigation={navigation} />
 
-          <Organisers navigation={navigation} />
+        <Organisers navigation={navigation} />
 
-          <EventsInMonth navigation={navigation} />
-        </ScrollView>
-      </View>
+        <EventsInMonth navigation={navigation} />
+      </ScrollView>
+      {/* <View style={{ flexGrow: 1 }}>
+      </View> */}
     </View>
   );
 };

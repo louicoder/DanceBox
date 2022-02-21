@@ -17,7 +17,7 @@ GoogleSignin.configure({
 const { height, width } = Dimensions.get('window');
 const Login = ({ navigation }) => {
   const [ state, setState ] = React.useState({
-    email: 'musanje2010@gmail.com',
+    email: 'musanje2015@gmail.com',
     password: 'password',
     passVisible: false
   });

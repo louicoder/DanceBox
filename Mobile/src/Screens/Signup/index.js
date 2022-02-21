@@ -6,10 +6,11 @@ import { RFValue } from 'react-native-responsive-fontsize';
 import { Input, Password, Button, Buton, Typo, BottomSheet, LoginReg, OptionsList, Header } from '../../Components';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAsyncStorage, KeyGenerator, showAlert, validateEmail } from '../../Utils/HelperFunctions';
-// import Icon from '../../assets/blob.svg';
+import Icon from '../../assets/Back.svg';
 import { BLUE, HEIGHT, WIDTH } from '../../Utils/Constants';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { QUERIES } from '../../Firebase';
+import { SvgUri } from 'react-native-svg';
 
 const { height } = Dimensions.get('window');
 const Signup = ({ navigation }) => {
@@ -74,19 +75,6 @@ const Signup = ({ navigation }) => {
   return (
     <View>
       <BottomSheet isVisible={state.visible} closeModal={closeModal} />
-      {/* <Icon
-        width={WIDTH * 4}
-        height={HEIGHT * 2}
-        style={{
-          position: 'absolute',
-          top: RFValue(-(7 / 10 * HEIGHT)),
-          left: RFValue(-(4 / 9 * HEIGHT)),
-          // transform: [ { rotateX: '90deg' } ],
-          zIndex: -30
-          // backgroundColor: 'red'
-        }}
-        // fill="#000"
-      /> */}
 
       <LoginReg
         {...state}

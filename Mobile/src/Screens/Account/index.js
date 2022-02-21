@@ -41,7 +41,7 @@ const Account = ({ navigation }) => {
     passVisible: false
   });
   const [ user, setUser ] = React.useState({});
-  // const { user } = useSelector((state) => state.Account);
+  const { user: USERX } = useSelector((state) => state.Account);
   const [ imageLoading, setImageLoading ] = React.useState(false);
   const [ isKeyboardVisible, setKeyboardVisible ] = React.useState(false);
 
@@ -54,7 +54,7 @@ const Account = ({ navigation }) => {
     },
     [ navigation ]
   );
-  console.log('Re-rendering account...USER', user);
+  console.log('Re-rendering account...USER', USERX);
 
   const logout = () => {
     HelperFunctions.removeAsyncObjectData('user', () => {

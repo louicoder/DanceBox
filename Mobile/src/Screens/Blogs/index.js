@@ -70,7 +70,7 @@ const Blogs = ({ navigation }) => {
           </View>
         </View>
       </BottomSheet> */}
-      <Buton
+      {/* <Buton
         title="Create Event"
         extStyles={{
           position: 'absolute',
@@ -83,7 +83,7 @@ const Blogs = ({ navigation }) => {
         }}
       >
         <DesignIcon name="calendar" color={WHITE} style={{ marginRight: RFValue(10) }} />
-      </Buton>
+      </Buton> */}
       <SafeAreaView style={{ flex: 1 }}>
         <View
           style={{
@@ -110,6 +110,7 @@ const Blogs = ({ navigation }) => {
             extInputStyles={{ height: RFValue(30), marginTop: 0, borderWidth: 0, paddingLeft: 0 }}
             placeholder="Search community posts..."
           />
+
           {/* <ScrollView
           style={{
             backgroundColor: THEME_COLOR,
@@ -145,11 +146,17 @@ const Blogs = ({ navigation }) => {
         <View style={{ flexGrow: 1, backgroundColor: WHITE }}>
           <FlatList
             showsVerticalScrollIndicator={false}
-            style={{ flex: 1, backgroundColor: HALF_BROWN }}
+            style={{ flex: 1, backgroundColor: WHITE }}
             data={[ ...new Array(15).fill() ]}
             keyExtractor={() => HelperFunctions.keyGenerator()}
             renderItem={({ item, index }) => (
-              <SingleBlog {...item} navigation={navigation} last={index + 1 === blogs.length} index={index} />
+              <SingleBlog
+                {...item}
+                navigation={navigation}
+                last={index + 1 === blogs.length}
+                index={index}
+                first={index === 0}
+              />
             )}
           />
         </View>

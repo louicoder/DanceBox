@@ -1,10 +1,15 @@
 import { QUERIES } from '../../Firebase';
 import { HelperFunctions } from '../../Utils';
+import { AUTH, FIRESTORE } from '../../Utils/Constants';
 import AxiosClient from '../Axios';
 
 export default {
   state: { user: {}, events: [], blogs: [], randomOrganisers: [], allOrganisers: [] },
   reducers: {
+    setField (state, field, value) {
+      // console.log('Setting user details----', user);
+      return { ...state, [field]: value };
+    },
     setUserDetails (state, user) {
       // console.log('Setting user details----', user);
       return { ...state, user };
@@ -36,14 +41,23 @@ export default {
 
     async login ({ email, password, callback }) {
       try {
-        await AxiosClient.post('/accounts/login', { email, password }).then(async ({ data }) => {
-          if (data.success) {
-            dispatch.Account.setUserDetails(data.result.user);
-            console.log('USER Login', data);
-            await HelperFunctions.storeAsyncObjectData('user', data.result.user, callback);
-          }
-          callback(data);
+        await AUTH.signInWithEmailAndPassword(email, password).then(async (data) => {
+          if (data.user)
+            return await FIRESTORE.collection('users').doc(data.user.uid).get().then((user) => {
+              console.log('USER EFFECTS', user.data());
+              const result = { ...user.data(), uid: user.id };
+              dispatch.Account.setField('user', result);
+              return callback({ success: true, result });
+            });
         });
+        // await AxiosClient.post('/accounts/login', { email, password }).then(async ({ data }) => {
+        //   if (data.success) {
+        //     dispatch.Account.setUserDetails(data.result.user);
+        //     console.log('USER Login', data);
+        //     await HelperFunctions.storeAsyncObjectData('user', data.result.user, callback);
+        //   }
+        //   callback(data);
+        // });
       } catch (error) {
         return callback({ success: false, result: error.message });
       }
@@ -84,9 +98,10 @@ export default {
 
     async getUserDetails ({ uid, callback }) {
       try {
-        await AxiosClient.get(`/accounts/${uid}`).then(({ data }) => {
-          // if (success) return callback({ result, success });
-          callback(data);
+        await FIRESTORE.collection('users').doc(uid).get().then((user) => {
+          const result = { ...user.data(), uid: user.id };
+          dispatch.Account.setField('user', result);
+          return callback({ success: true, result });
         });
       } catch (error) {
         return callback({ success: false, result: error.message });

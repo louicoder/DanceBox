@@ -1,10 +1,22 @@
 import React from 'react';
-import { View, Text, Pressable, Alert } from 'react-native';
+import { View, Text, Pressable, Alert, ScrollView } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { useDispatch, useSelector } from 'react-redux';
-import OrganiserPreview from '../../Components/OrganiserPreview';
+import { Typo } from '../../Components';
 import { HelperFunctions } from '../../Utils';
-import { THEME_COLOR, THEME_COLOR3, THEME_COLOR7 } from '../../Utils/Constants';
+import {
+  DANCE_STYLES,
+  HALF_WHITE,
+  QUARTER_WHITE,
+  SHADOW,
+  THEME_COLOR,
+  THEME_COLOR3,
+  THEME_COLOR7,
+  WHITE,
+  WIDTH
+} from '../../Utils/Constants';
+import Image from 'react-native-fast-image';
+import LinearGradient from 'react-native-linear-gradient';
 
 const Organisers = ({ navigation }) => {
   const [ organisers, setOrganisers ] = React.useState([]);
@@ -24,7 +36,7 @@ const Organisers = ({ navigation }) => {
   };
 
   return (
-    <View style={{ width: '100%', paddingHorizontal: RFValue(10), backgroundColor: '#fff' }}>
+    <View style={{ width: '100%', paddingHorizontal: RFValue(0), backgroundColor: '#fff' }}>
       <View
         style={{
           backgroundColor: '#fff',
@@ -35,17 +47,9 @@ const Organisers = ({ navigation }) => {
           justifyContent: 'space-between'
         }}
       >
-        <Text
-          style={{
-            // marginHorizontal: RFValue(10),
-            fontSize: RFValue(16),
-            fontWeight: 'bold'
-            // color: THEME_COLOR
-          }}
-        >
-          Featured Event Organisers:
-        </Text>
-        <Pressable
+        <Typo text="Dance Categories" size={16} style={{ fontWeight: 'bold', marginHorizontal: RFValue(10) }} />
+
+        {/* <Pressable
           // onPress={() => Alert.alert('Pending feature', 'This feature is Coming soon')}
           onPress={() => navigation.navigate('AllOrganisers')}
         >
@@ -59,29 +63,54 @@ const Organisers = ({ navigation }) => {
           >
             View All
           </Text>
-        </Pressable>
+        </Pressable> */}
       </View>
-      {randomOrganisers && randomOrganisers.length ? (
-        randomOrganisers.map((orgzr) => (
-          <OrganiserPreview key={HelperFunctions.keyGenerator()} navigation={navigation} {...orgzr} />
-        ))
-      ) : null}
-      {randomOrganisers && !randomOrganisers.length ? (
-        <Pressable
-          onPress={() => navigation.navigate('AllOrganisers')}
-          style={{
-            height: RFValue(200),
-            paddingHorizontal: RFValue(10),
-            width: '100%',
-            justifyContent: 'center'
-          }}
-        >
-          <Text style={{ color: '#aaa', fontSize: RFValue(14) }}>
-            We are constantly getting our hands to work to curate for you interesting event organisers, keep checking!
-            You can tap here to view all organisers on the platform.
-          </Text>
-        </Pressable>
-      ) : null}
+
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        style={{ paddingVertical: RFValue(0), borderWidth: 0 }}
+      >
+        {DANCE_STYLES.map((r) => (
+          <Pressable
+            style={{
+              width: 0.5 * WIDTH,
+              height: 0.5 * WIDTH,
+              backgroundColor: WHITE,
+              marginRight: RFValue(5)
+              // ...SHADOW
+              // shadowColor: '#ccc',
+              // shadowRadius: RFValue(2),
+              // shadowOffset: { width: 0, height: RFValue(8) }
+            }}
+          >
+            <Image
+              source={{
+                uri: r.image
+                // 'https://images.unsplash.com/photo-1597844954972-c843e52b956e?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1420&q=80'
+              }}
+              style={{ width: '100%', height: '100%' }}
+              resizeMode="cover"
+            />
+            <LinearGradient
+              colors={[ 'transparent', '#00000050', '#00000090', '#000000' ]}
+              style={{
+                height: '50%',
+                position: 'absolute',
+                bottom: 0,
+                width: '100%',
+                justifyContent: 'flex-end',
+                padding: RFValue(10),
+                // borderWidth: 1,
+                paddingBottom: RFValue(5)
+              }}
+            >
+              <Typo text={r.title} color={WHITE} size={16} style={{ fontWeight: 'bold' }} />
+              <Typo text="240k followers" color={QUARTER_WHITE} size={12} />
+            </LinearGradient>
+          </Pressable>
+        ))}
+      </ScrollView>
     </View>
   );
 };
