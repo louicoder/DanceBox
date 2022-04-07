@@ -98,10 +98,19 @@ app.use(cors());
 // });
 
 // ROUTES IMPORTS
-const { BlogsRoute, EventsRoute, ReviewsRoute, AccountsRoute, CommentsRoute, TestingRoute } = require('./Routes');
+const {
+  BlogsRoute,
+  EventsRoute,
+  ReviewsRoute,
+  AccountsRoute,
+  CommentsRoute,
+  TestingRoute,
+  PostsRoute
+} = require('./Routes');
 
 // ROUTES MIDDLEWARE CONNECTORS
 app.use('/api/blogs', BlogsRoute);
+app.use('/api/posts', PostsRoute);
 app.use('/api/events', EventsRoute);
 app.use('/api/reviews', ReviewsRoute);
 app.use('/api/accounts', AccountsRoute);

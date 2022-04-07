@@ -84,19 +84,6 @@ const Login = ({ navigation }) => {
 
   return (
     <View style={{ flex: 1 }}>
-      {/* <Icon
-        width={width * 4}
-        height={height * 2}
-        style={{
-          position: 'absolute',
-          top: RFValue(-(7 / 10 * HEIGHT)),
-          left: RFValue(-(4 / 9 * HEIGHT)),
-          // transform: [ { rotateX: '90deg' } ],
-          zIndex: -30
-          // backgroundColor: 'red'
-        }}
-        // fill="#000"
-      /> */}
       <LoginReg
         optionOnPress={() => navigation.navigate('Signup')}
         showForgot

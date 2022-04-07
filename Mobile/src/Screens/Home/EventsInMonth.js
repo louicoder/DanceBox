@@ -55,27 +55,11 @@ const EventsInMonth = ({ navigation }) => {
           // color: '#aaa'
         }}
       >
-        Events happening this month:
+        Events for you:
       </Text>
-      {events && events.length ? (
-        events.map((event) => <EventPreview key={HelperFunctions.keyGenerator()} {...event} navigation={navigation} />)
-      ) : null}
-      {events && !events.length ? (
-        <Pressable
-          // onPress={() => navigation.navigate('AllOrganisers')}
-          style={{
-            height: RFValue(200),
-            paddingHorizontal: RFValue(10),
-            width: '100%',
-            justifyContent: 'center'
-          }}
-        >
-          <Text style={{ color: '#aaa', fontSize: RFValue(14) }}>
-            There are no events this month but be ssure to keep checking this space for any upcoming events in the
-            current month.
-          </Text>
-        </Pressable>
-      ) : null}
+      {[ ...new Array(2).fill() ].map((event) => (
+        <EventPreview key={HelperFunctions.keyGenerator()} {...event} navigation={navigation} />
+      ))}
     </View>
   );
 };

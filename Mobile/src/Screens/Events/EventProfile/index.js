@@ -25,32 +25,32 @@ import Header from './Header';
 import { useDispatch, useSelector } from 'react-redux';
 import { KeyboardAwareFlatList, KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { ComingSoon, DesignIcon } from '../../../Components';
+import { Buton, ComingSoon, DesignIcon, EventPreview, Input, TextArea, Typo } from '../../../Components';
 import CommentBox from './CommentBox';
+import { BROWN, GRAY, HALF_BROWN, HALF_GRAY, WIDTH } from '../../../Utils/Constants';
+import { useKeyboard } from '../../../Utils/useKeyboardHeight';
 // import KeyboardStickyView from '../../Components/StickyView';
 
 const EventProfile = ({ navigation, route }) => {
   const dispatch = useDispatch();
-  // const { user } = useSelector((state) => state.Account);
+  const { user } = useSelector((state) => state.Account);
   // const stato = useSelector((state) => state);
   const loading = useSelector((state) => state.loading.effects.Events);
   const [ event, setEvent ] = React.useState({});
   const [ state, setState ] = React.useState({ commentShowing: false, comments: [] });
   const [ isKeyboardVisible, setKeyboardVisible ] = React.useState(false);
-  const [ user, setUser ] = React.useState(false);
-
-  React.useEffect(
-    () => {
-      getEvent();
-    },
-    [ route.params ]
-  );
+  const [ hyt ] = useKeyboard();
+  // const [ user, setUser ] = React.useState(false);
 
   React.useEffect(() => {
-    HelperFunctions.getUser(({ result, success }) => success && setUser(result));
+    // getEvent();
   }, []);
 
-  // console.log('----USER---', user);
+  React.useEffect(() => {
+    // HelperFunctions.getUser(({ result, success }) => success && setUser(result));
+  }, []);
+
+  console.log('----USER---', user);
 
   const getEvent = () =>
     dispatch.Events.getEvent({
@@ -118,60 +118,66 @@ const EventProfile = ({ navigation, route }) => {
   // console.log('PARMAS. comments', route.params);
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      {state.commentShowing && (
-        <CommentBox close={() => setState({ ...state, commentShowing: false })} postComment={postComment} user={user} />
-      )}
-      <ScrollView
-        style={{ flex: 1, backgroundColor: '#eeeeee70' }}
-        // extraScrollHeight={useSafeAreaInsets().top}
-      >
-        <Header
-          {...event}
-          event={event}
-          comments={state.comments}
-          navigation={navigation}
-          attendParticipate={attendParticipate}
-          unattendUnparticipate={unattendUnparticipate}
-          likeHandler={likeHandler}
-          postComment={(comment) => postComment(comment)}
-          showCommentBox={() => setState({ ...state, commentShowing: true })}
+    <View style={{ flex: 1 }}>
+      {/* <View style={{ position: 'absolute', bottom: hyt, width: '100%', zIndex: 40, height: RFValue(100) }}>
+        <TextArea
+          placeholder="Leave your comment..."
+          extStyles={{ marginBottom: 0, backgroundColor: GRAY, height: RFValue(100) }}
+          extInputStyles={{ backgroundColor: HALF_GRAY, marginBottom: 0, marginTop: 0 }}
         />
+      </View> */}
+      <ScrollView style={{ flex: 1, backgroundColor: 'transparent', paddingHorizontal: RFValue(0) }}>
+        <EventPreview
+          onPress={() => null}
+          borderRadius={false}
+          extStyles={{ marginBottom: 0, height: 3 / 4 * WIDTH }}
+        />
+        <View style={{ paddingHorizontal: RFValue(8) }}>
+          <Typo text="Details" size={18} style={{ fontWeight: 'bold', marginVertical: RFValue(8) }} />
 
-        <View
-          style={{
-            paddingVertical: RFValue(state.comments && user && user._id ? 20 : 0),
-            flexGrow: 1,
-            backgroundColor: '#fff'
-          }}
-        >
-          {state.comments.map((item, index) => (
-            <SingleComment
-              key={item._id}
-              first={index === 0}
-              {...item}
-              navigation={navigation}
-              last={state.comments && index + 1 === state.comments.length}
-              // goto={() => navigation.navigate('NewEventComment', { eventId: event._id })}
-            />
-          ))}
+          <Typo text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Qui ita affectus, beatum esse numquam probabis; Licet hic rursus ea commemores, quae optimis verbis ab Epicuro de laude amicitiae dicta sunt. Quia, si mala sunt, is, qui erit in iis, beatus non erit. Illum mallem levares, quo optimum atque humanissimum virum, Cn. Duo Reges: constructio interrete. Restant Stoici, qui cum a Peripateticis et Academicis omnia transtulissent, nominibus aliis easdem res secuti sunt. Nonne igitur tibi videntur, inquit, mala? Quis Aristidem non mortuum diligit?" />
 
-          {user && state.comments && !state.comments.length ? (
-            <ComingSoon title="">
-              <Pressable
-                style={{ alignItems: 'center', justifyContent: 'center' }}
-                onPress={() => setState({ ...state, commentShowing: true })}
-              >
-                <DesignIcon name="chatbubble-ellipses-outline" pkg="io" size={RFValue(100)} color="#ccc" />
-                <Text style={{ textAlign: 'center', color: '#ccc', fontSize: RFValue(16) }}>
-                  No comments yet, touch here to be the first one to add a comment...
-                </Text>
-              </Pressable>
-            </ComingSoon>
-          ) : null}
+          <Typo
+            text="Follow the conversation"
+            size={18}
+            style={{ fontWeight: 'bold', marginTop: RFValue(15), marginBottom: RFValue(10) }}
+          />
         </View>
+
+        {[ ...new Array(3).fill() ].map((r) => (
+          <View
+            style={{
+              width: '100%',
+              flexDirection: 'row',
+              alignItems: 'flex-start',
+              marginBottom: RFValue(25),
+              paddingHorizontal: RFValue(8)
+            }}
+          >
+            <View
+              style={{
+                width: 0.1 * WIDTH,
+                height: 0.1 * WIDTH,
+                borderRadius: RFValue(50),
+                backgroundColor: BROWN,
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+            >
+              <DesignIcon name="user" pkg="ad" />
+            </View>
+
+            <View style={{ flexShrink: 1, marginLeft: RFValue(15) }}>
+              <Typo
+                text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quo plebiscito decreta a senatu est consuli quaestio Cn. Theophrasti igitur, inquit, tibi liber ille placet de beata vita? Dicet pro me ipsa virtus nec dubitabit isti vestro beato M. Summum ením bonum exposuit vacuitatem doloris;"
+                size={13}
+              />
+            </View>
+          </View>
+        ))}
+        <Buton title="View All Comments" extStyles={{ marginHorizontal: RFValue(8), height: RFValue(40) }} />
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 

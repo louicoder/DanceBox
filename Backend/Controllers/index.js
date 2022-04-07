@@ -4,6 +4,7 @@ const ReviewsController = require('./Reviews');
 const AccountController = require('./Account');
 const CommentsController = require('./Comments');
 const TestingController = require('./Testing');
+const PostsController = require('./Posts');
 
 module.exports = {
   BlogsController,
@@ -11,5 +12,6 @@ module.exports = {
   ReviewsController,
   AccountController,
   CommentsController,
-  TestingController
+  TestingController,
+  PostsController
 };

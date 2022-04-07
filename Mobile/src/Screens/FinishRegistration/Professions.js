@@ -81,7 +81,7 @@ const Professions = ({ professions, setProfessions, closeModal }) => {
                 // height: RFValue(50),
                 marginBottom: i + 1 === pros.length ? useSafeAreaInsets().bottom + RFValue(10) : RFValue(10),
                 // borderWidth: exists ? 0 : 1,
-                backgroundColor: exists ? 'green' : '#eeeeee',
+                backgroundColor: exists ? BLACK : '#eeeeee',
                 borderColor: HALF_GRAY,
                 alignItems: 'center',
                 flexDirection: 'row',

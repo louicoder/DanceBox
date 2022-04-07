@@ -19,10 +19,10 @@ let socket;
 const Voting = ({ navigation, route }) => {
   // const {} = useSelector((state) => state.Account);
   const [ room, setRoom ] = React.useState({ users: 0, participants: [], votes: [] });
-  const [ event, setEvent ] = React.useState({ ...route.params.event });
+  const [ event, setEvent ] = React.useState({});
   const [ participants, setParticipants ] = React.useState([]);
   const [ modal, setModal ] = React.useState(false);
-  const [ user, setUser ] = React.useState({ ...route.params.user });
+  const [ user, setUser ] = React.useState({});
   const [ participant, setParticipant ] = React.useState('');
   const [ votes, setVotes ] = React.useState([]);
   const deviceId = getUniqueId();
@@ -30,59 +30,60 @@ const Voting = ({ navigation, route }) => {
 
   // const socketURL = 'wss://dancebox-309908.uc.r.appspot.com';
   const socketURL = 'http://192.168.90.163:8080';
-  React.useEffect(
-    () => {
-      // Alert.alert('Voting criteria', 'You only get to vote once and your decision is final, please vote wisely');
-      socket = SocketIOClient(socketURL, { jsonp: false });
-      socket.emit('join-server', { deviceId, room: route.params && route.params.eventId });
+  // React.useEffect(
+  //   () => {
+  //     // Alert.alert('Voting criteria', 'You only get to vote once and your decision is final, please vote wisely');
+  //     socket = SocketIOClient(socketURL, { jsonp: false });
+  //     // socket.emit('join-server', { deviceId, room: route.params && route.params.eventId });
 
-      socket.on('update', (usr) => {
-        console.log('update', usr.votes);
-        setRoom({ ...room, ...usr });
-        setParticipant('');
-      });
+  //     socket.on('update', (usr) => {
+  //       console.log('update', usr.votes);
+  //       setRoom({ ...room, ...usr });
+  //       setParticipant('');
+  //     });
 
-      socket.on('new-votes', (vots) => {
-        console.log('Votes', vots);
-        setVotes(vots);
-      });
+  //     socket.on('new-votes', (vots) => {
+  //       // console.log('Votes', vots);
+  //       setVotes(vots);
+  //     });
 
-      return () => {
-        socket.emit('leave-room', { roomId: route.params.eventId, deviceId });
-        // socket.disconnect();
-      };
-    },
-    [ setRoom, setVotes ]
-  );
+  //     return () => {
+  //       socket.emit('leave-room', { roomId: route.params.eventId, deviceId });
+  //       // socket.disconnect();
+  //     };
+  //   },
+  //   [ setRoom, setVotes ]
+  // );
 
-  React.useEffect(
-    () => {
-      const sub = navigation.addListener('focus', () => {
-        // getUser();
-        // getEvent();
-        navigation.setParams({ openModal: () => openModal(), author: event.authorId === user._id });
-      });
-      return () => sub;
-    },
-    [ navigation ]
-  );
+  // React.useEffect(
+  //   () => {
+  //     const sub = navigation.addListener('focus', () => {
+  //       // getUser();
+  //       // getEvent();
+  //       navigation.setParams({ openModal: () => openModal(), author: event.authorId === user._id });
+  //     });
+  //     return () => sub;
+  //   },
+  //   [ navigation ]
+  // );
 
-  console.log('AUTHOR OR NOT', event.authorId === user._id, event.authorId, user._id);
+  // console.log('AUTHOR OR NOT', event.authorId === user._id, event.authorId, user._id);
 
-  const getEvent = () =>
-    dispatch.Events.getEvent({
-      eventId: route.params.eventId,
-      callback: (res) => {
-        if (!res.success) return Alert.alert('Error getting event', res.result);
-        setEvent(res.result);
-        console.log('Got EVENT', res.result);
-      }
-    });
+  const getEvent = () => {
+    // dispatch.Events.getEvent({
+    //   eventId: route.params.eventId,
+    //   callback: (res) => {
+    //     if (!res.success) return Alert.alert('Error getting event', res.result);
+    //     setEvent(res.result);
+    //     console.log('Got EVENT', res.result);
+    //   }
+    // });
+  };
 
   const getUser = async () =>
     await HelperFunctions.getAsyncObjectData('user', ({ result: user, success }) => setUser(user));
 
-  const voteNow = () => socket.emit('vote', { user: route.params && route.params.user });
+  const voteNow = () => socket.emit('vote', {});
 
   const openModal = React.useCallback(
     () => {
@@ -99,27 +100,27 @@ const Voting = ({ navigation, route }) => {
   );
 
   const addParticipant = () => {
-    console.log('Participant', participant);
-    if (participant) {
-      const user = {
-        name: participant,
-        room: route.params.eventId,
-        cb: () => setParticipant(''),
-        id: keyGenerator()
-      };
-      socket.emit('add-participant', user);
-    }
-    // return;
+    // console.log('Participant', participant);
+    // if (participant) {
+    //   const user = {
+    //     name: participant,
+    //     room: route.params.eventId,
+    //     cb: () => setParticipant(''),
+    //     id: keyGenerator()
+    //   };
+    //   socket.emit('add-participant', user);
+    // }
+    // // return;
   };
 
   const removeParticipant = (id) => {
-    return socket.emit('remove-participant', { id, room: route.params.eventId });
+    // return socket.emit('remove-participant', { id, room: route.params.eventId });
   };
 
   const vote = (usr) => {
     // console.log('VOTE OBJ', usr);
-    const voteObject = { voter: deviceId, voted: usr.id, room: route.params.eventId };
-    socket.emit('vote', voteObject);
+    // const voteObject = { voter: deviceId, voted: usr.id, room: route.params.eventId };
+    // socket.emit('vote', voteObject);
   };
 
   return (

@@ -6,7 +6,7 @@ import { RFValue } from 'react-native-responsive-fontsize';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
-import { Buton, DesignIcon, Filters, ScrollBubbles } from '../../Components';
+import { Buton, DesignIcon, EventPreview, Filters, ScrollBubbles } from '../../Components';
 import LoadingModal from '../../Components/LoadingModal';
 import Modal from '../../Components/Modal';
 import { Input } from '../../Components';
@@ -46,24 +46,6 @@ const Events = ({ navigation, ...props }) => {
   // console.log('Events', events && events[0]);
   return (
     <View style={{ flex: 1, borderWidth: 0 }}>
-      <Buton
-        title="Create Event"
-        onPress={() => navigation.navigate('NewEvent')}
-        extStyles={{
-          position: 'absolute',
-          bottom: RFValue(10),
-          zIndex: 30,
-          // width: 0.4 * WIDTH,
-          height: RFValue(40),
-          borderRadius: RFValue(80),
-          right: RFValue(8),
-          paddingHorizontal: RFValue(15),
-          backgroundColor: THEME_COLOR
-        }}
-      >
-        <DesignIcon name="calendar" color={WHITE} style={{ marginRight: RFValue(10) }} />
-      </Buton>
-
       <View
         style={{
           flexDirection: 'row',
@@ -92,23 +74,14 @@ const Events = ({ navigation, ...props }) => {
         {/* :TODO: suggestions drop down */}
       </View>
 
-      <View style={{ flexGrow: 1, zIndex: 10 }}>
-        {events && events.length ? (
-          <FlatList
-            showsVerticalScrollIndicator={false}
-            style={{ flex: 1 }}
-            data={events}
-            keyExtractor={() => HelperFunctions.keyGenerator()}
-            renderItem={({ item, index }) => (
-              <SingleEvent last={index + 1 === events.length} {...item} {...props} navigation={navigation} />
-            )}
-          />
-        ) : null}
-        {events && !events.length ? (
-          <View style={{ flex: 1, backgroundColor: WHITE, alignItems: 'center', justifyContent: 'center' }}>
-            <Text>No events yet, keep checking...</Text>
-          </View>
-        ) : null}
+      <View style={{ flexGrow: 1, zIndex: 10, paddingHorizontal: RFValue(8) }}>
+        <FlatList
+          showsVerticalScrollIndicator={false}
+          style={{ flex: 1 }}
+          data={[ ...new Array(15).fill() ]}
+          keyExtractor={() => HelperFunctions.keyGenerator()}
+          renderItem={({ item, index }) => <EventPreview navigation={navigation} />}
+        />
       </View>
     </View>
   );

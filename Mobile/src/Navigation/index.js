@@ -135,6 +135,23 @@ const HomeScreens = ({ socket }) => (
       component={AllOrganisers}
       options={{ header: (props) => <Header title="Event Organisers" iconName="pencil" {...props} /> }}
     />
+    <HomeStack.Screen
+      name="Voting"
+      component={Voting}
+      options={(props) => ({
+        header: () => (
+          <Header
+            title="Event Voting"
+            iconName="pencil"
+            {...props}
+            showRightIcon
+            rightIconName="plus"
+            rightIconPkg="ad"
+            rightIconOnPress={() => props.route.params.openModal()}
+          />
+        )
+      })}
+    />
   </HomeStack.Navigator>
 );
 
@@ -209,7 +226,12 @@ const EventScreens = () => (
       component={Events}
       options={{
         header: (props) => (
-          <Header title="Events" backEnabled={false} {...props} rightComp={() => <DesignIcon name="plus" pkg="ad" />} />
+          <Header
+            title="Community Events"
+            backEnabled={false}
+            {...props}
+            rightComp={() => <DesignIcon name="plus" pkg="ad" />}
+          />
         ),
         cardStyle: { backgroundColor: WHITE }
       }}
@@ -360,7 +382,7 @@ const BottomStackScreens = ({ socket }) => (
 );
 
 const AllStacks = (props) => (
-  <Stacks.Navigator screenOptions={{}} initialRouteName="Splash" headerMode="screen">
+  <Stacks.Navigator screenOptions={{}} initialRouteName="FinishRegistration" headerMode="screen">
     {/* <Stacks.Screen name="Home" component={DrawerScreens} options={{ header: () => null }} {...props} /> */}
     <Stacks.Screen name="Main" component={BottomStackScreens} options={{ header: () => null }} {...props} />
     <Stacks.Screen
@@ -390,13 +412,13 @@ const AllStacks = (props) => (
     <Stacks.Screen
       name="Login"
       component={Login}
-      options={{ header: (props) => <Header title="Login" backEnabled={false} {...props} /> }}
+      options={{ header: (props) => <Header title="" backEnabled={false} {...props} /> }}
       {...props}
     />
     <Stacks.Screen
       name="Signup"
       component={Signup}
-      options={{ header: (props) => <Header title="Create Account" {...props} backEnabled={false} /> }}
+      options={{ header: (props) => <Header title="" {...props} backEnabled={false} /> }}
       {...props}
     />
     <Stacks.Screen name="Calendar" component={CalendarScreens} options={{ header: () => null }} {...props} />

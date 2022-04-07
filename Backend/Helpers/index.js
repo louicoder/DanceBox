@@ -85,6 +85,9 @@ const hashPassword = (stringToHash) => Bcrypt.hashSync(stringToHash, 10);
 
 const decodePassword = (password, hashedPassword) => Bcrypt.compareSync(password, hashedPassword);
 
+const dateWithoutOffset = () =>
+  new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, -1);
+
 module.exports = {
   paginateHelper,
   createToken,
@@ -92,6 +95,7 @@ module.exports = {
   hashPassword,
   decodePassword,
   userFiller,
-  pickRandomArrayElements
+  pickRandomArrayElements,
+  dateWithoutOffset
   // commentsFiller
 };

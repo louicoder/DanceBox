@@ -3,20 +3,7 @@ import { View, Text, Image, Pressable, SafeAreaView } from 'react-native';
 import React from 'react';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { Buton, Typo } from '../../Components';
-import {
-  BLACK,
-  WIDTH,
-  WHITE,
-  GRAY,
-  BROWN,
-  HALF_BLACK,
-  HALF_GRAY,
-  QUARTER_GRAY,
-  HALF_BROWN,
-  QUARTER_BROWN,
-  HEIGHT,
-  AUTH
-} from '../../Utils/Constants';
+import { BLACK, WIDTH, WHITE, GRAY, QUARTER_BROWN, AUTH } from '../../Utils/Constants';
 import { Bar } from 'react-native-progress';
 import {
   CHECK_GALLERY_PERMISSIONS,
@@ -97,20 +84,21 @@ const AddProfilePhoto = ({ navigation }) => {
       {/* <Image source={BG} style={{ position: 'absolute', width: '100%', height: HEIGHT }} /> */}
       <SafeAreaView style={{ flex: 1 }}>
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-          <Typo text="Select an image to show on your profile" size={16} />
+          <Typo text="Select an image to show on your profile" size={16} style={{ fontWeight: 'normal' }} />
 
           <View
             style={{
               marginVertical: RFValue(20),
               width: 3.6 / 4 * WIDTH,
-              height: 3 / 4 * WIDTH,
-              backgroundColor: QUARTER_BROWN
+              height: 3.6 / 4 * WIDTH,
+              backgroundColor: QUARTER_BROWN,
+              borderRadius: 3.6 / 4 * WIDTH
             }}
           >
             {state.image && state.image.uri ? (
               <Pressable onPress={pickImage}>
                 <Image
-                  style={{ width: '100%', height: '100%', borderColor: GRAY }}
+                  style={{ width: '100%', height: '100%', borderColor: GRAY, borderRadius: 3.6 / 4 * WIDTH }}
                   source={{ uri: state.image.uri }}
                   resizeMode="cover"
                 />
@@ -127,7 +115,7 @@ const AddProfilePhoto = ({ navigation }) => {
                 }}
                 onPress={pickImage}
               >
-                <Typo text="Select photo" size={16} />
+                <Typo text="Select photo" size={18} color={GRAY} />
               </Pressable>
             )}
           </View>

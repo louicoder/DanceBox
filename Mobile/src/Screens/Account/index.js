@@ -40,8 +40,8 @@ const Account = ({ navigation }) => {
     password: '',
     passVisible: false
   });
-  const [ user, setUser ] = React.useState({});
-  const { user: USERX } = useSelector((state) => state.Account);
+  // const [ user, setUser ] = React.useState({});
+  const { user } = useSelector((state) => state.Account);
   const [ imageLoading, setImageLoading ] = React.useState(false);
   const [ isKeyboardVisible, setKeyboardVisible ] = React.useState(false);
 
@@ -54,7 +54,6 @@ const Account = ({ navigation }) => {
     },
     [ navigation ]
   );
-  console.log('Re-rendering account...USER', USERX);
 
   const logout = () => {
     HelperFunctions.removeAsyncObjectData('user', () => {
@@ -144,12 +143,12 @@ const Account = ({ navigation }) => {
       ) : null}
 
       <SafeAreaView style={{ flex: 1 }}>
-        {user && user._id ? (
+        {user ? (
           <ScrollView style={{ flex: 1, backgroundColor: '#eee', zIndex: 10 }}>
             <View style={styles.imageContainer}>
               <ImageBackground
                 source={{
-                  uri: user.imageUrl || CONSTANTS.DEFAULT_PROFILE
+                  uri: user.photoURL
                 }}
                 resizeMode="cover"
                 style={styles.profilePhoto}

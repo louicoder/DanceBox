@@ -27,8 +27,8 @@ const Signup = ({ navigation }) => {
     password: 'password',
     error: '',
     visible: false,
-    patient: true,
-    accountType: 'patient'
+    patient: true
+    // accountType: 'patient'
   });
 
   const signup = () => {

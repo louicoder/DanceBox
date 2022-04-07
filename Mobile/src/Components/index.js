@@ -23,6 +23,7 @@ import LoginReg from './LoginReg';
 import TextArea from './TextArea';
 import Select from './Select';
 import ScrollBubbles from './ScrollBubbles';
+import EventPreview from './EventPreview';
 
 export {
   IconComp,
@@ -49,5 +50,6 @@ export {
   Password,
   TextArea,
   Select,
-  ScrollBubbles
+  ScrollBubbles,
+  EventPreview
 };

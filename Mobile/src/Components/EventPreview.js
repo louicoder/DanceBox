@@ -1,51 +1,69 @@
 import React from 'react';
-import { View, Text, Pressable, Image } from 'react-native';
+import { View, Text, Pressable } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { CONSTANTS } from '../Utils';
 import DesignIcon from './DesignIcon';
+import { Typo } from '.';
+import Image from 'react-native-fast-image';
+import Event from '../assets/event.jpg';
+import { HALF_WHITE, QUARTER_WHITE, WHITE, WIDTH } from '../Utils/Constants';
 
-const EventPreview = ({ title, description, participating, attending, imageUrl, navigation, _id, ...rest }) => {
+const EventPreview = ({ navigation, imageUrl, onPress, borderRadius = true, extStyles }) => {
   // console.log('REST---', rest);
   return (
     <Pressable
-      onPress={() => navigation.navigate('EventProfile', { _id })}
+      onPress={() => (onPress ? onPress : navigation.navigate('EventProfile', {}))}
       style={{
         width: '100%',
         flexDirection: 'row',
-        marginBottom: RFValue(8),
-        paddingVertical: RFValue(10)
+        marginBottom: RFValue(10),
+        // paddingVertical: RFValue(10),
+        alignItems: 'center',
+        height: WIDTH / 2,
+        zIndex: -10,
+        ...extStyles
       }}
     >
-      <Image source={{ uri: imageUrl || CONSTANTS.EVENTS_PIC }} style={{ width: RFValue(120), height: RFValue(120) }} />
-      <View style={{ flexShrink: 1, paddingLeft: RFValue(10) }}>
-        <Text style={{ fontSize: RFValue(16), fontWeight: 'bold' }}>
-          {title && title.slice(0, 20)}
-          {title && title.length > 20 && '...'}
-        </Text>
-        {description && (
-          <Text style={{ fontSize: RFValue(13), marginVertical: RFValue(5) }}>
-            {description && description.slice(0, 150)}
-            {description && description.length > 150 && '...'}
-          </Text>
-        )}
-        <View
+      {/* <View style={{ width: 0.18 * WIDTH, height: 0.18 * WIDTH, borderRadius: RFValue(8) }}> */}
+      <Image
+        source={imageUrl ? { uri: imageUrl } : Event}
+        resizeMode="cover"
+        style={{ width: '100%', height: '100%', borderRadius: borderRadius ? RFValue(8) : 0 }}
+      />
+      <View
+        style={{
+          width: '100%',
+          height: '100%',
+          position: 'absolute',
+          zIndex: 10,
+          backgroundColor: '#00000070',
+          justifyContent: 'flex-end',
+          padding: RFValue(10),
+          borderRadius: borderRadius ? RFValue(8) : 0
+        }}
+      >
+        <Pressable
+          onPress={() => null}
+          text="Follow"
           style={{
-            flexDirection: 'row-reverse',
-            alignItems: 'center',
-            justifyContent: 'flex-start',
-            width: '100%',
-            justifyContent: 'space-between'
+            backgroundColor: '#6B6ADE',
+            paddingHorizontal: RFValue(10),
+            paddingVertical: RFValue(5),
+            borderRadius: RFValue(5),
+            position: 'absolute',
+            top: RFValue(10),
+            zIndex: 50,
+            right: RFValue(10)
           }}
         >
-          <View style={{ flexDirection: 'row', alignItems: 'center', borderWidth: 0 }}>
-            {/* <DesignIcon name="user-check" pkg="ft" />
-            <DesignIcon name="share-a" pkg="fot" extStyles={{ marginLeft: RFValue(10) }} /> */}
-          </View>
-          <Text style={{ alignSelf: 'flex-end', fontSize: RFValue(14), color: '#aaa' }}>
-            {participating && `${participating.length} participants `} ・ {attending && attending.length} going
-          </Text>
-        </View>
+          <Typo text="+ Follow" color={WHITE} />
+        </Pressable>
+        <Typo text="The BReakout Competition" color={WHITE} size={20} style={{ fontWeight: 'bold' }} />
+        <Typo text="📍 Geaorge street ・ 10pm ・ 23 Feb 2022" color={WHITE} size={14} style={{ fontWeight: 'normal' }} />
+        <Typo text="240k following ・ 50 comments" color={QUARTER_WHITE} size={14} style={{ fontWeight: 'normal' }} />
       </View>
+
+      {/* </View> */}
     </Pressable>
   );
 };
