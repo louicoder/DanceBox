@@ -1,14 +1,11 @@
 const mongoose = require('mongoose');
 
 const comments = new mongoose.Schema({
-  authorId: String,
-  dateCreated: String,
-  comment: String,
-  id: { type: String },
-  commentType: {
-    type: String,
-    enum: [ 'blog', 'event' ]
-  },
+  replies: { type: Array },
+  postId: { type: String },
+  authorId: { type: String },
+  dateCreated: { type: String },
+  comment: { type: String },
   likes: { type: Array }
 });
 

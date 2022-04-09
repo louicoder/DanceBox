@@ -40,11 +40,13 @@ const AddProfilePhoto = ({ navigation }) => {
 
   const compressUpload = () => {
     setLoader(true);
-    if (!Object.keys(state.image).length)
+    if (!Object.keys(state.image).length) {
+      setLoader(false);
       return showAlert(
         'Error updating your details',
         'You need to first select a photo to add to your profile and then click finish, try again'
       );
+    }
 
     compressImage(
       state.image,
@@ -71,7 +73,7 @@ const AddProfilePhoto = ({ navigation }) => {
               callback: (res) => {
                 setLoader(false);
                 if (!res.success) return showAlert('Something went wrong', res.result);
-                return navigation.navigate('Home', { screen: 'Home' });
+                return navigation.navigate('Main');
               }
             })
         );
@@ -149,8 +151,7 @@ const AddProfilePhoto = ({ navigation }) => {
                 borderColor: BLACK
               }}
               textStyles={{ color: BLACK }}
-              onPress={() =>
-                !loading.updateAccountDetails && !loader ? navigation.navigate('Home', { screen: 'Home' }) : null}
+              onPress={() => (!loading.updateAccountDetails && !loader ? navigation.navigate('Main') : null)}
               loading={loading.updateAccountDetails || loader}
               showLoader={false}
             />

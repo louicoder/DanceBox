@@ -26,13 +26,17 @@ const LoginReg = ({
       enableResetScrollToCoords={false}
     >
       <Typo
-        text={login ? 'Welcome back!' : 'Get Started!'}
+        text={login ? 'Welcome back!' : 'Get Started...'}
         style={{ marginTop: 1 / 20 * HEIGHT, fontWeight: 'bold', color: '#000' }}
         size={30}
       />
       <Typo
         text={
-          login ? 'Sign into your account' : 'Create your account and start enjyoing the benefits of DanceBox platform.'
+          login ? (
+            'Sign back into your account and start from where you left off'
+          ) : (
+            'Create your account and start enjyoing the benefits of DanceBox platform.'
+          )
         }
         style={{ marginVertical: RFValue(10), marginBottom: RFValue(30) }}
         size={14}
@@ -62,7 +66,7 @@ const LoginReg = ({
 
       {showForgot ? (
         <Pressable onPress={forgotOnPress}>
-          <Typo text="Forgot Password ?" style={{ textAlign: 'right', marginBottom: RFValue(10), color: 'blue' }} />
+          <Typo text="Forgot Password ?" style={{ textAlign: 'right', marginBottom: RFValue(10), color: WHITE }} />
         </Pressable>
       ) : null}
       <Buton
@@ -78,7 +82,7 @@ const LoginReg = ({
         <Typo text={`${login ? 'Not yet' : 'Already'} registered ? `} />
         <Typo
           text={`${!login ? 'Login' : 'Register'} here`}
-          style={{ color: 'blue', fontWeight: 'normal' }}
+          style={{ color: WHITE, fontWeight: 'normal' }}
           pressable
           onPress={optionOnPress}
         />

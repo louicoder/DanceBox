@@ -1,23 +1,29 @@
-const { paginateHelper, userFiller } = require('../Helpers');
+const { paginateHelper, userFiller, dateWithoutOffset } = require('../Helpers');
 const { CommentsModel, AccountModel } = require('../Models');
 
+// const admin = require('firebase-admin');
+require('dotenv').config();
+
+// import firebase from 'firebase-admin';
+// var serviceAccount = require('../dance-box-2022-firebase-adminsdk-ghdm1-206e97b937');
+
+// const FIREBASE = admin.initializeApp({
+//   credential: admin.credential.cert(serviceAccount),
+//   databaseURL: process.env.DATABASE_URL
+// });
+
 const createComment = async (req, res) => {
-  if (!req.body.type)
-    return res.json({ success: false, result: 'Type of comment in query should either be event or blog' });
-  if (!req.body.type === 'event' && !req.body.type === 'blog')
-    return res.json({ success: false, result: 'Type of comment in query should either be event or blog' });
+  if (!req.body.postId) return res.json({ success: false, result: 'Post Id is required but is missing, try again' });
   if (!req.body.authorId) return res.json({ success: false, result: 'Author id is required but missing, try again' });
   if (!req.body.comment) return res.json({ success: false, result: 'Comment is required but missing, try again' });
-  if (!req.body.id)
-    return res.json({ success: false, result: 'Id of event of blog is required but missing, try again' });
 
   // const { type } = req.query;
-  const { authorId, comment, id, type } = req.body;
-  const payload = { authorId, comment, dateCreated: new Date().toISOString(), commentType: type.toLowerCase(), id };
-  const comm = new CommentsModel(payload);
+  const { postId, comment, authorId } = req.body;
+  const payload = { postId, authorId, comment, dateCreated: dateWithoutOffset(), likes: [], replies: [] };
+  const COMM = new CommentsModel(payload);
   try {
     console.log('Reached comment', req.body);
-    await comm.save().then(async (result) => {
+    await COMM.save().then(async (result) => {
       const user = await AccountModel.findOne({ _id: authorId });
       console.log('RESULT', user._doc);
       res.json({ success: true, result: { ...result._doc, user } });
@@ -45,15 +51,22 @@ const getBlogComments = async (req, res) => {
   }
 };
 
-const getEventComments = async (req, res) => {
-  if (!req.params.eventId) return res.json({ success: false, result: 'Event id is required but missing, try again' });
+const getPostComments = async (req, res) => {
+  if (!req.params.postId) return res.json({ success: false, result: 'Event id is required but missing, try again' });
 
-  const { eventId: id } = req.params;
+  const { postId: _id } = req.params;
   const { page = 1, limit = 10 } = req.query;
   try {
+    // const snap = await FIREBASE.firestore()
+    //   .collection('users')
+    //   .where('uid', 'in', [ '9CHNXcrxvTg75wvNvH2z53uD7zI3', 'A7Lk7xgG7yUfG6e4Zzy2leIeLCb2' ])
+    //   .get();
+    // const docs = [ ...snap.docs.map((r) => ({ ...r.data(), id: r.id })) ];
+    // return res.json({ success: true, result: docs });
+
     // console.log('Here incomments');
-    const total = await CommentsModel.find({ id, commentType: 'event' }).countDocuments();
-    const response = await CommentsModel.find({ id, commentType: 'event' });
+    const total = await CommentsModel.find({ _id }).countDocuments();
+    const response = await CommentsModel.find({ _id });
     let final = await userFiller(response, 'authorId');
     // final.sort((a, b) => b.dateCreated - a.dateCreated);
     return paginateHelper(page, limit, total, final, res);
@@ -63,4 +76,4 @@ const getEventComments = async (req, res) => {
   }
 };
 
-module.exports = { createComment, getBlogComments, getEventComments };
+module.exports = { createComment, getBlogComments, getPostComments };

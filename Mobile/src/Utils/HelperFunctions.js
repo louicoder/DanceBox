@@ -30,8 +30,8 @@ export const requestPermission = async (permission, callback) => {
   try {
     await request(permission).then((result) => {
       // console.log('PERMISSION', permission);
-      if (result === 'granted') return callback({ error: null });
-      return callback({ error: result });
+      if (result === 'granted') return callback({ success: true, result });
+      return callback({ success: false, result });
     });
   } catch (error) {
     return callback({ error: error.message });
@@ -52,7 +52,7 @@ const switchPermissionResult = (result, permission, callback) => {
       case 'granted':
         // console.log('The permission is granted');
         // return { error: null, granted: true };
-        return callback();
+        return callback({ success: true, result });
       case 'blocked':
         // console.log('The permission is denied and not requestable anymore');
         break;
@@ -412,3 +412,6 @@ export const compressImage = async (photo, progressCallback, callback) => {
     return showAlert('Error happened when trying to transform the image', error.message);
   }
 };
+
+export const dateWithoutOffset = () =>
+  new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, -1);

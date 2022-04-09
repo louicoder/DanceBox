@@ -97,14 +97,14 @@ const Search = ({ navigation, ...props }) => {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View
-        style={{ paddingHorizontal: RFValue(10), flexDirection: 'row', marginTop: RFValue(10) }}
+        style={{ paddingHorizontal: RFValue(10), flexDirection: 'row', marginTop: RFValue(10), alignItems: 'center' }}
         keyboardShouldPersistTaps="handled"
       >
         <Input
           onSubmitEditing={searchHandler}
           placeholder="Enter your search"
-          extStyles={{ width: '85%', marginBottom: 0 }}
-          inputStyles={{ borderTopRightRadius: 0, borderBottomRightRadius: 0 }}
+          extStyles={{ width: '85%', marginBottom: 0, height: '100%' }}
+          inputStyles={{ padding: 0, margin: 0, borderWidth: 1 }}
           value={state.search}
           onChangeText={(search) => setState({ ...state, search })}
         />
@@ -112,8 +112,8 @@ const Search = ({ navigation, ...props }) => {
           // rippleCentered
           style={{
             flexGrow: 1,
-            borderTopRightRadius: RFValue(5),
-            borderBottomRightRadius: RFValue(5),
+            // borderTopRightRadius: RFValue(5),
+            // borderBottomRightRadius: RFValue(5),
             alignItems: 'center',
             justifyContent: 'center',
             backgroundColor: '#000'

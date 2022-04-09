@@ -5,6 +5,7 @@ import { RFValue } from 'react-native-responsive-fontsize';
 import { keyGenerator } from '../../Utils/HelperFunctions';
 import { BLACK, BROWN, GRAY, HALF_GRAY, WHITE } from '../../Utils/Constants';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Header from '../../Components/Header';
 
 const Professions = ({ professions, setProfessions, closeModal }) => {
   console.log('Professions', professions);
@@ -54,18 +55,9 @@ const Professions = ({ professions, setProfessions, closeModal }) => {
   ];
 
   return (
-    <View style={{}}>
-      <View
-        style={{ marginBottom: RFValue(20), flexDirection: 'row', alignItems: 'center', paddingHorizontal: RFValue(5) }}
-      >
-        <DesignIcon name="chevron-left" pkg="mc" size={30} onPress={closeModal} />
-        <Typo
-          text="select professions"
-          style={{ fontWeight: 'bold', marginLeft: RFValue(10), textTransform: 'capitalize' }}
-          size={18}
-        />
-      </View>
-      <ScrollView style={{ paddingHorizontal: RFValue(8) }}>
+    <View style={{ flex: 1 }}>
+      <Header title="Select professions" onBackPress={closeModal} />
+      <ScrollView style={{ paddingHorizontal: RFValue(8), flexGrow: 1 }}>
         {pros.map((r, i) => {
           // console.log('Index', professions.findIndex((i) => 1.value));
           const exists = professions.find((x) => x.value === r.value);

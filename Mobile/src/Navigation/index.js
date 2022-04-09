@@ -24,9 +24,9 @@ import {
   BlogProfile,
   NewBlogComment,
   NewEventComment,
-  UserBlogs,
-  UserEvents,
-  EditAccount,
+  // UserBlogs,
+  // UserEvents,
+  // EditAccount,
   Calendar,
   OrganiserProfile,
   AllOrganisers,
@@ -45,9 +45,9 @@ import Drawer from '../Screens/Drawer';
 import FinishRegistration from '../Screens/FinishRegistration';
 import Splash from '../Screens/Splash';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import AllEvents from '../Screens/Account/AllEvents';
-import AllBlogs from '../Screens/Account/AllBlogs';
-import { BLACK, BROWN, GRAY, THEME_COLOR, THEME_COLOR2, THEME_COLOR3, WHITE } from '../Utils/Constants';
+// import AllEvents from '../Screens/Account/AllEvents';
+// import AllBlogs from '../Screens/Account/AllBlogs';
+import { BLACK, BROWN, GRAY, HALF_WHITE, THEME_COLOR, THEME_COLOR2, THEME_COLOR3, WHITE } from '../Utils/Constants';
 import { DesignIcon, Typo } from '../Components';
 import { CONSTANTS } from '../Utils';
 import { showAlert } from '../Utils/HelperFunctions';
@@ -166,7 +166,9 @@ const BlogScreens = () => (
             title="Community Discussions"
             backEnabled={false}
             {...props}
-            rightComp={() => <DesignIcon name="plus" pkg="ad" color="green" />}
+            titleStyles={{ color: WHITE }}
+            extStyles={{ backgroundColor: THEME_COLOR }}
+            // rightComp={() => <DesignIcon name="plus" pkg="ad" color="green" />}
           />
         ),
         cardStyle: { backgroundColor: WHITE }
@@ -230,7 +232,9 @@ const EventScreens = () => (
             title="Community Events"
             backEnabled={false}
             {...props}
-            rightComp={() => <DesignIcon name="plus" pkg="ad" />}
+            titleStyles={{ color: WHITE }}
+            extStyles={{ backgroundColor: THEME_COLOR }}
+            // rightComp={() => <DesignIcon name="plus" pkg="ad" />}
           />
         ),
         cardStyle: { backgroundColor: WHITE }
@@ -274,51 +278,51 @@ const EventScreens = () => (
 const AccountScreens = () => (
   <AccountStack.Navigator screenOptions={{ header: (props) => null }} headerMode="screen">
     <AccountStack.Screen name="Account" component={Account} />
-    <AccountStack.Screen
+    {/* <AccountStack.Screen
       name="UserBlogs"
       component={UserBlogs}
       options={{ header: (props) => <Header title="Your blogs" {...props} /> }}
-    />
-    <AccountStack.Screen
+    /> */}
+    {/* <AccountStack.Screen
       name="UserEvents"
       component={UserEvents}
       options={{ header: (props) => <Header {...props} title="Your events" /> }}
-    />
-    <AccountStack.Screen
+    /> */}
+    {/* <AccountStack.Screen
       name="EditAccount"
       component={EditAccount}
       options={{ header: (props) => <Header title="Edit account details" iconName="pencil" {...props} /> }}
-    />
-    <AccountStack.Screen
+    /> */}
+    {/* <AccountStack.Screen
       name="NewBlogComment"
       component={NewBlogComment}
       options={{ header: (props) => <Header title="Add Blog Comment" iconName="pencil" {...props} /> }}
-    />
-    <AccountStack.Screen
+    /> */}
+    {/* <AccountStack.Screen
       name="BlogProfile"
       component={BlogProfile}
       options={{ header: (props) => <Header {...props} title="Blog details" /> }}
-    />
-    <AccountStack.Screen
+    /> */}
+    {/* <AccountStack.Screen
       name="EventProfile"
       component={EventProfile}
       options={{ header: (props) => <Header {...props} title="Event details" /> }}
-    />
-    <AccountStack.Screen
+    /> */}
+    {/* <AccountStack.Screen
       name="NewEventComment"
       component={NewEventComment}
       options={{ header: (props) => <Header title="Add Event Comment" iconName="pencil" {...props} /> }}
-    />
-    <AccountStack.Screen
+    /> */}
+    {/* <AccountStack.Screen
       name="MyEvents"
       component={AllEvents}
       options={{ header: (props) => <Header title="All your events" iconName="pencil" {...props} /> }}
-    />
-    <AccountStack.Screen
+    /> */}
+    {/* <AccountStack.Screen
       name="MyBlogs"
       component={AllBlogs}
       options={{ header: (props) => <Header title="All your blogs" iconName="pencil" {...props} /> }}
-    />
+    /> */}
   </AccountStack.Navigator>
 );
 
@@ -329,10 +333,10 @@ const BottomStackScreens = ({ socket }) => (
     screenOptions={{}}
     // activeColor="#ffffff"
     // inactiveColor="#ffffff70"
-    activeColor={BLACK}
-    inactiveColor={GRAY}
+    activeColor={WHITE}
+    inactiveColor={HALF_WHITE}
     initialRouteName="Events"
-    barStyle={{ backgroundColor: WHITE, height: RFValue(70) }}
+    barStyle={{ backgroundColor: THEME_COLOR }}
     labeled={false}
   >
     <BottomStack.Screen
@@ -348,7 +352,7 @@ const BottomStackScreens = ({ socket }) => (
       name="Events"
       component={EventScreens}
       options={() => ({
-        tabBarIcon: ({ color }) => <DesignIcon color={color} name="calendar-outline" pkg="io" />
+        tabBarIcon: ({ color }) => <DesignIcon color={color} name="calendar" pkg="si" />
         // tabBarIcon: ({ color }) => <DesignIcon color={color} name="calendar" pkg="ad" />
       })}
     />
@@ -359,14 +363,14 @@ const BottomStackScreens = ({ socket }) => (
       options={() => ({
         tabBarLabel: 'Community',
         // tabBarIcon: ({ color }) => <Ionicons color={color} name="chatbox-ellipses-outline" size={RFValue(20)} />
-        tabBarIcon: ({ color }) => <DesignIcon name="message1" pkg="ad" color={color} />
+        tabBarIcon: ({ color }) => <DesignIcon name="rss-feed" pkg="mt" color={color} size={28} />
       })}
     />
     <BottomStack.Screen
       name="Favorites"
       component={SearchScreens}
       options={() => ({
-        tabBarIcon: ({ color, focused }) => <DesignIcon color={color} name="bookmark" pkg="fa" />
+        tabBarIcon: ({ color, focused }) => <DesignIcon color={color} name="chatbubble-ellipses-outline" pkg="io" />
       })}
     />
     <BottomStack.Screen
@@ -382,7 +386,7 @@ const BottomStackScreens = ({ socket }) => (
 );
 
 const AllStacks = (props) => (
-  <Stacks.Navigator screenOptions={{}} initialRouteName="FinishRegistration" headerMode="screen">
+  <Stacks.Navigator screenOptions={{}} initialRouteName="Splash" headerMode="screen">
     {/* <Stacks.Screen name="Home" component={DrawerScreens} options={{ header: () => null }} {...props} /> */}
     <Stacks.Screen name="Main" component={BottomStackScreens} options={{ header: () => null }} {...props} />
     <Stacks.Screen
@@ -412,13 +416,21 @@ const AllStacks = (props) => (
     <Stacks.Screen
       name="Login"
       component={Login}
-      options={{ header: (props) => <Header title="" backEnabled={false} {...props} /> }}
+      options={{
+        header: (props) => (
+          <Header title="" backEnabled={false} {...props} extStyles={{ backgroundColor: THEME_COLOR }} />
+        )
+      }}
       {...props}
     />
     <Stacks.Screen
       name="Signup"
       component={Signup}
-      options={{ header: (props) => <Header title="" {...props} backEnabled={false} /> }}
+      options={{
+        header: (props) => (
+          <Header title="" {...props} backEnabled={false} extStyles={{ backgroundColor: THEME_COLOR }} />
+        )
+      }}
       {...props}
     />
     <Stacks.Screen name="Calendar" component={CalendarScreens} options={{ header: () => null }} {...props} />

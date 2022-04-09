@@ -8,6 +8,7 @@ import LoadingPlugin from '@rematch/loading';
 import * as models from './Models';
 import io from 'socket.io-client';
 import FlashMessage from 'react-native-flash-message';
+import { THEME_COLOR } from '../Utils/Constants';
 
 // require('../Utils/Firebase');
 
@@ -33,7 +34,7 @@ export default () => {
       <Provider store={store}>
         <App />
       </Provider>
-      <FlashMessage position="top" />
+      <FlashMessage position="top" style={{ backgroundColor: THEME_COLOR }} />
     </React.Fragment>
   );
 };

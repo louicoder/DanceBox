@@ -3,6 +3,7 @@ import React from 'react';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { Typo } from '.';
 import { BLACK, BROWN, WHITE } from '../Utils/Constants';
+import { keyGenerator } from '../Utils/HelperFunctions';
 
 const ScrollBubbles = ({ selected = '', onPress, options, extStyles }) => {
   return (
@@ -11,6 +12,7 @@ const ScrollBubbles = ({ selected = '', onPress, options, extStyles }) => {
         {options &&
           options.map((r, i) => (
             <Pressable
+              key={keyGenerator()}
               style={{
                 paddingHorizontal: RFValue(10),
                 height: RFValue(30),
@@ -18,7 +20,7 @@ const ScrollBubbles = ({ selected = '', onPress, options, extStyles }) => {
                 backgroundColor: selected === r ? BLACK : BROWN,
                 borderRadius: 50,
                 marginRight: RFValue(10),
-                marginLeft: i === 0 ? RFValue(10) : 0
+                marginLeft: i === 0 ? RFValue(8) : 0
               }}
               onPress={() => onPress(r)}
             >

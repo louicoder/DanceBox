@@ -2,12 +2,13 @@ const mongoose = require('mongoose');
 
 const PostSchema = new mongoose.Schema({
   // All across props
-  type: { type: String, enum: [ 'post', 'event', 'poll' ], required: true },
+  type: { type: String, enum: [ 'post', 'event' ], required: true },
   likes: { type: Array, default: [] },
   authorId: { type: String, required: true },
   dateCreated: { type: String },
   description: { type: String, required: true },
   followers: { type: Array },
+  imageUrl: { type: String },
 
   // EVent only props::
   eventTime: { type: String },

@@ -1,12 +1,12 @@
 import React from 'react';
-import { View, Text, Dimensions, Pressable } from 'react-native';
+import { View, Text, Dimensions, Pressable, StatusBar } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { Input, Password, Buton, Typo, LoginReg } from '../../Components';
 // import Icon from '../../assets/blob.svg';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAsyncStorage, showAlert, validateEmail, ValidateEmail } from '../../Utils/HelperFunctions';
-import { HEIGHT, WIDTH } from '../../Utils/Constants';
+import { HEIGHT, THEME_COLOR, WIDTH } from '../../Utils/Constants';
 import { GoogleSignin, GoogleSigninButton, statusCodes } from '@react-native-google-signin/google-signin';
 
 // 635333492136-j1lfb3u3m52rfh1d30gqtfu8p4cnbj1q.apps.googleusercontent.com
@@ -83,7 +83,9 @@ const Login = ({ navigation }) => {
   // }, [setState])
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, backgroundColor: THEME_COLOR }}>
+      <StatusBar backgroundColor={THEME_COLOR} />
+
       <LoginReg
         optionOnPress={() => navigation.navigate('Signup')}
         showForgot

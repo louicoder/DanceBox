@@ -1,198 +1,297 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  SafeAreaView,
-  Image,
-  ScrollView,
-  Pressable,
-  Keyboard,
-  ImageBackground,
-  FlatList,
-  KeyboardAvoidingView,
-  TextInput,
-  Platform,
-  Alert
-} from 'react-native';
-// import Ripple from 'react-native-material-ripple';
+import { View, Text, Pressable, ActivityIndicator } from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
 import { RFValue } from 'react-native-responsive-fontsize';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { Button, DesignIcon } from '../../Components';
-import { CONSTANTS, HelperFunctions } from '../../Utils';
-import { useSelector } from 'react-redux';
-import { useDispatch } from 'react-redux';
-// import SingleBlog from '../Blogs/SingleBlog';
-// import SingleEvent from '../Events/SingleEvent';
-import auth from '@react-native-firebase/auth';
-import Menus from './Menus';
-import { LoginPlaceholder, PasswordInput, CommentBox, StickyView, Modal } from '../../Components';
-import styles from './Styles';
-import ResetPassword from './ResetPassword';
-import Profile from './Profile';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useDispatch, useSelector } from 'react-redux';
+import { BottomSheet, DesignIcon, Typo } from '../../Components';
+import { BLACK, BROWN, GRAY, GREEN, HEIGHT, SHADOW, THEME_COLOR3, THEME_COLOR5, WHITE } from '../../Utils/Constants';
+import Image from 'react-native-fast-image';
+import { abbreviateNumber, keyGenerator, showAlert } from '../../Utils/HelperFunctions';
+import { hideMessage, showMessage } from 'react-native-flash-message';
+import Feedback from './Feedback';
 
 const Account = ({ navigation }) => {
-  const dispatch = useDispatch();
-  const [ state, setState ] = React.useState({
-    image: {},
-    progress: 0,
-    user: {},
-    isVisible: false,
-    password: '',
-    passVisible: false
-  });
-  // const [ user, setUser ] = React.useState({});
   const { user } = useSelector((state) => state.Account);
-  const [ imageLoading, setImageLoading ] = React.useState(false);
-  const [ isKeyboardVisible, setKeyboardVisible ] = React.useState(false);
-
-  React.useEffect(
-    () => {
-      const sub = navigation.addListener('focus', () => {
-        getUser();
-      });
-      return () => sub;
-    },
-    [ navigation ]
-  );
-
-  const logout = () => {
-    HelperFunctions.removeAsyncObjectData('user', () => {
-      setState({ ...state, passVisible: false });
-      dispatch.Account.setUserDetails({});
-      // setUser({});
-      // return navigation.navigate('Login', { loginMode: true });
-    });
-  };
+  const dispatch = useDispatch();
+  const [ state, setState ] = React.useState({ comp: '' });
+  const [ isVisible, setIsVisible ] = React.useState(false);
 
   React.useEffect(() => {
-    const KS = Keyboard.addListener('keyboardDidShow', () => setKeyboardVisible(true));
-    const KH = Keyboard.addListener('keyboardDidHide', () => setKeyboardVisible(false));
-
-    return () => {
-      KH.remove();
-      KS.remove();
-    };
+    // dispatch.Account.getUserDetails({ uid: user.uid, callback: () => {} });
   }, []);
 
-  const getUser = () =>
-    HelperFunctions.getUser(({ result: user, success }) => {
-      // console.log('Sucess user===', user, success);
-      if (success) setUser(user);
+  const logout = () => {
+    showMessage({
+      // description: 'Please wait while we log you out',
+      message: 'Logging out',
+      titleStyle: { fontSize: RFValue(14) },
+      renderCustomContent: () => (
+        <View style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: RFValue(10) }}>
+          <ActivityIndicator color={WHITE} style={{ marginRight: RFValue(10) }} />
+          <Typo text="Please wait while we log you out of your account..." size={12} color={WHITE} />
+        </View>
+      ),
+      autoHide: false,
+      hideOnPress: false
     });
 
-  const selectImage = () =>
-    HelperFunctions.ImagePicker(({ base64, uri, type, ...rest }) => uri && uploadProfileImage(image));
-
-  const uploadProfileImage = async (image) => {
-    try {
-      await HelperFunctions.uploadImage(
-        `Profiles/${user._id}/${image.fileName}`,
-        image.uri,
-        (progress) => {
-          setState({ ...state, progress });
-          setImageLoading(true);
-        },
-        (error) => {
-          // setState({ ...state, progressVisible: false, progress: 0 });
-          setImageLoading(false);
-          Alert.alert('Error', error);
-        },
-        async (imageUrl) => updateAccount(imageUrl)
-      );
-    } catch (error) {
-      setImageLoading(false);
-      return HelperFunctions.Notify('Error', error.message);
-    }
-  };
-
-  const updateAccount = (imageUrl) => {
-    dispatch.Account.updateAccountDetails({
-      uid: user._id,
-      payload: { imageUrl },
-      callback: (resp) => {
-        // console.log('REsp from update image', resp);
-        setImageLoading(false);
-        if (resp.error) return HelperFunctions.Notify('Error updating profile photo', resp.result);
-        return HelperFunctions.Notify('Success', 'Your profile photo has been updated successfully');
+    dispatch.Account.logout({
+      callback: (res) => {
+        hideMessage();
+        if (!res.success)
+          return showAlert(
+            'Unable to logout at this time',
+            `we apologise something went wrong while trying to logout you out of your account, please try again ::: \n ${res.result}`
+          );
+        return navigation.push('LoginScreens');
       }
     });
   };
 
-  const resetPassword = () => {
-    //
+  const openModal = () => setIsVisible(true);
+  const closeModal = () => setIsVisible(false);
+
+  const confirmLogout = () =>
+    showMessage({
+      message: 'Are you sure you want to logout?',
+      style: { backgroundColor: GREEN },
+      titleStyle: { fontSize: RFValue(16) },
+      position: 'bottom',
+      duration: 5000,
+      // autoHide: false,
+      hideOnPress: false,
+      renderCustomContent: () => (
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            marginTop: RFValue(15)
+          }}
+        >
+          {[
+            {
+              title: 'Yes',
+              onPress: () => {
+                logout();
+                // hideMessage();
+              }
+            },
+            { title: 'Cancel', onPress: () => hideMessage() }
+          ].map((r) => (
+            <Pressable
+              key={keyGenerator()}
+              onPress={r.onPress}
+              style={{
+                width: '48%',
+                height: RFValue(40),
+                borderWidth: 1,
+                borderColor: WHITE,
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+            >
+              <Typo text={r.title} size={18} style={{ textTransform: 'capitalize' }} color={WHITE} />
+            </Pressable>
+          ))}
+        </View>
+      )
+    });
+
+  const devMode = () =>
+    showAlert(
+      'Still in development',
+      'We are working hard to have all these features ready for use very soon, thank you!'
+    );
+
+  const RenderModalContent = ({ comp, closeModal }) => {
+    switch (comp) {
+      case 'feedback':
+        return <Feedback closeModal={closeModal} />;
+      default:
+        break;
+    }
   };
 
-  const isInd = user && user.accountType === 'individual';
-
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      // keyboardVerticalOffset={!isKeyboardVisible ? 40 + useSafeAreaInsets().top : 0}
-    >
-      {/* <React.Fragment> */}
-      {/* <Modal isVisible={state.isVisible} closeModal={() => setState({ ...state, isVisible: false })}>
-        <PasswordReset />
-      </Modal> */}
-      {state.passVisible ? (
-        <ResetPassword
-          resetPassword={resetPassword}
-          close={() => setState({ ...state, passVisible: false })}
-          reset={logout}
-        />
-      ) : null}
-
-      <SafeAreaView style={{ flex: 1 }}>
-        {user ? (
-          <ScrollView style={{ flex: 1, backgroundColor: '#eee', zIndex: 10 }}>
-            <View style={styles.imageContainer}>
-              <ImageBackground
-                source={{
-                  uri: user.photoURL
+    <View style={{ flex: 1 }}>
+      <BottomSheet isVisible={isVisible} closeModal={closeModal}>
+        <View style={{ height: '100%' }}>
+          <RenderModalContent comp={state.comp} closeModal={closeModal} />
+        </View>
+      </BottomSheet>
+      <ScrollView style={{ flexGrow: 1, backgroundColor: BROWN }}>
+        <View
+          style={{
+            alignItems: 'center',
+            padding: RFValue(0),
+            backgroundColor: WHITE,
+            paddingTop: RFValue(20),
+            paddingTop: useSafeAreaInsets().top + RFValue(20)
+          }}
+        >
+          <View
+            style={{
+              width: RFValue(100),
+              height: RFValue(100),
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderRadius: 100,
+              backgroundColor: WHITE,
+              marginBottom: RFValue(10)
+            }}
+          >
+            <Pressable
+              onPress={devMode}
+              style={{
+                backgroundColor: WHITE,
+                zIndex: 50,
+                position: 'absolute',
+                borderRadius: RFValue(100),
+                right: RFValue(15),
+                right: 0,
+                bottom: 0,
+                ...SHADOW,
+                shadowOffset: { width: 0, height: RFValue(5) },
+                shadowRadius: RFValue(8),
+                shadowColor: '#000',
+                elevation: RFValue(15)
+                // top: useSafeAreaInsets().top + RFValue(15)
+              }}
+            >
+              <DesignIcon
+                name="camera"
+                pkg="ft"
+                withBorder
+                style={{}}
+                backColor={WHITE}
+                size={22}
+                color={GREEN}
+                onPress={devMode}
+              />
+            </Pressable>
+            {user.imageUrl ? (
+              <Image
+                source={{ uri: user.imageUrl }}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  borderRadius: 1 / 2 * HEIGHT,
+                  zIndex: 5,
+                  ...SHADOW,
+                  shadowColor: BLACK,
+                  elevation: RFValue(15)
                 }}
                 resizeMode="cover"
-                style={styles.profilePhoto}
-                imageStyle={{ borderRadius: RFValue(100) }}
-              >
-                <Pressable onPress={selectImage} style={styles.editIconContainer}>
-                  <Icon name="pencil" color="#fff" size={RFValue(40)} />
-                </Pressable>
-              </ImageBackground>
-              <View style={styles.nameContainer}>
-                {<Text style={styles.name}>{user.name || user.username || '⏤'}</Text>}
-                <Text style={styles.email}>{user.email}</Text>
-                <Pressable
-                  onPress={() =>
-                    user.accountType === 'individual'
-                      ? navigation.navigate('EditAccount')
-                      : Alert.alert(
-                          'Still in development',
-                          'We are working hard to have organisers update their accounts in app, stay tuned'
-                        )}
-                  style={styles.editButton}
-                >
-                  <Text style={styles.editButtonText}>Edit Profile</Text>
-                </Pressable>
-              </View>
-            </View>
-
-            {user && (
-              <Profile
-                resetPassword={() => setState({ ...state, passVisible: true })}
-                {...user}
-                logout={logout}
-                navigation={navigation}
+              />
+            ) : (
+              <DesignIcon
+                color={GREEN}
+                name="user"
+                pkg="ad"
+                size={RFValue(50)}
+                style={{
+                  // borderWidth: 1,
+                  padding: RFValue(15),
+                  borderRadius: RFValue(80),
+                  backgroundColor: WHITE,
+                  ...SHADOW,
+                  shadowColor: GRAY,
+                  elevation: RFValue(10)
+                }}
               />
             )}
-          </ScrollView>
-        ) : (
-          <LoginPlaceholder
-            login={() => navigation.navigate('Login', { goToScreen: 'Account', loginMode: true })}
-            register={() => navigation.navigate('Login', { goToScreen: 'Account', loginMode: false })}
+          </View>
+
+          <Typo
+            text={user.name || user.username || ''}
+            style={{ textTransform: 'capitalize', fontWeight: 'bold', marginVertical: RFValue(0) }}
+            size={18}
+            color={BLACK}
+            // lines={1}
           />
-        )}
-      </SafeAreaView>
-    </KeyboardAvoidingView>
+          <Typo text={`${user.email}`} style={{ marginVertical: RFValue(0) }} size={12} color={GRAY} />
+
+          <Typo
+            text=""
+            style={{ marginVertical: RFValue(0) }}
+            size={12}
+            color={GRAY}
+            // lines={1}
+          />
+        </View>
+
+        <View
+          style={{
+            backgroundColor: '#fff',
+            // height: RFValue(300),
+            marginVertical: RFValue(10),
+            // paddingVertical: RFValue(10),
+            flexDirection: 'row',
+            flexWrap: 'wrap'
+          }}
+        >
+          {[
+            // { title: 'followers', caption: '0', hidden: false },
+            // { title: 'following', caption: '0' },
+            // { title: 'Posts', caption: '0' },
+            // { title: 'about you', icon: true, name: 'ios-information-circle-outline', pkg: 'io' },
+            { title: 'settings', icon: true, name: 'setting' },
+            { title: 'Edit profile', icon: true, name: 'form', pkg: 'ad' },
+            { title: 'favorites', name: 'bookmark-outline', icon: true, pkg: 'mc' },
+            { title: 'Invite a friend', icon: true, name: 'share-social-outline', pkg: 'io' },
+            { title: 'Terms & conditions', icon: true, name: 'document-text-outline', pkg: 'io' },
+            { title: 'user agreement', icon: true, name: 'documents-outline', pkg: 'io' },
+            // { title: 'Wallet', icon: true, name: 'wallet-outline', pkg: 'io' },
+            {
+              title: 'Feedback',
+              icon: true,
+              name: 'md-chatbox-ellipses-outline',
+              pkg: 'io',
+              onPress: () => {
+                setIsVisible(true);
+                setState({ ...state, comp: 'feedback' });
+              },
+              active: true
+            },
+            { title: 'Logout', icon: true, name: 'lock', pkg: 'sim', onPress: () => confirmLogout(), active: true }
+          ].map(
+            (r, index) =>
+              !r.hidden ? (
+                <Pressable
+                  key={keyGenerator()}
+                  onPress={() => (r.onPress ? r.onPress() : devMode())}
+                  style={{
+                    width: '33.33%',
+                    height: RFValue(100),
+                    // borderWidth: 1,
+                    borderRightWidth: [ 1, 4, 6, 7, 12, 9, 10 ].includes(index) ? 1 : 0,
+                    borderLeftWidth: [ 1, 4, 6, 12 ].includes(index) ? 1 : 0,
+                    borderColor: THEME_COLOR5,
+                    // borderBottomWidth: [].includes : 0,
+                    borderBottomWidth: index > 5 ? 0 : 1,
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
+                >
+                  {!r.icon ? (
+                    <Typo text={r.caption} size={25} style={{ fontWeight: 'bold' }} color={GREEN} />
+                  ) : (
+                    <DesignIcon name={r.name} pkg={r.pkg || 'ad'} color={r.active ? BLACK : THEME_COLOR3} size={40} />
+                  )}
+                  <Typo
+                    text={r.title}
+                    color={r.active ? BLACK : THEME_COLOR3}
+                    style={{ textTransform: 'capitalize' }}
+                    size={11}
+                  />
+                </Pressable>
+              ) : null
+          )}
+        </View>
+        <View style={{ backgroundColor: '#fff' }} />
+      </ScrollView>
+    </View>
   );
 };
 

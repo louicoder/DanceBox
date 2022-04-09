@@ -24,6 +24,7 @@ import TextArea from './TextArea';
 import Select from './Select';
 import ScrollBubbles from './ScrollBubbles';
 import EventPreview from './EventPreview';
+import Header from './Header';
 
 export {
   IconComp,
@@ -51,5 +52,6 @@ export {
   TextArea,
   Select,
   ScrollBubbles,
-  EventPreview
+  EventPreview,
+  Header
 };

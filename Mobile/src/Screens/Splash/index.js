@@ -1,15 +1,15 @@
 import React from 'react';
 import { useEffect } from 'react';
-import { View, Text, Image, ActivityIndicator } from 'react-native';
+import { View, Text, Image, ActivityIndicator, StatusBar } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
-import LOGO from '../../assets/Logo.jpg';
+import LOGO from '../../assets/Logo1.jpg';
 import { useDispatch, useSelector } from 'react-redux';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import { HelperFunctions } from '../../Utils';
 import axios from 'axios';
 import { showMessage } from 'react-native-flash-message';
-import { AUTH } from '../../Utils/Constants';
+import { AUTH, THEME_COLOR } from '../../Utils/Constants';
 
 // const AUTH = auth();
 let sub;
@@ -20,18 +20,12 @@ const Splash = ({ navigation: { navigate } }) => {
 
   useEffect(() => {
     getUser();
-    // showMessage({
-    //   message: 'Hello World',
-    //   description: 'This is our second message',
-    //   type: 'success'
-    // });
-    // setTimeout(() => {
-    //   return navigate('Intro');
-    // }, 2000);
   }, []);
 
   const getUser = async () => {
-    if (!AUTH.currentUser) return navigation.navigate('Login');
+    console.log('Splash=====', AUTH.currentUser);
+
+    if (!AUTH.currentUser) return navigate('Login');
     return dispatch.Account.getUserDetails({
       uid: AUTH.currentUser.uid,
       callback: (res) => {
@@ -71,23 +65,35 @@ const Splash = ({ navigation: { navigate } }) => {
   };
 
   return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#fff' }}>
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: THEME_COLOR }}>
+      <StatusBar backgroundColor={THEME_COLOR} />
       <View style={{ width: '100%', alignItems: 'center', justifyContent: 'center' }}>
         <Image
           style={{
-            width: RFValue(300),
-            height: RFValue(300),
+            width: RFValue(200),
+            height: RFValue(200),
             // borderWidth: RFValue(5),
             borderColor: '#fff',
             padding: RFValue(5)
           }}
           source={LOGO}
+          resizeMode="contain"
         />
         {/* <Text style={{ color: '#010203', fontSize: RFValue(30), fontWeight: 'bold' }}>Dance Box</Text> */}
       </View>
-      <View style={{ position: 'absolute', bottom: RFValue(30) }}>
-        {loading.getUserDetails && <ActivityIndicator color="#000" />}
-        <Text style={{ color: '#000' }}>www.skillzeastafrica.com</Text>
+      <View
+        style={{
+          position: 'absolute',
+          bottom: RFValue(30),
+          alignSelf: 'center',
+          flexDirection: 'row',
+          alignItems: 'center'
+        }}
+      >
+        <ActivityIndicator color="#000" size={RFValue(14)} animating={loading.getUserDetails} />
+        <Text style={{ color: '#000', marginLeft: RFValue(loading.getUserDetails ? 5 : 0) }}>
+          www.skillzeastafrica.com
+        </Text>
       </View>
     </View>
   );

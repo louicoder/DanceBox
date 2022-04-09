@@ -28,6 +28,8 @@ const BottomSheet = ({ isVisible, closeModal, children, extStyles, whiteBG = tru
           position: 'absolute',
           backgroundColor: whiteBG ? '#fff' : 'transparent',
           bottom: 0,
+          // left: 0,
+          // top: 0,
           width: '100%',
           // maxHeight: 0.9 * height,
           // paddingBottom: useSafeAreaInsets().bottom + RFValue(0),

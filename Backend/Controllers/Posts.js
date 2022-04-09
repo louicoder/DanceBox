@@ -1,4 +1,4 @@
-const { paginateHelper } = require('../Helpers');
+const { paginateHelper, userFiller, FIREBASE } = require('../Helpers');
 const { PostsModel } = require('../Models');
 const mongoose = require('mongoose');
 // const {  PostsModel } = require('./');
@@ -49,7 +49,8 @@ const getAllPosts = async (req, res) => {
     const total = await PostsModel.find().countDocuments();
 
     await PostsModel.find().limit(limit * 1).skip((page - 1) * limit).then(async (result) => {
-      return paginateHelper(page, limit, total, result, res);
+      const usersFilled = await userFiller(result, 'authorId');
+      return paginateHelper(page, limit, total, usersFilled, res);
     });
   } catch (error) {
     return res.json({ success: false, result: error.message });
@@ -59,7 +60,10 @@ const getAllPosts = async (req, res) => {
 const getRandomPosts = async (req, res) => {
   const { limit: size = 10 } = req.query;
   try {
-    await PostsModel.aggregate([ { $sample: { size } } ]).then((result) => res.json({ success: true, result }));
+    await PostsModel.aggregate([ { $sample: { size } } ]).then(async (resp) => {
+      // const user = FIREBASE.firestore().collection('users').doc()
+      res.json({ success: true, result });
+    });
     // return res.json({ success: false, result: 'It worked on' });
   } catch (error) {
     return res.json({ success: false, result: error.message });
@@ -76,8 +80,12 @@ const getUserPosts = async (req, res) => {
     const total = await PostsModel.find({ authorId }).countDocuments();
     await PostsModel.find({ authorId }).limit(limit * 1).skip((page - 1) * limit).then(async (result) => {
       // const userIds = [ ...result.map((r) => r.authorId) ];
-      // const final = await addUserObject(userIds, result, 'authorId', res);
-      paginateHelper(page, limit, total, result, res);
+      const final = userFiller(result, 'authorId', (resp) => {
+        // const final = await addUserObject(userIds, result, 'authorId', res);
+        // paginateHelper(page, limit, total, result, res);
+        if (!resp.success) return res.json(res);
+        return paginateHelper(page, limit, total, resp.result, res);
+      });
     });
   } catch (error) {
     return res.json({ success: false, result: error.message });

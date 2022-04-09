@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, ScrollView, Pressable, SafeAreaView, Alert, Platform } from 'react-native';
+import { View, Text, ScrollView, Pressable, SafeAreaView, Alert, ActivityIndicator } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import { PERMISSIONS } from 'react-native-permissions';
 import { RFValue } from 'react-native-responsive-fontsize';
@@ -43,44 +43,51 @@ const Events = ({ navigation, ...props }) => {
     });
   };
 
+  const renderItem = ({ item, index }) => (
+    <EventPreview
+      navigation={navigation}
+      imageUrl="https://ychef.files.bbci.co.uk/1376x774/p07ztf1q.jpg"
+      extStyles={{ marginTop: index === 0 ? RFValue(10) : 0 }}
+    />
+  );
+
   // console.log('Events', events && events[0]);
   return (
     <View style={{ flex: 1, borderWidth: 0 }}>
       <View
         style={{
           flexDirection: 'row',
-          height: RFValue(30),
-          // borderWidth: 1,
-          // width: '100%',
+          height: RFValue(35),
           alignItems: 'center',
           justifyContent: 'space-between',
-          marginHorizontal: RFValue(10),
-          // paddingLeft: RFValue(10),
+          // paddingHorizontal: RFValue(10),
           backgroundColor: BROWN,
-          marginBottom: RFValue(15),
-          // borderBottomWidth: 1,
+          marginVertical: RFValue(15),
+          marginHorizontal: RFValue(8),
+          // borderWidth: 1,
           borderColor: GRAY,
-          paddingRight: 0,
-          // position: 'relative',
           zIndex: 50
         }}
       >
-        <DesignIcon name="magnify" pkg="mc" extStyles={{ marginHorizontal: RFValue(10) }} />
-        <Input
-          extStyles={{ height: RFValue(30), marginBottom: 0, flexShrink: 1 }}
-          extInputStyles={{ height: RFValue(30), marginTop: 0, borderWidth: 0, paddingLeft: 0 }}
-          placeholder="search community events..."
-        />
-        {/* :TODO: suggestions drop down */}
+        <DesignIcon name="md-search-outline" pkg="io" extStyles={{ marginHorizontal: RFValue(0) }} />
+        <View style={{ flexGrow: 1 }}>
+          <Input
+            extStyles={{ height: RFValue(35), marginBottom: 0 }}
+            extInputStyles={{ height: RFValue(30), marginTop: 0, borderWidth: 0, padding: 0 }}
+            placeholder="Search community posts..."
+          />
+        </View>
+        <ActivityIndicator color={GRAY} style={{ flexShrink: 1 }} animating={false} />
       </View>
 
-      <View style={{ flexGrow: 1, zIndex: 10, paddingHorizontal: RFValue(8) }}>
+      <View style={{ flexGrow: 1, zIndex: 10, paddingHorizontal: RFValue(0) }}>
         <FlatList
           showsVerticalScrollIndicator={false}
           style={{ flex: 1 }}
-          data={[ ...new Array(15).fill() ]}
+          contentContainerStyle={{ paddingHorizontal: RFValue(8) }}
+          data={[ ...new Array(105).fill() ]}
           keyExtractor={() => HelperFunctions.keyGenerator()}
-          renderItem={({ item, index }) => <EventPreview navigation={navigation} />}
+          renderItem={renderItem}
         />
       </View>
     </View>

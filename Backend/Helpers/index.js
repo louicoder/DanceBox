@@ -1,7 +1,17 @@
 const Bcrypt = require('bcrypt');
 const JWT = require('jsonwebtoken');
 const { AccountModel, CommentsModel } = require('../Models');
+
+const admin = require('firebase-admin');
 require('dotenv').config();
+
+// import firebase from 'firebase-admin';
+var serviceAccount = require('../dance-box-2022-firebase-adminsdk-ghdm1-206e97b937');
+
+const FIREBASE = admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: process.env.DATABASE_URL
+});
 
 const paginateHelper = (page, limit, totalDocuments, result, res) => {
   // console.log('RESSSSSS', page, limit, totalDocuments, result.length);
@@ -15,7 +25,7 @@ const paginateHelper = (page, limit, totalDocuments, result, res) => {
       last: parseInt(page) === Math.ceil(totalDocuments / parseInt(limit))
     });
   } catch (error) {
-    return error500(res, error);
+    return res.json({ success: false, result: error.message });
   }
 };
 
@@ -45,18 +55,22 @@ const validateToken = (req, res, next) => {
   }
 };
 
-const userFiller = async (array, field = '_id') => {
+const userFiller = async (array, field = 'authorId') => {
   try {
-    const userIds = [ ...array.map((r) => r[field]) ];
-    const res = await AccountModel.find({ _id: { $in: userIds } });
-    const users = [ ...res.map((r) => r._doc) ];
+    const userIds = [ ...new Set([ ...array.map((r) => r[field]) ]) ];
+    // const res = await AccountModel.find({ _id: { $in: userIds } });
+    // const users = [...res.map((r) => r._doc)];
+
+    const users = await FIREBASE.firestore().collection('users').where('uid', 'in', userIds).get();
+    const docs = [ ...users.docs.map((r) => ({ ...r.data(), id: r.id })) ];
 
     let final = [];
     for (const item of array) {
-      const result = users.find((r) => r._id.toString() === item._doc[field]);
-      if (result) {
-        const { password, ...user } = result;
-        final.push({ ...item._doc, user });
+      const user = docs.find((r) => r.uid === item._doc[field]);
+
+      if (user) {
+        const { name, username, photoURL: imageUrl, email, ...rest } = user;
+        final.push({ ...item._doc, user: { name, username, imageUrl, email } });
       }
     }
     return final;
@@ -96,6 +110,7 @@ module.exports = {
   decodePassword,
   userFiller,
   pickRandomArrayElements,
-  dateWithoutOffset
+  dateWithoutOffset,
+  FIREBASE
   // commentsFiller
 };

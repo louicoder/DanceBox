@@ -13,7 +13,7 @@ import EventsInMonth from './EventsInMonth';
 import StickyView from '../../Components/StickyView';
 import CommentBox from '../../Components/CommentBox';
 import Image from 'react-native-fast-image';
-import { BROWN, INTERESTS, THEME_COLOR } from '../../Utils/Constants';
+import { BROWN, INTERESTS, THEME_COLOR, WHITE } from '../../Utils/Constants';
 
 const { width } = Dimensions.get('window');
 
@@ -64,13 +64,14 @@ const Home = ({ navigation, ...props }) => {
       {/* <SafeAreaView style={{ flex: 1 }}> */}
       <View
         style={{
-          marginTop: useSafeAreaInsets().top + RFValue(10),
-          marginBottom: RFValue(10),
+          // marginTop: useSafeAreaInsets().top + RFValue(10),
+          // marginBottom: RFValue(10),
           // borderWidth: 1,
-          // backgroundColor: '#fff',
+          backgroundColor: THEME_COLOR,
           paddingHorizontal: RFValue(10),
           flexDirection: 'row',
-          alignItems: 'center'
+          alignItems: 'center',
+          height: RFValue(60)
         }}
       >
         <View
@@ -93,11 +94,16 @@ const Home = ({ navigation, ...props }) => {
           )}
         </View>
         <View style={{ flexGrow: 1, marginLeft: RFValue(10) }}>
-          <Typo text="Welcome back," size={12} />
-          <Typo text={user.userName || user.email} size={12} style={{ fontWeight: 'normal', textTransform: 'none' }} />
+          <Typo text="Welcome back," size={14} color={WHITE} style={{ fontWeight: 'bold' }} />
+          <Typo
+            text={user.userName || user.email}
+            size={14}
+            style={{ fontWeight: 'normal', textTransform: 'none', lineHeight: RFValue(15) }}
+            color={WHITE}
+          />
         </View>
         {/* <DesignIcon withBorder={false} name="bell-outline" pkg="mc" widthHeight={35} /> */}
-        <DesignIcon withBorder={false} name="dots-vertical" pkg="mc" widthHeight={35} />
+        {/* <DesignIcon withBorder={false} name="setting" pkg="ad" widthHeight={35} color={WHITE} /> */}
         {/* <DesignIcon name="user" pg="ad" /> */}
       </View>
       {/* </SafeAreaView> */}

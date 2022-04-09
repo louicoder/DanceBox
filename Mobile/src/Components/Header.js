@@ -10,7 +10,9 @@ const Header = ({
   leftComp: LeftComponent,
   title,
   rightComp: RightComponent,
+  titleStyles,
   navigation,
+  iconProps,
   backEnabled = true,
   extStyles
 }) => {
@@ -46,11 +48,16 @@ const Header = ({
               pkg="mc"
               size={30}
               onPress={() => (onBackPress ? onBackPress() : navigation.goBack())}
+              {...iconProps}
             />
           </View>
         )}
         <View style={{ flexGrow: 1 }}>
-          {LeftComponent ? <LeftComponent /> : <Typo text={title} size={20} style={{ fontWeight: 'bold' }} />}
+          {LeftComponent ? (
+            <LeftComponent />
+          ) : (
+            <Typo text={title} size={20} style={{ fontWeight: 'bold', ...titleStyles }} />
+          )}
         </View>
         <View style={{}}>{RightComponent ? <RightComponent /> : null}</View>
       </View>

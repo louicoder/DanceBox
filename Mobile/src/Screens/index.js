@@ -14,9 +14,9 @@ import NewBlog from './Blogs/NewBlog';
 import NewEvent from './Events/NewEvent';
 import NewBlogComment from './Blogs/NewBlogComment';
 import NewEventComment from './Events/NewEventComment';
-import UserBlogs from './Account/AllBlogs';
-import UserEvents from './Account/AllEvents';
-import EditAccount from './Account/EditAccount';
+// import UserBlogs from './Account/AllBlogs';
+// import UserEvents from './Account/AllEvents';
+// import EditAccount from './Account/EditAccount';
 import Calendar from './Calendar';
 import OrganiserProfile from './OrganiserProfile';
 import AllOrganisers from './AllOrganisers';
@@ -42,9 +42,9 @@ export {
   NewEvent,
   NewBlogComment,
   NewEventComment,
-  UserBlogs,
-  UserEvents,
-  EditAccount,
+  // UserBlogs,
+  // UserEvents,
+  // EditAccount,
   Calendar,
   OrganiserProfile,
   AllOrganisers,

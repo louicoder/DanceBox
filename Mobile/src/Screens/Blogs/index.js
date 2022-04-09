@@ -1,34 +1,36 @@
 import React from 'react';
-import { View, Text, Pressable, SafeAreaView, ScrollView, FlatList, Alert, Platform } from 'react-native';
+import { View, Text, Pressable, SafeAreaView, ScrollView, FlatList, Alert, ActivityIndicator } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
-import { BottomSheet, Buton, ComingSoon, DesignIcon, Filters, ScrollBubbles, Typo } from '../../Components';
+import { BottomSheet, Buton, ComingSoon, DesignIcon, Filters, Header, ScrollBubbles, Typo } from '../../Components';
 import LoadingModal from '../../Components/LoadingModal';
 import { Input } from '../../Components';
 import { HelperFunctions } from '../../Utils';
-import { BLACK, BROWN, GRAY, HALF_BROWN, HEIGHT, INTERESTS, THEME_COLOR, WHITE, WIDTH } from '../../Utils/Constants';
+import {
+  BLACK,
+  BROWN,
+  GRAY,
+  HALF_BROWN,
+  HEIGHT,
+  INTERESTS,
+  SHADOW,
+  THEME_COLOR,
+  WHITE,
+  WIDTH
+} from '../../Utils/Constants';
 import SingleBlog from './SingleBlog';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useKeyboard } from '../../Utils/useKeyboardHeight';
+import NewPost from './NewPost';
+import Instructions from './Instructions';
 
 const Blogs = ({ navigation }) => {
   const dispatch = useDispatch();
-  const [ state, setState ] = React.useState({ period: null, selectedBubble: '', isVisible: false });
+  const [ state, setState ] = React.useState({ isVisible: false });
   const { blogs } = useSelector((state) => state.Blogs);
   const loading = useSelector((state) => state.loading.effects.Blogs);
-
-  // React.useEffect(
-  //   // () => {
-  //   //   const sub = navigation.addListener('focus', () => {
-  //   //     getBlogs();
-  //   //   });
-
-  //   //   return () => sub;
-  //   // },
-  //   // [ navigation ]
-  // );
 
   const getBlogs = () => {
     // dispatch.Blogs.getBlogs((response) => {});
@@ -42,125 +44,112 @@ const Blogs = ({ navigation }) => {
 
   const closeModal = React.useCallback(() => setState({ ...state, isVisible: false }), [ state.isVisible ]);
 
+  const renderItem = ({ item, index }) => (
+    <SingleBlog {...item} navigation={navigation} last={index + 1 === blogs.length} index={index} first={index === 0} />
+  );
+
+  const RenderModalContent = ({ comp, createPost, closeModal }) => {
+    switch (comp) {
+      case 'newpost':
+        return <NewPost closeModal={closeModal} />;
+      case 'instructions':
+        return <Instructions createPost={createPost} />;
+    }
+  };
+
   return (
     <View style={{ flex: 1 }}>
-      {/* <BottomSheet isVisible={state.isVisible} closeModal={closeModal}>
-        <View
-          style={{
-            paddingBottom: useSafeAreaInsets().bottom,
-            height: HEIGHT,
-            paddingHorizontal: RFValue(10),
-            // height: HEIGHT - useSafeAreaInsets().top,
-            paddingTop: useSafeAreaInsets().top
-          }}
-        >
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center'
-            }}
-          >
-            <DesignIcon
-              name={Platform.select({ ios: 'chevron-left', android: 'arrow-left' })}
-              pkg={Platform.select({ ios: 'mc', android: 'mc' })}
-              size={30}
-              onPress={closeModal}
-            />
-            <Typo text="Post something" size={18} style={{ marginLeft: RFValue(10) }} />
-          </View>
-        </View>
-      </BottomSheet> */}
-      {/* <Buton
-        title="Create Event"
+      <BottomSheet
+        isVisible={state.isVisible}
+        closeModal={closeModal}
         extStyles={{
-          position: 'absolute',
-          bottom: RFValue(10),
-          zIndex: 30,
-          width: 0.4 * WIDTH,
-          height: RFValue(40),
-          right: RFValue(8),
-          backgroundColor: THEME_COLOR
+          height: 'auto',
+          ...(![ 'instructions' ].includes(state.comp) && { top: 0, left: 0, bottom: 0, right: 0 })
         }}
       >
-        <DesignIcon name="calendar" color={WHITE} style={{ marginRight: RFValue(10) }} />
-      </Buton> */}
-      <SafeAreaView style={{ flex: 1 }}>
-        <View
-          style={{
-            flexDirection: 'row',
-            height: RFValue(30),
-            // borderWidth: 1,
-            // width: '100%',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            marginHorizontal: RFValue(5),
-            // paddingLeft: RFValue(10),
-            backgroundColor: BROWN,
-            marginBottom: RFValue(15),
-            // borderBottomWidth: 1,
-            borderColor: GRAY,
-            paddingRight: 0,
-            // position: 'relative',
-            zIndex: 50
-          }}
-        >
-          <DesignIcon name="md-search-outline" pkg="io" extStyles={{ marginHorizontal: RFValue(10) }} />
+        {/* <Header
+          title="Create Post"
+          extStyles={{ backgroundColor: THEME_COLOR }}
+          titleStyles={{ color: WHITE }}
+          iconProps={{ color: WHITE }}
+          onBackPress={closeModal}
+        /> */}
+        <View style={{ height: ![ 'instructions' ].includes(state.comp) ? '100%' : 'auto' }}>
+          <RenderModalContent
+            {...state}
+            createPost={() => setState({ ...state, comp: 'newpost' })}
+            closeModal={closeModal}
+          />
+        </View>
+      </BottomSheet>
+      <View
+        style={{
+          flexDirection: 'row',
+          height: RFValue(35),
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          paddingHorizontal: RFValue(10),
+          backgroundColor: BROWN,
+          marginVertical: RFValue(15),
+          marginHorizontal: RFValue(8),
+          // borderWidth: 1,
+          borderColor: GRAY,
+          zIndex: 50
+        }}
+      >
+        <DesignIcon name="md-search-outline" pkg="io" extStyles={{ marginHorizontal: RFValue(0) }} />
+        <View style={{ flexGrow: 1 }}>
           <Input
-            extStyles={{ height: RFValue(30), marginBottom: 0, flexShrink: 1 }}
-            extInputStyles={{ height: RFValue(30), marginTop: 0, borderWidth: 0, paddingLeft: 0 }}
+            extStyles={{ height: RFValue(35), marginBottom: 0 }}
+            extInputStyles={{ height: RFValue(30), marginTop: 0, borderWidth: 0, padding: 0 }}
             placeholder="Search community posts..."
           />
-
-          {/* <ScrollView
-          style={{
-            backgroundColor: THEME_COLOR,
-            width: '100%',
-            // borderWidth: 1,
-            height: 2.5 / 4 * HEIGHT,
-            position: 'absolute',
-            top: RFValue(30.2),
-            left: 0,
-            zIndex: 40
-          }}
-        >
-          {[
-            ...new Array(50).fill().map((r, i) => (
-              <View style={{ padding: RFValue(15), borderBottomWidth: 1, borderColor: GRAY }}>
-                <Typo text={`New number - ${i + 1}`} color={WHITE} />
-                <Typo
-                  text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nos paucis ad haec additis finem faciamus aliquando; Istam  "
-                  color={WHITE}
-                />
-              </View>
-            ))
-          ]}
-        </ScrollView> */}
         </View>
-        <ScrollBubbles
-          selected={state.selectedBubble}
-          onPress={selectBubble}
-          options={INTERESTS}
-          extStyles={{ marginTop: 0 }}
+        <ActivityIndicator color={GRAY} style={{ flexShrink: 1 }} animating={false} />
+      </View>
+
+      <Pressable
+        onPress={() => setState({ ...state, isVisible: true, comp: 'instructions' })}
+        style={{
+          width: RFValue(50),
+          height: RFValue(50),
+          borderRadius: RFValue(100),
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 50,
+          backgroundColor: THEME_COLOR,
+          ...SHADOW,
+          shadowOpacity: 5,
+          elevation: RFValue(10),
+          shadowColor: '#000',
+          position: 'absolute',
+          bottom: RFValue(10),
+          right: RFValue(10)
+        }}
+      >
+        <DesignIcon
+          name="plus"
+          pkg="ad"
+          color={WHITE}
+          onPress={() => setState({ ...state, isVisible: true, comp: 'instructions' })}
         />
+      </Pressable>
+      <ScrollBubbles
+        selected={state.selectedBubble}
+        onPress={selectBubble}
+        options={INTERESTS}
+        extStyles={{ marginTop: 0 }}
+      />
 
-        <View style={{ flexGrow: 1, backgroundColor: WHITE }}>
-          <FlatList
-            showsVerticalScrollIndicator={false}
-            style={{ flex: 1, backgroundColor: WHITE }}
-            data={[ ...new Array(15).fill() ]}
-            keyExtractor={() => HelperFunctions.keyGenerator()}
-            renderItem={({ item, index }) => (
-              <SingleBlog
-                {...item}
-                navigation={navigation}
-                last={index + 1 === blogs.length}
-                index={index}
-                first={index === 0}
-              />
-            )}
-          />
-        </View>
-      </SafeAreaView>
+      <View style={{ flexGrow: 1, backgroundColor: WHITE }}>
+        <FlatList
+          showsVerticalScrollIndicator={false}
+          style={{ flex: 1, backgroundColor: BROWN }}
+          data={[ ...new Array(15).fill() ]}
+          keyExtractor={() => HelperFunctions.keyGenerator()}
+          renderItem={renderItem}
+        />
+      </View>
     </View>
   );
 };

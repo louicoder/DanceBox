@@ -5,7 +5,7 @@ import { RFValue } from 'react-native-responsive-fontsize';
 import { DesignIcon, HeaderLinker, Typo } from '../../Components';
 import { HelperFunctions } from '../../Utils';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { SHADOW, THEME_COLOR3, THEME_COLOR4, WHITE } from '../../Utils/Constants';
+import { SHADOW, THEME_COLOR, THEME_COLOR3, THEME_COLOR4, WHITE } from '../../Utils/Constants';
 
 const TopCategories = ({ navigation: { navigate } }) => {
   return (
@@ -14,8 +14,8 @@ const TopCategories = ({ navigation: { navigate } }) => {
         width: '100%',
         paddingHorizontal: RFValue(10),
         backgroundColor: '#fff',
-        // marginBottom: RFValue(10),
-        marginVertical: RFValue(10)
+        marginTop: RFValue(30),
+        marginBottom: RFValue(40)
       }}
     >
       {/* <HeaderLinker title="Top Categories" all={false} /> */}
@@ -28,17 +28,17 @@ const TopCategories = ({ navigation: { navigate } }) => {
         }}
       >
         {[
-          { title: 'Calendar', name: 'calendar-text', onPress: () => navigate('Calendar') },
+          { title: 'Calendar', name: 'calendar', pkg: 'si', onPress: () => navigate('Calendar') },
           // { title: 'Classes', name: 'account-group', onPress: () => null },
           {
             title: 'Voting',
-            name: 'vote-yea',
+            name: 'vote-outline',
             onPress: () => null,
-            pkg: 'fa5',
+            pkg: 'mc',
             onPress: () => navigate('Voting')
           },
           // { title: 'Ticketing', name: 'tag', onPress: () => null },
-          { title: 'Community', name: 'account-group', onPress: () => navigate('BlogScreens') }
+          { title: 'Community', name: 'rss-feed', onPress: () => navigate('BlogScreens'), pkg: 'mt' }
           // { title: 'Fitness', name: 'weight-lifter', onPress: () => null }
         ].map(({ title, onPress, ...rest }) => (
           <Pressable
@@ -46,17 +46,12 @@ const TopCategories = ({ navigation: { navigate } }) => {
             style={{
               width: '31%',
               borderRadius: RFValue(8),
-              // borderColor: '#ccc',
-              // backgroundColor: '#eeeeee90',
+              borderWidth: 1,
+              borderColor: THEME_COLOR,
               backgroundColor: WHITE,
               height: RFValue(100),
-              marginBottom: RFValue(5),
               alignItems: 'center',
-              justifyContent: 'center',
-              ...SHADOW,
-              shadowOffset: { width: 0, height: RFValue(4) },
-              shadowColor: '#ddd',
-              shadowRadius: RFValue(8)
+              justifyContent: 'center'
             }}
             onPress={() =>
               onPress
@@ -66,8 +61,8 @@ const TopCategories = ({ navigation: { navigate } }) => {
                     'This feature is coming soon, please watch the space for more upcoming updates...'
                   )}
           >
-            <DesignIcon {...rest} pkg={rest.pkg || 'mc'} size={30} />
-            <Typo text={title} size={15} style={{ fontWeight: 'bold', marginTop: RFValue(10) }} />
+            <DesignIcon {...rest} pkg={rest.pkg || 'mc'} size={rest.size || 40} />
+            <Typo text={title} size={15} style={{ fontWeight: 'normal', marginTop: RFValue(10) }} />
           </Pressable>
         ))}
       </View>

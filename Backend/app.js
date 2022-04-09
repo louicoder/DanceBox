@@ -2,6 +2,8 @@ const express = require('express');
 // const express = require('express');
 const app = express();
 const server = require('http').createServer(app);
+require('dotenv').config();
+
 const io = require('socket.io')(server, {
   cors: {
     origin: '*'
@@ -151,4 +153,4 @@ app.use('/api/testing', TestingRoute);
 //   }
 // });
 
-module.exports = server;
+module.exports = { server };

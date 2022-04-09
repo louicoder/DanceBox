@@ -4,6 +4,7 @@ import { TextInput } from 'react-native-gesture-handler';
 import { RFValue } from 'react-native-responsive-fontsize';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Typo } from '.';
+import { BLACK } from '../Utils/Constants';
 import Styles from './Styles';
 
 const Input = ({
@@ -36,9 +37,7 @@ const Input = ({
 
   return (
     <View style={Styles.inputContainer}>
-      {title && (
-        <Typo size={12} text={title} color="#01020350" style={{ textTransform: 'capitalize', ...titleStyles }} />
-      )}
+      {title && <Typo size={12} text={title} color={BLACK} style={{ textTransform: 'capitalize', ...titleStyles }} />}
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
         <TextInput
           ref={inputRef}

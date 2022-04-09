@@ -46,11 +46,11 @@ const FinishRegisration = ({ navigation }) => {
       <BottomSheet isVisible={visible} closeModal={closeModal}>
         <View
           style={{
-            maxHeight: HEIGHT - useSafeAreaInsets().top,
-            backgroundColor: '#fff',
-            paddingTop: RFValue(20),
-            paddingHorizontal: RFValue(0),
-            paddingBottom: useSafeAreaInsets().bottom
+            height: '100%',
+            backgroundColor: '#fff'
+            // paddingTop: RFValue(20),
+            // paddingHorizontal: RFValue(0)
+            // paddingBottom: useSafeAreaInsets().bottom
           }}
         >
           <Professions
@@ -126,12 +126,12 @@ const FinishRegisration = ({ navigation }) => {
           /> */}
           <Buton
             title="Update my account"
-            onPress={() => null}
+            // onPress={() => null}
             extStyles={{
               backgroundColor: BLACK,
               borderWidth: 1,
               width: '100%',
-              marginBottom: useSafeAreaInsets().bottom
+              marginBottom: useSafeAreaInsets().bottom + RFValue(20)
             }}
             loading={loading.updateAccountDetails}
             onPress={() => (!loading.updateAccountDetails ? updateAccount() : null)}

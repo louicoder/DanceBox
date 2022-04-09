@@ -58,7 +58,12 @@ const EventsInMonth = ({ navigation }) => {
         Events for you:
       </Text>
       {[ ...new Array(2).fill() ].map((event) => (
-        <EventPreview key={HelperFunctions.keyGenerator()} {...event} navigation={navigation} />
+        <EventPreview
+          key={HelperFunctions.keyGenerator()}
+          {...event}
+          navigation={navigation}
+          imageUrl="https://ychef.files.bbci.co.uk/1376x774/p07ztf1q.jpg"
+        />
       ))}
     </View>
   );

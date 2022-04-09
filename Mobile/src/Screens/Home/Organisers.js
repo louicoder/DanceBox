@@ -36,40 +36,25 @@ const Organisers = ({ navigation }) => {
   };
 
   return (
-    <View style={{ width: '100%', paddingHorizontal: RFValue(0), backgroundColor: '#fff' }}>
+    <View style={{ width: '100%', backgroundColor: '#fff' }}>
       <View
         style={{
           backgroundColor: '#fff',
           // marginTop: RFValue(0),
-          paddingVertical: RFValue(15),
+          // paddingVertical: RFValue(0),
           flexDirection: 'row',
           alignItems: 'center',
           justifyContent: 'space-between'
         }}
       >
         <Typo text="Dance Categories" size={16} style={{ fontWeight: 'bold', marginHorizontal: RFValue(10) }} />
-
-        {/* <Pressable
-          // onPress={() => Alert.alert('Pending feature', 'This feature is Coming soon')}
-          onPress={() => navigation.navigate('AllOrganisers')}
-        >
-          <Text
-            style={{
-              marginHorizontal: RFValue(10),
-              fontSize: RFValue(14),
-              color: THEME_COLOR3
-              // fontWeight: 'bold'
-            }}
-          >
-            View All
-          </Text>
-        </Pressable> */}
       </View>
 
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
-        style={{ paddingVertical: RFValue(0), borderWidth: 0 }}
+        style={{ height: 0.7 * WIDTH, borderWidth: 0 }}
+        contentContainerStyle={{ alignItems: 'center', paddingLeft: RFValue(8) }}
       >
         {DANCE_STYLES.map((r, i) => (
           <Pressable
@@ -77,10 +62,12 @@ const Organisers = ({ navigation }) => {
               width: 0.6 * WIDTH,
               height: 0.6 * WIDTH,
               backgroundColor: WHITE,
-              marginLeft: RFValue(5)
+              marginRight: i === (DANCE_STYLES && DANCE_STYLES.length) ? 0 : RFValue(15),
+              borderRadius: RFValue(10),
               // marginLeft: i === 0 ? RFValue(10) : 0
-              // ...SHADOW
-              // shadowColor: '#ccc',
+              ...SHADOW,
+              shadowColor: '#000',
+              elevation: RFValue(10)
               // shadowRadius: RFValue(2),
               // shadowOffset: { width: 0, height: RFValue(8) }
             }}
@@ -90,21 +77,25 @@ const Organisers = ({ navigation }) => {
                 uri: r.image
                 // 'https://images.unsplash.com/photo-1597844954972-c843e52b956e?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1420&q=80'
               }}
-              style={{ width: '100%', height: '100%' }}
+              style={{ width: '100%', height: '100%', borderRadius: RFValue(10) }}
               resizeMode="cover"
             />
             <LinearGradient
-              colors={[ 'transparent', '#00000050', '#00000090', '#000000' ]}
               style={{
-                height: '50%',
                 position: 'absolute',
                 bottom: 0,
-                width: '100%',
-                justifyContent: 'flex-end',
+                left: 0,
                 padding: RFValue(10),
+                justifyContent: 'flex-end',
+                borderBottomRightRadius: RFValue(10),
+                borderBottomLeftRadius: RFValue(10),
+                height: '60%',
+                width: '100%',
+                borderColor: WHITE,
                 // borderWidth: 1,
-                paddingBottom: RFValue(5)
+                zIndex: 40
               }}
+              colors={[ 'transparent', '#00000080', '#000000', '#000000' ]}
             >
               <Typo text={r.title} color={WHITE} size={20} style={{ fontWeight: 'bold', marginBottom: RFValue(2) }} />
               <Typo text="240k followers" color={QUARTER_WHITE} size={14} />

@@ -7,7 +7,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { CommentsLikeButtons, DesignIcon, Typo } from '../../Components';
 import { CONSTANTS, HelperFunctions } from '../../Utils';
-import { BROWN, GRAY, SHADOW, WHITE } from '../../Utils/Constants';
+import { BROWN, GRAY, SHADOW, THEME_COLOR, WHITE } from '../../Utils/Constants';
 import Image from 'react-native-fast-image';
 
 const SingleBlog = ({
@@ -59,16 +59,16 @@ const SingleBlog = ({
   return (
     <View
       style={{
-        marginBottom: RFValue(15),
-        marginHorizontal: RFValue(8),
+        marginBottom: RFValue(5),
+        // paddingHorizontal: RFValue(8),
         paddingVertical: RFValue(8),
-        marginTop: first ? RFValue(20) : 0,
-        backgroundColor: WHITE,
-        borderRadius: RFValue(10),
-        ...SHADOW,
-        shadowColor: '#00000020',
-        shadowRadius: RFValue(8),
-        shadowOffset: { width: 0, height: RFValue(1) }
+        // marginTop: first ? RFValue(20) : 0,
+        backgroundColor: WHITE
+        // borderRadius: RFValue(10)
+        // ...SHADOW,
+        // shadowColor: '#00000020',
+        // shadowRadius: RFValue(8),
+        // shadowOffset: { width: 0, height: RFValue(1) }
 
         // shadowOffset:
         // borderWidth: 1
@@ -79,16 +79,18 @@ const SingleBlog = ({
           flexDirection: 'row',
           alignItems: 'center',
           marginBottom: RFValue(10),
-          paddingHorizontal: RFValue(10)
+          paddingHorizontal: RFValue(8)
         }}
       >
         <DesignIcon name="user" pkg="ad" widthHeight={35} withBorder extStyles={{ marginRight: RFValue(10) }} />
 
-        <View style={{ flexShrink: 1 }}>
+        <View style={{ flexGrow: 1 }}>
           <Typo text="Musanje Louis" size={13} style={{ fontWeight: 'bold' }} />
 
-          <Typo text="@louicoder ・ 2 days ago" size={12} style={{}} color={GRAY} />
+          <Typo text="2 days ago" size={12} style={{ lineHeight: RFValue(15) }} color={GRAY} />
         </View>
+
+        <Typo text="Follow" style={{}} color={THEME_COLOR} />
       </View>
       <Image
         source={{
@@ -100,7 +102,7 @@ const SingleBlog = ({
       <Typo
         text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Et non ex maxima parte de tota iudicabis? Duo Reges: constructio interrete. Nec enim, dum metuit, iustus est, et certe, si metuere destiterit, non erit; Gracchum patrem non beatiorem fuisse quam fillum, cum alter stabilire rem publicam studuerit, alter evertere. An hoc usque quaque, aliter in vita? Cur tantas regiones barbarorum pedibus obiit, tot maria transmisit? Atqui eorum nihil est eius generis, ut sit in fine atque extrerno bonorum. Egone quaeris, inquit, quid sentiam? Nam ista vestra: Si gravis, brevis"
         lines={4}
-        style={{ marginBottom: RFValue(10), marginHorizontal: RFValue(10) }}
+        style={{ marginBottom: RFValue(10), paddingHorizontal: RFValue(8) }}
       />
 
       <View
@@ -109,7 +111,7 @@ const SingleBlog = ({
           alignItems: 'center',
           width: '100%',
           borderWidth: 0,
-          paddingHorizontal: RFValue(10)
+          paddingHorizontal: RFValue(8)
         }}
       >
         <View
@@ -129,4 +131,4 @@ const SingleBlog = ({
   );
 };
 
-export default SingleBlog;
+export default React.memo(SingleBlog);

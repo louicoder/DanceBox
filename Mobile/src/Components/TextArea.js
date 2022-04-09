@@ -29,9 +29,7 @@ const Input = ({
   // console.log('rest');
   return (
     <View style={[ Styles.inputContainer, extStyles ]}>
-      {title ? (
-        <Typo size={12} text={title} color={BLACK} style={{ textTransform: 'capitalize', ...titleStyles }} />
-      ) : null}
+      {title ? <Typo size={12} text={title} color={BLACK} style={{ ...titleStyles }} /> : null}
       <TextInput
         textAlignVertical="top"
         multiline={true}
