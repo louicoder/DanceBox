@@ -25,6 +25,8 @@ import Select from './Select';
 import ScrollBubbles from './ScrollBubbles';
 import EventPreview from './EventPreview';
 import Header from './Header';
+import PostProfileCard from './PostProfileCard';
+import LikeCommentShare from './LikeCommentShare';
 
 export {
   IconComp,
@@ -53,5 +55,7 @@ export {
   Select,
   ScrollBubbles,
   EventPreview,
-  Header
+  Header,
+  PostProfileCard,
+  LikeCommentShare
 };

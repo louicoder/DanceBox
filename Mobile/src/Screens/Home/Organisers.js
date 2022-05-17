@@ -58,6 +58,7 @@ const Organisers = ({ navigation }) => {
       >
         {DANCE_STYLES.map((r, i) => (
           <Pressable
+            key={HelperFunctions.keyGenerator()}
             style={{
               width: 0.6 * WIDTH,
               height: 0.6 * WIDTH,

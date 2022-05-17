@@ -13,6 +13,7 @@ const IconWithText = ({
   color = '#aaa',
   onPress,
   rightIcon = false,
+  iconStyles,
   textCntStyles,
   extStyles
 }) => {
@@ -31,7 +32,14 @@ const IconWithText = ({
       }}
     >
       <View style={{}}>
-        <DesignIcon name={name} pkg={pkg} size={RFValue(size)} color={color} extStyles={{ marginRight: 0 }} />
+        <DesignIcon
+          name={name}
+          pkg={pkg}
+          size={RFValue(size)}
+          color={color}
+          extStyles={{ marginRight: 0 }}
+          {...iconStyles}
+        />
       </View>
       <View style={{ width: '85%' }}>
         <Text style={[ { fontSize: RFValue(15), color: !textExists ? '#aaa' : '#000' }, textCntStyles ]}>

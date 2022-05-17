@@ -3,14 +3,27 @@ import { View, Text, FlatList, Pressable, Alert, Dimensions, ScrollView } from '
 import { RFValue } from 'react-native-responsive-fontsize';
 import { baseURL } from '../../Store/Axios';
 import io from 'socket.io-client';
-import { THEME_COLOR } from '../../Utils/Constants';
+import moment from 'moment';
+import {
+  BLACK,
+  FIRESTORE,
+  GRAY,
+  HALF_BLACK,
+  HALF_WHITE,
+  HEIGHT,
+  SHADOW,
+  THEME_COLOR,
+  THEME_COLOR3,
+  WHITE
+} from '../../Utils/Constants';
 import { HelperFunctions } from '../../Utils';
-import { BottomSheet, Button, DesignIcon, Input } from '../../Components';
+import { BottomSheet, Buton, Button, DesignIcon, Input, Typo } from '../../Components';
 import { getUniqueId } from 'react-native-device-info';
 import SocketIOClient from 'socket.io-client/dist/socket.io.js';
 import { useDispatch } from 'react-redux';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { keyGenerator } from '../../Utils/HelperFunctions';
+import NewVoteEvent from './NewVoteEvent';
 
 navigator.__defineGetter__('userAgent', () => 'react-native');
 
@@ -20,52 +33,48 @@ const Voting = ({ navigation, route }) => {
   // const {} = useSelector((state) => state.Account);
   const [ room, setRoom ] = React.useState({ users: 0, participants: [], votes: [] });
   const [ event, setEvent ] = React.useState({});
-  const [ participants, setParticipants ] = React.useState([]);
+  const [ votingEvents, setVotingEvents ] = React.useState([]);
   const [ modal, setModal ] = React.useState(false);
-  const [ user, setUser ] = React.useState({});
+  const [ roomId, setUser ] = React.useState({});
   const [ participant, setParticipant ] = React.useState('');
   const [ votes, setVotes ] = React.useState([]);
   const deviceId = getUniqueId();
   const dispatch = useDispatch();
 
   // const socketURL = 'wss://dancebox-309908.uc.r.appspot.com';
-  const socketURL = 'http://192.168.90.163:8080';
-  // React.useEffect(
-  //   () => {
-  //     // Alert.alert('Voting criteria', 'You only get to vote once and your decision is final, please vote wisely');
-  //     socket = SocketIOClient(socketURL, { jsonp: false });
-  //     // socket.emit('join-server', { deviceId, room: route.params && route.params.eventId });
+  const socketURL = `http://192.168.1.100:8080`;
+  React.useEffect(() => {
+    socket = SocketIOClient(socketURL, { jsonp: false });
+    // socket.emit('join-server', { deviceId });
 
-  //     socket.on('update', (usr) => {
-  //       console.log('update', usr.votes);
-  //       setRoom({ ...room, ...usr });
-  //       setParticipant('');
-  //     });
+    // socket.emit('create-room', (room) => {
+    //   console.log('Created room ', room);
+    // });
+    // socket.on('update', (usr) => {
+    //   console.log('update', usr.votes);
+    //   setRoom({ ...room, ...usr });
+    //   setParticipant('');
+    // });
 
-  //     socket.on('new-votes', (vots) => {
-  //       // console.log('Votes', vots);
-  //       setVotes(vots);
-  //     });
+    // socket.on('new-votes', (vots) => {
+    //   // console.log('Votes', vots);
+    //   setVotes(vots);
+    // });
 
-  //     return () => {
-  //       socket.emit('leave-room', { roomId: route.params.eventId, deviceId });
-  //       // socket.disconnect();
-  //     };
-  //   },
-  //   [ setRoom, setVotes ]
-  // );
+    return () => {
+      // socket.emit('delete-room');
+      // socket.emit('leave-room', { roomId: route.params.eventId, deviceId });
+      // socket.disconnect();
+    };
+  }, []);
 
-  // React.useEffect(
-  //   () => {
-  //     const sub = navigation.addListener('focus', () => {
-  //       // getUser();
-  //       // getEvent();
-  //       navigation.setParams({ openModal: () => openModal(), author: event.authorId === user._id });
-  //     });
-  //     return () => sub;
-  //   },
-  //   [ navigation ]
-  // );
+  React.useEffect(() => {
+    const sub = FIRESTORE.collection('voting').onSnapshot((snaps) => {
+      const docs = [ ...snaps.docs.map((r) => ({ ...r.data(), id: r.id })) ];
+      setVotingEvents(docs);
+    });
+    // return sub;
+  }, []);
 
   // console.log('AUTHOR OR NOT', event.authorId === user._id, event.authorId, user._id);
 
@@ -85,154 +94,101 @@ const Voting = ({ navigation, route }) => {
 
   const voteNow = () => socket.emit('vote', {});
 
-  const openModal = React.useCallback(
-    () => {
-      setModal(true);
-    },
-    [ setModal ]
-  );
+  const openModal = () => setModal(true);
 
-  const closeModal = React.useCallback(
-    () => {
-      setModal(false);
-    },
-    [ setModal ]
-  );
+  const closeModal = () => setModal(false);
 
-  const addParticipant = () => {
-    // console.log('Participant', participant);
-    // if (participant) {
-    //   const user = {
-    //     name: participant,
-    //     room: route.params.eventId,
-    //     cb: () => setParticipant(''),
-    //     id: keyGenerator()
-    //   };
-    //   socket.emit('add-participant', user);
-    // }
-    // // return;
-  };
+  const renderItem = ({ item, index }) => {
+    return (
+      <Pressable
+        onPress={() => navigation.navigate('VotingRoom', { room: item })}
+        style={{
+          width: '100%',
+          // borderWidth: 1,
+          // backgroundColor: '#D4E4F6',
+          // backgroundColor: '#91C8CC',
+          backgroundColor: '#3C925F',
+          borderRadius: RFValue(10),
+          padding: RFValue(10),
+          // height: RFValue(100),
+          width: '100%',
+          marginTop: index === 0 ? RFValue(15) : 0,
+          marginBottom: index + 1 === (votingEvents && votingEvents.length) ? 0 : RFValue(15)
+          // shadowColor: '#aaa',
+          // ...SHADOW
+          // elevation: RFValue(8)
+        }}
+      >
+        <Typo text={item.title} style={{ textTransform: 'capitalize', fontWeight: 'bold' }} size={18} color={WHITE} />
 
-  const removeParticipant = (id) => {
-    // return socket.emit('remove-participant', { id, room: route.params.eventId });
-  };
-
-  const vote = (usr) => {
-    // console.log('VOTE OBJ', usr);
-    // const voteObject = { voter: deviceId, voted: usr.id, room: route.params.eventId };
-    // socket.emit('vote', voteObject);
+        <Typo
+          text={`Event expires • ${moment(moment(item.dateCreated).add(24, 'hours')).fromNow()}`}
+          style={{}}
+          // size={12}
+          color={WHITE}
+        />
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Typo
+            text={`${moment(item.dateCreated).format('dddd, Do-MMMM-YYYY')}`}
+            style={{}}
+            size={12}
+            color={HALF_WHITE}
+          />
+          <Typo
+            text={`${item.votes ? item.votes.length : 0} votes so far`}
+            style={{
+              marginVertical: RFValue(5),
+              backgroundColor: '#D5A828',
+              alignSelf: 'flex-start',
+              paddingHorizontal: RFValue(10),
+              paddingVertical: RFValue(5),
+              borderRadius: RFValue(50)
+            }}
+            size={14}
+            // color="#5CEF75"
+            color="#fff"
+          />
+        </View>
+      </Pressable>
+    );
   };
 
   return (
     <View style={{ flex: 1 }}>
-      <BottomSheet isVisible={modal} closeModal={closeModal} extStyles={{}}>
-        <View style={{ height, width: '100%', paddingHorizontal: RFValue(10), paddingTop: useSafeAreaInsets().top }}>
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              marginBottom: RFValue(15)
-            }}
-          >
-            <Text style={{ flexShrink: 1, marginRight: RFValue(15), fontSize: RFValue(16) }}>
-              Add all the participants so they can appear on the voting list
-            </Text>
-            <DesignIcon name="close" pkg="ad" withBorder onPress={closeModal} />
-          </View>
-          <View style={{ flexDirection: 'row' }}>
-            <Input
-              placeholder="Participant name"
-              onSubmitEditing={addParticipant}
-              onChangeText={(p) => setParticipant(p)}
-              extStyles={{ flexShrink: 1 }}
-            />
-            <Button title="Add" extStyles={{ width: '20%' }} onPress={addParticipant} />
-          </View>
-          <ScrollView style={{ flexGrow: 1 }}>
-            {room.participants.map((p, i) => (
-              <Pressable
-                key={p.id}
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  borderBottomWidth: i + 1 === room.participants.length ? 0 : 1,
-                  borderColor: '#eee',
-                  paddingVertical: RFValue(20)
-                }}
-              >
-                <Text style={{ fontSize: RFValue(18), textTransform: 'capitalize' }}>{p.name}</Text>
-                <DesignIcon name="close" pkg="ad" onPress={() => removeParticipant(p.id)} />
-              </Pressable>
-            ))}
-          </ScrollView>
-          {/* <Text>{JSON.stringify(room.participants)}</Text> */}
-        </View>
+      <BottomSheet isVisible={modal} closeModal={closeModal} extStyles={{ top: 0 }}>
+        <NewVoteEvent closeModal={closeModal} />
       </BottomSheet>
 
-      <View style={{ padding: RFValue(0), flexDirection: 'row' }}>
-        <View style={{ width: '50%', backgroundColor: 'green', padding: RFValue(15) }}>
-          <Text style={{ fontSize: RFValue(20), textAlign: 'center', color: '#fff' }}>
-            {room && room.users && room.users.length} online
-          </Text>
-        </View>
-        <View style={{ width: '50%', backgroundColor: THEME_COLOR, padding: RFValue(15) }}>
-          <Text style={{ fontSize: RFValue(20), textAlign: 'center', color: '#fff' }}>
-            {votes && votes.length} votes
-          </Text>
-        </View>
-      </View>
-
+      <Pressable
+        onPress={openModal}
+        style={{
+          width: RFValue(50),
+          height: RFValue(50),
+          borderRadius: RFValue(100),
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 50,
+          backgroundColor: THEME_COLOR,
+          // ...SHADOW,
+          // shadowOpacity: 5,
+          // elevation: RFValue(10),
+          // shadowColor: '#000',
+          position: 'absolute',
+          bottom: RFValue(10),
+          right: RFValue(10)
+        }}
+      >
+        <DesignIcon name="plus" pkg="ad" color={WHITE} onPress={openModal} />
+      </Pressable>
       {/* PARTICIPANT LIST */}
-      <View style={{ flexGrow: 1 }}>
+      <View style={{ flexGrow: 1, backgroundColor: WHITE }}>
         <FlatList
-          keyExtractor={() => HelperFunctions.keyGenerator()}
-          style={{ flex: 1, paddingHorizontal: RFValue(10) }}
-          data={room.participants}
+          keyExtractor={(item) => item.id}
+          style={{ flex: 1, marginHorizontal: RFValue(8) }}
+          data={votingEvents}
           // ListHeaderComponent={() => (
           // )}
-          renderItem={({ item }) => (
-            <View
-              style={{
-                // borderWidth: 1,
-                marginBottom: RFValue(10),
-                justifyContent: 'space-between',
-                flexDirection: 'row',
-                alignItems: 'center',
-                paddingHorizontal: RFValue(10),
-                width: '100%',
-                backgroundColor: '#eeeeee70',
-                height: RFValue(70)
-              }}
-            >
-              <View>
-                <Text style={{ fontSize: RFValue(20), fontWeight: 'normal' }}>{item.name}</Text>
-                <Text style={{ fontSize: RFValue(16), fontWeight: 'bold' }}>{item.votes} votes</Text>
-              </View>
-              {votes && !votes.reduce((p, c) => [ ...p, c.voter ], []).includes(deviceId) ? (
-                <Pressable
-                  onPress={() => vote(item)}
-                  style={{
-                    height: RFValue(30),
-                    // width: RFValue(40),
-                    paddingHorizontal: RFValue(10),
-                    borderRadius: 5,
-                    backgroundColor: '#000',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}
-                >
-                  {/* <DesignIcon name="plus" pkg="ad" size={16} color="#fff" /> */}
-                  <Text style={{ fontSize: RFValue(14), color: '#fff' }}>Vote</Text>
-                </Pressable>
-              ) : (
-                <View>
-                  <Text>{votes.filter((v) => v.voted === item.id).length}</Text>
-                </View>
-              )}
-            </View>
-          )}
+          renderItem={renderItem}
         />
         {/* END PARTICIPANT LIST */}
       </View>

@@ -3,7 +3,7 @@ import { View, Text, Pressable, ActivityIndicator } from 'react-native';
 import Ripple from 'react-native-material-ripple';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { Typo } from '.';
-import { BLACK, WHITE } from '../Utils/Constants';
+import { BLACK, GRAY, WHITE } from '../Utils/Constants';
 
 const Button = ({
   title,
@@ -13,17 +13,19 @@ const Button = ({
   textStyles = { color: WHITE },
   loading = false,
   showLoader = true,
+  disabled,
   children
 }) => {
   return (
     <Pressable
       onPress={onPress}
+      disabled={disabled}
       // onPressIn={onPressIn}
       style={[
         {
           flexDirection: 'row',
           height: RFValue(45),
-          backgroundColor: noBg ? 'transparent' : BLACK,
+          backgroundColor: disabled ? GRAY : noBg ? 'transparent' : BLACK,
           borderWidth: noBg ? RFValue(1) : 0,
           borderColor: BLACK,
           // width: '100%',
@@ -38,6 +40,8 @@ const Button = ({
       {children}
       {loading && showLoader ? <ActivityIndicator size={20} color={textStyles.color} /> : null}
       <Typo
+        pressable
+        onPress={onPress}
         text={title}
         style={{
           fontSize: RFValue(14),

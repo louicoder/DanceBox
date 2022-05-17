@@ -5,7 +5,18 @@ import { RFValue } from 'react-native-responsive-fontsize';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
 import { BottomSheet, DesignIcon, Typo } from '../../Components';
-import { BLACK, BROWN, GRAY, GREEN, HEIGHT, SHADOW, THEME_COLOR3, THEME_COLOR5, WHITE } from '../../Utils/Constants';
+import {
+  BLACK,
+  BROWN,
+  GRAY,
+  GREEN,
+  HEIGHT,
+  SHADOW,
+  THEME_COLOR,
+  THEME_COLOR3,
+  THEME_COLOR5,
+  WHITE
+} from '../../Utils/Constants';
 import Image from 'react-native-fast-image';
 import { abbreviateNumber, keyGenerator, showAlert } from '../../Utils/HelperFunctions';
 import { hideMessage, showMessage } from 'react-native-flash-message';
@@ -44,7 +55,7 @@ const Account = ({ navigation }) => {
             'Unable to logout at this time',
             `we apologise something went wrong while trying to logout you out of your account, please try again ::: \n ${res.result}`
           );
-        return navigation.push('LoginScreens');
+        return navigation.push('Login');
       }
     });
   };
@@ -55,7 +66,7 @@ const Account = ({ navigation }) => {
   const confirmLogout = () =>
     showMessage({
       message: 'Are you sure you want to logout?',
-      style: { backgroundColor: GREEN },
+      style: { backgroundColor: THEME_COLOR },
       titleStyle: { fontSize: RFValue(16) },
       position: 'bottom',
       duration: 5000,
@@ -115,10 +126,10 @@ const Account = ({ navigation }) => {
 
   return (
     <View style={{ flex: 1 }}>
-      <BottomSheet isVisible={isVisible} closeModal={closeModal}>
-        <View style={{ height: '100%' }}>
-          <RenderModalContent comp={state.comp} closeModal={closeModal} />
-        </View>
+      <BottomSheet isVisible={isVisible} closeModal={closeModal} extStyles={{ top: 0 }}>
+        {/* <View style={{ height: 'auto', right: 0, top: 0, left: 0, bottom: 0 }}> */}
+        <RenderModalContent comp={state.comp} closeModal={closeModal} />
+        {/* </View> */}
       </BottomSheet>
       <ScrollView style={{ flexGrow: 1, backgroundColor: BROWN }}>
         <View

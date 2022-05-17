@@ -10,6 +10,7 @@ const Input = React.forwardRef(
   (
     {
       value,
+      editable = true,
       callback,
       title,
       extInputStyles,
@@ -21,6 +22,7 @@ const Input = React.forwardRef(
       onChangeText,
       placeHolderTextColor = GRAY,
       titleStyles,
+      onSubmitEditing,
       type
     },
     ref
@@ -42,7 +44,8 @@ const Input = React.forwardRef(
           style={[ Styles.input, extInputStyles ]}
           onChangeText={onChangeText}
           value={value}
-          editable={!loading}
+          editable={!loading || editable}
+          onSubmitEditing={onSubmitEditing}
         />
         {error && <Text style={{ color: 'red' }}>{error}</Text>}
       </View>

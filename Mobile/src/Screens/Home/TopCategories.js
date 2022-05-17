@@ -5,7 +5,15 @@ import { RFValue } from 'react-native-responsive-fontsize';
 import { DesignIcon, HeaderLinker, Typo } from '../../Components';
 import { HelperFunctions } from '../../Utils';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { SHADOW, THEME_COLOR, THEME_COLOR3, THEME_COLOR4, WHITE } from '../../Utils/Constants';
+import {
+  SHADOW,
+  THEME_COLOR,
+  THEME_COLOR3,
+  THEME_COLOR4,
+  THEME_COLOR5,
+  THEME_COLOR6,
+  WHITE
+} from '../../Utils/Constants';
 
 const TopCategories = ({ navigation: { navigate } }) => {
   return (
@@ -46,9 +54,10 @@ const TopCategories = ({ navigation: { navigate } }) => {
             style={{
               width: '31%',
               borderRadius: RFValue(8),
-              borderWidth: 1,
+              // borderWidth: 1,
               borderColor: THEME_COLOR,
-              backgroundColor: WHITE,
+              backgroundColor: THEME_COLOR5,
+              // backgroundColor: WHITE,
               height: RFValue(100),
               alignItems: 'center',
               justifyContent: 'center'

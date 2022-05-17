@@ -83,6 +83,7 @@ const CalendarComponent = ({ navigation }) => {
           markedDates={state.markedDates}
           markingType={'multi-dot'}
           // onDayPress={(e) => console.log('Date', e)}
+          // displayLoadingIndicator
         />
       )}
 

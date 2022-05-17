@@ -9,10 +9,12 @@ const PostSchema = new mongoose.Schema({
   description: { type: String, required: true },
   followers: { type: Array },
   imageUrl: { type: String },
+  categories: { type: Array, default: [] },
 
   // EVent only props::
-  eventTime: { type: String },
-  eventDate: { type: String },
+  // eventTime: { type: String },
+  startDate: { type: String },
+  endDate: { type: String },
   eventInterval: { type: String, enum: [ 'once', 'daily', 'monthly', 'forever' ] },
 
   // Poll props

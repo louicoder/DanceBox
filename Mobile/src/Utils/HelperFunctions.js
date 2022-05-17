@@ -3,7 +3,7 @@ import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import { request, check, PERMISSIONS } from 'react-native-permissions';
 import Storage from '@react-native-firebase/storage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Share from 'react-native-share';
+import SHARE from 'react-native-share';
 import RNFetchBlob from 'rn-fetch-blob';
 import { showMessage } from 'react-native-flash-message';
 import { RFValue } from 'react-native-responsive-fontsize';
@@ -77,16 +77,14 @@ export const ImagePicker = (callback, opts = { maxWidth: 500, maxHeight: 500 }) 
   };
 
   launchImageLibrary(options, (response) => {
+    console.log('Image', response);
     if (response.didCancel) {
       // console.log('User cancelled image picker');
     } else if (response.error) {
       // console.log('ImagePicker Error: ', response.error);
     } else if (response.customButton) {
       // console.log('User tapped custom button: ', response.customButton);
-    } else {
-      // console.log('Responsefile size mbs -->', response.fileSize, 'filanme -->', response.fileName);
-      callback(response);
-    }
+    } else return callback(response);
   });
 };
 
@@ -230,7 +228,7 @@ export const shuffleArray = (array) => {
 };
 
 export const shareEXtention = async (message, files, callback) => {
-  await Share.open({ message, urls: [ files ] })
+  await SHARE.open({ message, urls: [ files ] })
     .then((result) => callback({ success: true, result }))
     .catch((error) => console.log('Something went wrong--', error.message));
 };
@@ -415,3 +413,43 @@ export const compressImage = async (photo, progressCallback, callback) => {
 
 export const dateWithoutOffset = () =>
   new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, -1);
+
+export const sharePost = async (post, dispatch) => {
+  dispatch.Blogs.setField('activeShare', post._id);
+  try {
+    if (post.imageUrl)
+      await RNFetchBlob.fetch('GET', post.imageUrl).then((dt) => {
+        const url = `data:image/png;base64,${dt.base64()}`;
+        SHARE.open({
+          url,
+          message: post.description || post.title
+        })
+          .then((r) => dispatch.Blogs.setField('activeShare', ''))
+          .catch((error) => {
+            dispatch.Blogs.setField('activeShare', '');
+            if (error.message.indexOf('User did not share') !== -1) return null;
+            return showAlert('Something went wrong', error.message);
+          });
+      });
+    else
+      SHARE.open({
+        // url,
+        message: post.description || post.title
+      })
+        .then((r) => dispatch.Blogs.setField('activeShare', ''))
+        .catch((error) => {
+          dispatch.Blogs.setField('activeShare', '');
+          if (error.message.indexOf('User did not share') !== -1) return null;
+          return showAlert('Something went wrong', error.message);
+        });
+  } catch (error) {
+    dispatch.Blogs.setField('activeShare', '');
+    return showAlert('Something went wrong', error.message);
+  }
+};
+
+export const devAlert = () =>
+  showAlert(
+    'Still under development',
+    'Apologies! this feature is still under development, we shall keep you posted on any updates '
+  );

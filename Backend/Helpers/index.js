@@ -66,11 +66,12 @@ const userFiller = async (array, field = 'authorId') => {
 
     let final = [];
     for (const item of array) {
-      const user = docs.find((r) => r.uid === item._doc[field]);
+      const user = docs.find((r) => r.uid === item[field]);
+      console.log('EACH ITEM', item);
 
       if (user) {
-        const { name, username, photoURL: imageUrl, email, ...rest } = user;
-        final.push({ ...item._doc, user: { name, username, imageUrl, email } });
+        const { name, username, photoURL: imageUrl, email, favorites, ...rest } = user;
+        final.push({ ...item, user: { name, username, imageUrl, email, favorites } });
       }
     }
     return final;

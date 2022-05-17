@@ -50,16 +50,20 @@ export default {
               return callback({ success: true, result });
             });
         });
-        // await AxiosClient.post('/accounts/login', { email, password }).then(async ({ data }) => {
-        //   if (data.success) {
-        //     dispatch.Account.setUserDetails(data.result.user);
-        //     console.log('USER Login', data);
-        //     await HelperFunctions.storeAsyncObjectData('user', data.result.user, callback);
-        //   }
-        //   callback(data);
-        // });
       } catch (error) {
         return callback({ success: false, result: error.message });
+      }
+    },
+
+    async logout ({ callback }, state) {
+      try {
+        await AUTH.signOut().then((r) => {
+          dispatch.Account.setField('user', {});
+          return callback({ success: true, result: 'Logged out successfully' });
+        });
+      } catch (error) {
+        // console.log('Error loggin out', error.message);
+        return failedRequest(callback, error.message);
       }
     },
 

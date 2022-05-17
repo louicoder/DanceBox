@@ -16,21 +16,43 @@ let votes = [];
 // let partcipants = [];
 let rooms = [];
 let participants = [];
+let mainRooms = {};
+// let server = [];
 
 io.on('connection', (socket) => {
   socket.on('join-server', (usr) => {
-    socket.join(usr.room);
-    const userObj = { socket: socket.id, id: usr.deviceId, room: usr.room };
+    console.log('Joined server', socket.id);
+    socket.join('server');
+    const userObj = { socket: socket.id, ...usr };
     if (rooms.indexOf(usr.room) === -1) rooms.push(usr.room);
-    if (users.map((u) => u.id).indexOf(socket.id) === -1) users.push(userObj);
-    const parts = participants.filter((u) => u.room === usr.room);
+    if (users.map((u) => u.deviceId).indexOf(usr.deviceId) === -1) users.push(userObj);
+    // console.log('USERS server', users);
+    // const parts = participants.filter((u) => u.room === usr.room);
 
-    const userz = users.filter((u) => u.room === usr.room);
-    const votez = votes.filter((v) => v.room === usr.room);
+    // const userz = users.filter((u) => u.room === usr.room);
+    // const votez = votes.filter((v) => v.room === usr.room);
 
-    io.to(usr.room).emit('update', { users: userz, participants: parts });
-    io.to(usr.room).emit('new-votes', votez);
+    // io.to(usr.room).emit('update', { users: userz, participants: parts });
+    io.to('server').emit('joined-server', users);
+    // socket.to('server').emit('joined-server', usr);
   });
+
+  socket.on('join-room', ({ roomId, uid }) => {
+    socket.join(roomId);
+    if (mainRooms[roomId]) mainRooms[roomId] = [ ...mainRooms[roomId], uid ];
+    else mainRooms[roomId] = [ uid ];
+    io.to(roomId).emit('new-user', mainRooms[roomId]);
+  });
+
+  // io.of('/').adapter.on('delete-room', (room) => {
+  //   console.log(`room ${room} was created`);
+  // });
+
+  // socket.on('create-room', (room) => {
+  //   io.of('/').adapter.on('create-room', (room) => {
+  //     console.log(`room ${room} was created`);
+  //   });
+  // });
 
   socket.on('add-participant', (usr) => {
     console.log('LEAVING ROOM--------', usr);
@@ -52,16 +74,9 @@ io.on('connection', (socket) => {
     io.to(usr.room).emit('new-votes', votez);
   });
 
-  socket.on('leave-room', ({ deviceId, roomId }) => {
-    socket.leave(roomId);
-    rooms = rooms.filter((r) => r !== roomId);
-    users = users.filter((u) => u.id !== deviceId);
-    const userz = users.filter((u) => u.room === roomId);
-    const parts = participants.filter((u) => u.room === roomId);
-    io.to(roomId).emit('update', { users: userz, participants: parts });
-    const votez = votes.filter((v) => v.room === roomId);
-    io.to(roomId).emit('new-votes', votez);
-    socket.disconnect();
+  socket.on('leave-room', ({ uid, roomId }) => {
+    mainRooms[roomId] = mainRooms[roomId] && mainRooms[roomId].filter((r) => r !== uid);
+    io.to(roomId).emit('new-user', mainRooms[roomId]);
   });
 
   socket.on('vote', (usr) => {
@@ -73,7 +88,11 @@ io.on('connection', (socket) => {
   });
 
   socket.on('disconnect', (args) => {
-    console.log('Socket disconnected', args);
+    console.log('Socket disconnected', socket.rooms.size);
+    // users = users.filter((r) => r.socket !== socket.id);
+    // io.
+    // io.to('server').emit('joined-server', users);
+
     // users = users.filter((usr) => usr.id !== socket.id);
     // io.to('server').emit('new-user', users);
   });

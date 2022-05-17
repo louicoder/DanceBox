@@ -11,20 +11,20 @@ import firestore from '@react-native-firebase/firestore';
 export default function Feedback ({ closeModal }) {
   const dispatch = useDispatch();
   const { user } = useSelector((st) => st.Account);
-  const loading = useSelector((st) => st.loading.effects.Account);
+  const loading = useSelector((st) => st.loading.effects.General);
   const [ state, setState ] = React.useState('');
 
   const onChangeTextHandler = (feedback) => setState(feedback);
 
   const submitFeedback = () => {
     Keyboard.dismiss();
-    dispatch.Account.submitFeedback({
+    dispatch.General.sendFeedback({
       payload: {
         email: user.email,
         feedback: state,
         dateCreated: dateWithoutOffset(),
         timestamp: firestore.FieldValue.serverTimestamp(),
-        name: user.name,
+        name: user.name || user.username || '',
         uid: user.uid
       },
       callback: (res) => {
@@ -39,7 +39,7 @@ export default function Feedback ({ closeModal }) {
     });
   };
   return (
-    <View style={{ paddingHorizontal: RFValue(8), flexGrow: 1 }}>
+    <View style={{ paddingHorizontal: RFValue(8), flex: 1 }}>
       <Header title="Add your feedback" onBackPress={closeModal} extStyles={{ paddingHorizontal: RFValue(0) }} />
 
       <View style={{ flexGrow: 1 }}>
@@ -75,7 +75,7 @@ export default function Feedback ({ closeModal }) {
           <Buton
             title="Submit Feedback"
             onPress={submitFeedback}
-            loading={loading.submitFeedback}
+            loading={loading.sendFeedback}
             extStyles={{ marginBottom: RFValue(20) }}
           />
         </KeyboardAwareScrollView>

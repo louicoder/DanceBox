@@ -1,17 +1,5 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  Image,
-  Pressable,
-  TextInput,
-  KeyboardAvoidingView,
-  Platform,
-  Alert,
-  Keyboard,
-  ScrollView,
-  SafeAreaView
-} from 'react-native';
+import { View, StatusBar, Keyboard, ScrollView, SafeAreaView } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import Ripple from 'react-native-material-ripple';
 import { RFValue } from 'react-native-responsive-fontsize';
@@ -27,8 +15,9 @@ import { KeyboardAwareFlatList, KeyboardAwareScrollView } from 'react-native-key
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Buton, ComingSoon, DesignIcon, EventPreview, Input, TextArea, Typo } from '../../../Components';
 import CommentBox from './CommentBox';
-import { BROWN, GRAY, HALF_BROWN, HALF_GRAY, WIDTH } from '../../../Utils/Constants';
+import { BROWN, GRAY, HALF_BROWN, HALF_GRAY, THEME_COLOR, WIDTH } from '../../../Utils/Constants';
 import { useKeyboard } from '../../../Utils/useKeyboardHeight';
+import { showAlert } from '../../../Utils/HelperFunctions';
 // import KeyboardStickyView from '../../Components/StickyView';
 
 const EventProfile = ({ navigation, route }) => {
@@ -36,33 +25,41 @@ const EventProfile = ({ navigation, route }) => {
   const { user } = useSelector((state) => state.Account);
   // const stato = useSelector((state) => state);
   const loading = useSelector((state) => state.loading.effects.Events);
+  const { activeEvent } = useSelector((state) => state.Events);
   const [ event, setEvent ] = React.useState({});
   const [ state, setState ] = React.useState({ commentShowing: false, comments: [] });
   const [ isKeyboardVisible, setKeyboardVisible ] = React.useState(false);
-  const [ hyt ] = useKeyboard();
+  // const [ hyt ] = useKeyboard();
   // const [ user, setUser ] = React.useState(false);
 
-  React.useEffect(() => {
-    // getEvent();
-  }, []);
+  React.useEffect(
+    () => {
+      // console.log('EVENT PROFILE', route.params);
+      if (route.params && route.params._id) getEvent();
+    },
+    [ route.params ]
+  );
 
   React.useEffect(() => {
+    // StatusBar.setBarStyle('dark-content');
+    StatusBar.setBackgroundColor(THEME_COLOR);
+    // StatusBar.setTranslucent(true);
     // HelperFunctions.getUser(({ result, success }) => success && setUser(result));
   }, []);
 
-  console.log('----USER---', user);
+  // console.log('----USER---', user);
 
   const getEvent = () =>
     dispatch.Events.getEvent({
       eventId: route.params._id,
       callback: ({ success, result }) => {
         if (!success)
-          return Alert.alert(
+          return showAlert(
             'Error getting event',
-            'Something went wrong while trying to fetch this event, please try again'
+            'Something went wrong while trying to fetch this event details, please try again'
           );
-        setEvent(result);
-        return getComments();
+        // setEvent(result);
+        // return getComments();
       }
     });
 
@@ -128,23 +125,45 @@ const EventProfile = ({ navigation, route }) => {
       </View> */}
       <ScrollView style={{ flex: 1, backgroundColor: 'transparent', paddingHorizontal: RFValue(0) }}>
         <EventPreview
-          onPress={() => null}
+          // onPress={() => null}
+          // borderRadius={false}
+          extStyles={{ marginBottom: 0, height: 3 / 4 * WIDTH, borderRadius: 0 }}
+          event={activeEvent}
+          {...activeEvent}
           borderRadius={false}
-          extStyles={{ marginBottom: 0, height: 3 / 4 * WIDTH }}
+          onPress={false}
         />
         <View style={{ paddingHorizontal: RFValue(8) }}>
+          <Typo
+            text={`${activeEvent &&
+              activeEvent.followers &&
+              activeEvent &&
+              activeEvent.followers.length} follower${activeEvent &&
+            activeEvent.followers &&
+            activeEvent.followers.length > 1
+              ? 's'
+              : ''}`}
+            style={{
+              backgroundColor: '#eee',
+              paddingVertical: RFValue(5),
+              alignSelf: 'flex-start',
+              marginVertical: RFValue(15),
+              borderRadius: RFValue(30),
+              paddingHorizontal: RFValue(10)
+            }}
+          />
           <Typo text="Details" size={18} style={{ fontWeight: 'bold', marginVertical: RFValue(8) }} />
 
-          <Typo text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Qui ita affectus, beatum esse numquam probabis; Licet hic rursus ea commemores, quae optimis verbis ab Epicuro de laude amicitiae dicta sunt. Quia, si mala sunt, is, qui erit in iis, beatus non erit. Illum mallem levares, quo optimum atque humanissimum virum, Cn. Duo Reges: constructio interrete. Restant Stoici, qui cum a Peripateticis et Academicis omnia transtulissent, nominibus aliis easdem res secuti sunt. Nonne igitur tibi videntur, inquit, mala? Quis Aristidem non mortuum diligit?" />
+          <Typo text={activeEvent && activeEvent.description} />
 
-          <Typo
+          {/* <Typo
             text="Follow the conversation"
             size={18}
             style={{ fontWeight: 'bold', marginTop: RFValue(15), marginBottom: RFValue(10) }}
-          />
+          /> */}
         </View>
 
-        {[ ...new Array(3).fill() ].map((r) => (
+        {/* {[ ...new Array(3).fill() ].map((r) => (
           <View
             style={{
               width: '100%',
@@ -175,7 +194,7 @@ const EventProfile = ({ navigation, route }) => {
             </View>
           </View>
         ))}
-        <Buton title="View All Comments" extStyles={{ marginHorizontal: RFValue(8), height: RFValue(40) }} />
+        <Buton title="View All Comments" extStyles={{ marginHorizontal: RFValue(8), height: RFValue(40) }} /> */}
       </ScrollView>
     </View>
   );

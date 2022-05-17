@@ -1,15 +1,17 @@
 import React from 'react';
 import { View, Text, Pressable, Image } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { DesignIcon, IconWithText } from '../../Components';
 import EventPreview from '../../Components/EventPreview';
 import OrganiserPreview from '../../Components/OrganiserPreview';
 import { CONSTANTS, HelperFunctions } from '../../Utils';
+import { showAlert } from '../../Utils/HelperFunctions';
 
 const EventsInMonth = ({ navigation }) => {
   const [ events, setEvents ] = React.useState([]);
   const dispatch = useDispatch();
+  const { randomEvents } = useSelector((st) => st.Events);
   React.useEffect(() => {
     getEventsInMonth();
   }, []);
@@ -22,16 +24,12 @@ const EventsInMonth = ({ navigation }) => {
     yr = dt[2];
     month = `${yr}-${mnth}`;
 
-    dispatch.Events.getEventsInMonth({
-      month,
-      // month: '09',
+    dispatch.Events.getRandomEvents({
+      size: 2,
       callback: ({ result, success }) => {
         // console.log('HERE marked', result);
-        let dates = {};
-        if (success) {
-          result.map((evnt) => (dates = { ...dates, [evnt.startDate.slice(0, 10)]: { selected: true } }));
-          setEvents(result);
-        }
+        // let dates = {};
+        if (!success) return showAlert('Something went wrong', result, 'danger');
       }
     });
   };
@@ -57,12 +55,13 @@ const EventsInMonth = ({ navigation }) => {
       >
         Events for you:
       </Text>
-      {[ ...new Array(2).fill() ].map((event) => (
+      {randomEvents.map((event) => (
         <EventPreview
           key={HelperFunctions.keyGenerator()}
           {...event}
           navigation={navigation}
-          imageUrl="https://ychef.files.bbci.co.uk/1376x774/p07ztf1q.jpg"
+          // imageUrl="https://ychef.files.bbci.co.uk/1376x774/p07ztf1q.jpg"
+          event={event}
         />
       ))}
     </View>

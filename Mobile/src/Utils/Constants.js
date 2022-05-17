@@ -9,23 +9,23 @@ export const DEFAULT_PROFILE =
   'https://firebasestorage.googleapis.com/v0/b/dancebox-309908.appspot.com/o/profilepic-default.jpg?alt=media&token=76da5163-cd96-492c-bd67-b0def69215c8';
 
 export const INTERESTS = [
-  'Competition',
-  'Performance',
-  'Workshop',
-  'Festival',
-  'Class',
-  'Video shoot',
-  'DJeeing',
-  'Rap',
-  'BeatBoxing',
-  'Breakdance',
-  'Traditional',
-  'Drummers',
-  'Capoela',
-  'Mceeing',
-  'Freestyle',
-  'Videography',
-  'Photography',
+  'competition',
+  'performance',
+  'workshop',
+  'festival',
+  'class',
+  'video shoot',
+  'djeeing',
+  'rap',
+  'beatBoxing',
+  'breakdance',
+  'traditional',
+  'drummers',
+  'capoela',
+  'mceeing',
+  'freestyle',
+  'videography',
+  'photography',
   'production',
   'battles'
 ];
@@ -85,6 +85,8 @@ export const QUARTER_BROWN = '#eeeeee75';
 export const HALF_BROWN = '#eeeeee50';
 export const SEMI_BROWN = '#eeeeee25';
 
+export const PURPLE = '#C282F1';
+
 export const STORAGE = _STORAGE();
 export const FIRESTORE = _FIRESTORE();
 export const MESSAGING = _MESSAGING();
@@ -100,18 +102,20 @@ export const SHADOW = {
 // export { WIDTH, HEIGHT };
 
 export const DANCE_STYLES = [
-  { title: 'Break dance', image: 'https://guide2uganda.ug/wp-content/uploads/2019/08/Dance-Break-1-750x504.jpg' },
+  { title: 'breakdance', image: 'https://guide2uganda.ug/wp-content/uploads/2019/08/Dance-Break-1-750x504.jpg' },
   { title: 'Contemporary', image: 'https://independent.co.ug/wp-content/uploads/2016/08/Kaweesa.jpg' },
   { title: 'Capoela', image: 'https://rioandlearn.com/wp-content/uploads/2013/08/Capoeira.jpg' },
   {
-    title: 'Traditional',
+    title: 'traditional',
     image:
       'https://whyy.org/wp-content/uploads/2017/07/spirit-of-uganda-photo-by-dan-ozminkowski-image-235-1-768x431.jpg'
   },
   {
-    title: 'House',
+    title: 'house',
     image:
       'https://entebbenews.net/wp-content/uploads/2020/12/GLOBALLY-RENOWED-DANCE-GROUP-GHETTO-KIDS-MEET-%E2%80%98JERUSALEMA-STAR-MASTER-KG-IN-UGANDA-1.jpg'
   },
-  { title: 'Krump', image: 'https://i.ytimg.com/vi/EbrQI0S9oAE/sddefault.jpg' }
+  { title: 'krump', image: 'https://i.ytimg.com/vi/EbrQI0S9oAE/sddefault.jpg' }
 ];
+
+export const ALL_INTERESTS = [ ...new Set([ ...DANCE_STYLES.map((r) => r.title), ...INTERESTS ]) ];

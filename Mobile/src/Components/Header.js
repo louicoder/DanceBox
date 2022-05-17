@@ -3,6 +3,7 @@ import { View, Text, Platform } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { DesignIcon, Typo } from '.';
+import { WHITE } from '../Utils/Constants';
 import Styles from './Styles';
 
 const Header = ({
@@ -22,6 +23,7 @@ const Header = ({
         width: '100%',
         height: useSafeAreaInsets().top + RFValue(60),
         paddingHorizontal: RFValue(10),
+        backgroundColor: WHITE,
         ...extStyles
       }}
     >
@@ -56,7 +58,7 @@ const Header = ({
           {LeftComponent ? (
             <LeftComponent />
           ) : (
-            <Typo text={title} size={20} style={{ fontWeight: 'bold', ...titleStyles }} />
+            <Typo text={title} size={18} style={{ fontWeight: 'bold', ...titleStyles }} />
           )}
         </View>
         <View style={{}}>{RightComponent ? <RightComponent /> : null}</View>

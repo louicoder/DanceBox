@@ -15,7 +15,7 @@ const Instructions = ({ createPost }) => {
         color={GRAY}
       />
       <Typo size={16} text={`Please follow the instructions in order to keep this space safe for everyone\n `} />
-      <Typo size={16} text="1. Do not use abuse and vulgar laguage in your post" />
+      <Typo size={16} text="1. Do not use abuse and vulgar language in your post" />
       <Typo
         size={16}
         text={`2. Please keep your post straight to the point to avoid confusion and misunderstanding\n`}

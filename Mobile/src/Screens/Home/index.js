@@ -13,7 +13,7 @@ import EventsInMonth from './EventsInMonth';
 import StickyView from '../../Components/StickyView';
 import CommentBox from '../../Components/CommentBox';
 import Image from 'react-native-fast-image';
-import { BROWN, INTERESTS, THEME_COLOR, WHITE } from '../../Utils/Constants';
+import { BLACK, BROWN, INTERESTS, SHADOW, THEME_COLOR, WHITE } from '../../Utils/Constants';
 
 const { width } = Dimensions.get('window');
 
@@ -31,7 +31,7 @@ const Home = ({ navigation, ...props }) => {
     // getEventsInMonth();
   }, []);
 
-  console.log('USER', user);
+  // console.log('USER', user);
 
   // const getEventsInMonth = (det) => {
   //   let dt, mnth, yr, month;
@@ -62,50 +62,7 @@ const Home = ({ navigation, ...props }) => {
   return (
     <View style={{ flex: 1 }}>
       {/* <SafeAreaView style={{ flex: 1 }}> */}
-      <View
-        style={{
-          // marginTop: useSafeAreaInsets().top + RFValue(10),
-          // marginBottom: RFValue(10),
-          // borderWidth: 1,
-          backgroundColor: THEME_COLOR,
-          paddingHorizontal: RFValue(10),
-          flexDirection: 'row',
-          alignItems: 'center',
-          height: RFValue(60)
-        }}
-      >
-        <View
-          style={{
-            height: RFValue(35),
-            width: RFValue(35),
-            borderRadius: 50,
-            backgroundColor: BROWN,
-            alignItems: 'center',
-            justifyContent: 'center'
-          }}
-        >
-          {user && user.photoURL ? (
-            <Image
-              source={{ uri: user.photoURL }}
-              style={{ width: '100%', height: '100%', borderRadius: RFValue(100) }}
-            />
-          ) : (
-            <DesignIcon name="user" pkg="ad" />
-          )}
-        </View>
-        <View style={{ flexGrow: 1, marginLeft: RFValue(10) }}>
-          <Typo text="Welcome back," size={14} color={WHITE} style={{ fontWeight: 'bold' }} />
-          <Typo
-            text={user.userName || user.email}
-            size={14}
-            style={{ fontWeight: 'normal', textTransform: 'none', lineHeight: RFValue(15) }}
-            color={WHITE}
-          />
-        </View>
-        {/* <DesignIcon withBorder={false} name="bell-outline" pkg="mc" widthHeight={35} /> */}
-        {/* <DesignIcon withBorder={false} name="setting" pkg="ad" widthHeight={35} color={WHITE} /> */}
-        {/* <DesignIcon name="user" pg="ad" /> */}
-      </View>
+
       {/* </SafeAreaView> */}
 
       <ScrollView style={{ flexGrow: 1, width: '100%', backgroundColor: '#fff' }} showsVerticalScrollIndicator={false}>

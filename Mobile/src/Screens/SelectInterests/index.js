@@ -62,8 +62,10 @@ const Interests = ({ navigation }) => {
               <Typo
                 size={12}
                 text={item}
+                pressable
                 // pressable
-                onPress={() => null}
+                onPress={() => setInterstsHandler(item)}
+                // onPress={() => null}
                 style={{
                   // fontSize: RFValue(14),
                   textTransform: 'capitalize',

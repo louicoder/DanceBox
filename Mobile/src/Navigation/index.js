@@ -47,10 +47,24 @@ import Splash from '../Screens/Splash';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 // import AllEvents from '../Screens/Account/AllEvents';
 // import AllBlogs from '../Screens/Account/AllBlogs';
-import { BLACK, BROWN, GRAY, HALF_WHITE, THEME_COLOR, THEME_COLOR2, THEME_COLOR3, WHITE } from '../Utils/Constants';
+import {
+  BLACK,
+  BROWN,
+  GRAY,
+  HALF_WHITE,
+  SHADOW,
+  THEME_COLOR,
+  THEME_COLOR2,
+  THEME_COLOR3,
+  WHITE
+} from '../Utils/Constants';
 import { DesignIcon, Typo } from '../Components';
 import { CONSTANTS } from '../Utils';
 import { showAlert } from '../Utils/HelperFunctions';
+import NewPost from '../Screens/Blogs/NewPost';
+import CommunityChat from '../Screens/Search/CommunityChat';
+import HomeHeader from '../Screens/Home/HomeHeader';
+import VotingRoom from '../Screens/Voting/VotingRoom';
 
 const Stacks = createStackNavigator();
 const LoginStack = createStackNavigator();
@@ -62,7 +76,7 @@ const AccountStack = createStackNavigator();
 const CalendarStack = createStackNavigator();
 const DefaultStack = createDrawerNavigator();
 
-const BottomStack = createMaterialBottomTabNavigator();
+const BottomStack = createBottomTabNavigator();
 
 const LoginScreen = () => (
   <LoginStack.Navigator>
@@ -91,7 +105,7 @@ const HomeScreens = ({ socket }) => (
       name="Home"
       component={Home}
       socket={socket}
-      options={{ header: () => null, cardStyle: { backgroundColor: '#fff' } }}
+      options={{ header: () => <HomeHeader />, cardStyle: { backgroundColor: '#fff' } }}
     />
     <HomeStack.Screen
       name="BlogProfile"
@@ -106,7 +120,18 @@ const HomeScreens = ({ socket }) => (
     <HomeStack.Screen
       name="EventProfile"
       component={EventProfile}
-      options={{ header: (props) => <Header {...props} title="Event details" /> }}
+      options={{
+        header: (props) => (
+          <Header
+            {...props}
+            title="Event details"
+            titleStyles={{ color: WHITE }}
+            extStyles={{ backgroundColor: THEME_COLOR, zIndex: 200 }}
+            iconProps={{ color: WHITE }}
+          />
+        ),
+        cardStyle: { zIndex: 100 }
+      }}
     />
     <HomeStack.Screen
       name="NewEventComment"
@@ -144,10 +169,33 @@ const HomeScreens = ({ socket }) => (
             title="Event Voting"
             iconName="pencil"
             {...props}
-            showRightIcon
-            rightIconName="plus"
-            rightIconPkg="ad"
-            rightIconOnPress={() => props.route.params.openModal()}
+            // showRightIcon
+            // rightIconName="plus"
+            // rightIconPkg="ad"
+            extStyles={{ backgroundColor: THEME_COLOR }}
+            iconProps={{ color: WHITE }}
+            titleStyles={{ color: WHITE }}
+            // rightIconOnPress={() => props.route.params.openModal()}
+          />
+        )
+      })}
+    />
+    <HomeStack.Screen
+      name="VotingRoom"
+      component={VotingRoom}
+      options={(props) => ({
+        header: () => (
+          <Header
+            title="Voting Room"
+            // iconName="pencil"
+            {...props}
+            // showRightIcon
+            // rightIconName="plus"
+            // rightIconPkg="ad"
+            extStyles={{ backgroundColor: THEME_COLOR }}
+            iconProps={{ color: WHITE }}
+            titleStyles={{ color: WHITE }}
+            // rightIconOnPress={() => props.route.params.openModal()}
           />
         )
       })}
@@ -166,8 +214,8 @@ const BlogScreens = () => (
             title="Community Discussions"
             backEnabled={false}
             {...props}
-            titleStyles={{ color: WHITE }}
-            extStyles={{ backgroundColor: THEME_COLOR }}
+            titleStyles={{ color: BLACK }}
+            extStyles={{ backgroundColor: WHITE }}
             // rightComp={() => <DesignIcon name="plus" pkg="ad" color="green" />}
           />
         ),
@@ -176,8 +224,19 @@ const BlogScreens = () => (
     />
     <BlogStack.Screen
       name="NewBlog"
-      component={NewBlog}
-      options={{ header: (props) => <Header title="New Blog Post" iconName="pencil" {...props} /> }}
+      component={NewPost}
+      options={{
+        header: (props) => (
+          <Header
+            title="Create New Post"
+            extStyles={{ backgroundColor: WHITE, ...SHADOW, elevation: RFValue(8) }}
+            titleStyles={{ color: BLACK }}
+            iconProps={{ color: BLACK }}
+            iconName="pencil"
+            {...props}
+          />
+        )
+      }}
     />
     <BlogStack.Screen
       name="NewBlogComment"
@@ -195,6 +254,13 @@ const BlogScreens = () => (
 const SearchScreens = () => (
   <SearchStack.Navigator screenOptions={{ header: (props) => null }} headerMode="screen">
     <SearchStack.Screen name="Search" component={Search} />
+    <SearchStack.Screen
+      name="CommunityChat"
+      component={CommunityChat}
+      options={{
+        header: (props) => <Header {...props} title="Community Chat" extStyles={{ ...SHADOW, elevation: RFValue(8) }} />
+      }}
+    />
 
     <SearchStack.Screen
       name="NewBlogComment"
@@ -232,8 +298,8 @@ const EventScreens = () => (
             title="Community Events"
             backEnabled={false}
             {...props}
-            titleStyles={{ color: WHITE }}
-            extStyles={{ backgroundColor: THEME_COLOR }}
+            titleStyles={{ color: BLACK }}
+            extStyles={{ backgroundColor: WHITE }}
             // rightComp={() => <DesignIcon name="plus" pkg="ad" />}
           />
         ),
@@ -243,12 +309,26 @@ const EventScreens = () => (
     <EventStack.Screen
       name="NewEvent"
       component={NewEvent}
-      options={{ header: (props) => <Header title="Create New Event" {...props} /> }}
+      options={{
+        header: (props) => (
+          <Header title="Create New Event" {...props} extStyles={{ ...SHADOW, elevation: RFValue(8) }} />
+        )
+      }}
     />
     <EventStack.Screen
       name="EventProfile"
       component={EventProfile}
-      options={{ header: (props) => <Header {...props} title="Event details" /> }}
+      options={{
+        header: (props) => (
+          <Header
+            {...props}
+            title="Event details"
+            titleStyles={{ color: BLACK }}
+            extStyles={{ backgroundColor: WHITE }}
+            iconProps={{ color: BLACK }}
+          />
+        )
+      }}
     />
     <EventStack.Screen
       name="NewEventComment"
@@ -268,6 +348,7 @@ const EventScreens = () => (
             rightIconName="plus"
             rightIconPkg="ad"
             rightIconOnPress={() => props.route.params.openModal()}
+            extStyles={{ ...SHADOW, elevation: RFValue(8) }}
           />
         )
       })}
@@ -329,15 +410,26 @@ const AccountScreens = () => (
 const BottomStackScreens = ({ socket }) => (
   // <SafeAreaView style={{ flex: 1 }}>
   <BottomStack.Navigator
-    shifting={false}
-    screenOptions={{}}
+    // shifting={false}
+    screenOptions={{
+      // alignSelf: 'center'
+    }}
     // activeColor="#ffffff"
     // inactiveColor="#ffffff70"
     activeColor={WHITE}
     inactiveColor={HALF_WHITE}
     initialRouteName="Events"
-    barStyle={{ backgroundColor: THEME_COLOR }}
-    labeled={false}
+    // barStyle={{ backgroundColor: WHITE }}
+    // labeled={false}
+    // lazy={false}
+    tabBarOptions={{
+      showLabel: false,
+      style: { backgroundColor: BLACK, borderWidth: 0 },
+      inactiveTintColor: HALF_WHITE,
+      activeTintColor: WHITE,
+      keyboardHidesTabBar: true
+    }}
+    // sceneAnimationEnabled={false}
   >
     <BottomStack.Screen
       name="Home"
@@ -427,9 +519,7 @@ const AllStacks = (props) => (
       name="Signup"
       component={Signup}
       options={{
-        header: (props) => (
-          <Header title="" {...props} backEnabled={false} extStyles={{ backgroundColor: THEME_COLOR }} />
-        )
+        header: (props) => <Header title="" {...props} backEnabled={false} extStyles={{ backgroundColor: WHITE }} />
       }}
       {...props}
     />

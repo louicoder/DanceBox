@@ -17,13 +17,13 @@ const createPost = async (req, res) => {
       result: 'You should provide the poll options and they should be atleast 2 options'
     });
 
-  if (req.body.type === 'event' && (!req.body.eventTime || !req.body.eventDate || !req.body.eventInterval))
+  if (req.body.type === 'event' && (!req.body.eventDate || !req.body.eventInterval))
     return res.json({
       success: false,
-      result: 'You should event date, event time and event interval in order to continue'
+      result: 'You should event date and event interval in order to continue'
     });
 
-  const Post = new PostsModel({ ...req.body, dateCreated: new Date().toISOString(), followers: [] });
+  const Post = new PostsModel({ ...req.body, dateCreated: new Date().toISOString(), followers: [], likes: [] });
   try {
     await Post.save().then((result) => res.json({ success: true, result }));
   } catch (error) {
@@ -44,12 +44,14 @@ const getPost = async (req, res) => {
 };
 
 const getAllPosts = async (req, res) => {
-  const { page = 1, limit = 2 } = req.query;
+  const { page = 1, limit = 2, type = 'post', category = '' } = req.query;
   try {
-    const total = await PostsModel.find().countDocuments();
+    const total = await PostsModel.find({ type }).countDocuments();
 
-    await PostsModel.find().limit(limit * 1).skip((page - 1) * limit).then(async (result) => {
-      const usersFilled = await userFiller(result, 'authorId');
+    await PostsModel.find({ type }).limit(limit * 1).skip((page - 1) * limit).then(async (result) => {
+      const unserializedResult = [ ...result.map((r) => r._doc) ];
+      const usersFilled = await userFiller(unserializedResult, 'authorId');
+      console.log('FILLED USERS', usersFilled);
       return paginateHelper(page, limit, total, usersFilled, res);
     });
   } catch (error) {
@@ -57,11 +59,33 @@ const getAllPosts = async (req, res) => {
   }
 };
 
-const getRandomPosts = async (req, res) => {
-  const { limit: size = 10 } = req.query;
+const getEventPosts = async (req, res) => {
+  const { page = 1, limit = 2, eventInterval = 'once' } = req.query;
   try {
-    await PostsModel.aggregate([ { $sample: { size } } ]).then(async (resp) => {
+    const total = await PostsModel.find({ eventInterval, type: 'event' }).countDocuments();
+
+    await PostsModel.find({ eventInterval, type: 'event' })
+      .limit(limit * 1)
+      .skip((page - 1) * limit)
+      .then(async (result) => {
+        const unserializedResult = [ ...result.map((r) => r._doc) ];
+        const usersFilled = await userFiller(unserializedResult, 'authorId');
+        console.log('FILLED USERS', usersFilled);
+        return paginateHelper(page, limit, total, usersFilled, res);
+      });
+  } catch (error) {
+    return res.json({ success: false, result: error.message });
+  }
+};
+
+const getRandomPosts = async (req, res) => {
+  const { limit = 10, type = 'post' } = req.query;
+  console.log('LIMIT,', limit, typeof limit);
+  try {
+    await PostsModel.aggregate([ { $sample: { size: parseInt(limit) } }, { $match: { type } } ]).then(async (resp) => {
       // const user = FIREBASE.firestore().collection('users').doc()
+      if (!resp.length) return res.json({ success: true, result: [] });
+      const result = await userFiller(resp, 'authorId');
       res.json({ success: true, result });
     });
     // return res.json({ success: false, result: 'It worked on' });
@@ -123,6 +147,23 @@ const likePost = async (req, res) => {
   }
 };
 
+const followPost = async (req, res) => {
+  if (!req.body.userId) return res.json({ success: false, result: 'User id is required, please try again' });
+
+  const { userId } = req.body;
+  const { postId: _id } = req.params;
+
+  try {
+    const post = await PostsModel.updateOne({ _id }, { $push: { followers: userId } });
+    // console.log('RESul', result);
+    if (post.nModified <= 0) return res.json({ success: false, result: error.message });
+    const result = await PostsModel.findOne({ _id });
+    return res.json({ success: true, result });
+  } catch (error) {
+    return res.json({ success: false, result: error.message });
+  }
+};
+
 const deletePost = async (req, res) => {
   if (!req.params.postId) return res.json({ success: false, result: 'Post id is required, please try again' });
   const { postId: _id } = req.params;
@@ -137,4 +178,40 @@ const deletePost = async (req, res) => {
   }
 };
 
-module.exports = { createPost, getPost, updatePost, likePost, getUserPosts, getAllPosts, getRandomPosts, deletePost };
+const searchPosts = async (req, res) => {
+  if (!req.query.query) return res.json({ success: false, result: 'Query string cannot be empty please try again' });
+
+  try {
+    const { page = 1, limit = 1, query = '' } = req.query;
+    // const titleString = { title: { $regex: '.*' + req.query.title + '.*', $options: 'i' } };
+    // const nameString = { 'owner.name': { $regex: '.*' + req.query.title + '.*', $options: 'i' } };
+
+    const total = await PostsModel.find({
+      description: { $regex: '.*' + query + '.*', $options: 'i' }
+    }).countDocuments();
+    // const totalPages = Math.ceil(count / limit);
+    await PostsModel.find({ description: { $regex: '.*' + query + '.*', $options: 'i' } })
+      .limit(limit * 1)
+      .skip((page - 1) * limit)
+      .then(async (result) => {
+        const usersFilled = await userFiller(result, 'authorId');
+        return paginateHelper(page, limit, total, usersFilled, res);
+      });
+  } catch (error) {
+    return res.json({ success: false, result: error.message });
+  }
+};
+
+module.exports = {
+  createPost,
+  getPost,
+  updatePost,
+  likePost,
+  getUserPosts,
+  getAllPosts,
+  getRandomPosts,
+  deletePost,
+  searchPosts,
+  getEventPosts,
+  followPost
+};

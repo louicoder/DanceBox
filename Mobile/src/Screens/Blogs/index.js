@@ -25,16 +25,22 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useKeyboard } from '../../Utils/useKeyboardHeight';
 import NewPost from './NewPost';
 import Instructions from './Instructions';
+import { showAlert } from '../../Utils/HelperFunctions';
 
 const Blogs = ({ navigation }) => {
   const dispatch = useDispatch();
   const [ state, setState ] = React.useState({ isVisible: false });
-  const { blogs } = useSelector((state) => state.Blogs);
+  const [ momentum, setMomentum ] = React.useState(false);
+  const { blogs, postsPagination: { nextPage, limit, totalDocuments, last } } = useSelector((state) => state.Blogs);
   const loading = useSelector((state) => state.loading.effects.Blogs);
 
-  const getBlogs = () => {
-    // dispatch.Blogs.getBlogs((response) => {});
-  };
+  React.useEffect(() => {
+    const nav = navigation.addListener('focus', () => {
+      getPosts();
+    });
+
+    return () => navigation.removeListener(nav);
+  }, []);
 
   const selectBubble = React.useCallback((selectedBubble) => setState({ ...state, selectedBubble }), [
     state.selectedBubble
@@ -45,7 +51,7 @@ const Blogs = ({ navigation }) => {
   const closeModal = React.useCallback(() => setState({ ...state, isVisible: false }), [ state.isVisible ]);
 
   const renderItem = ({ item, index }) => (
-    <SingleBlog {...item} navigation={navigation} last={index + 1 === blogs.length} index={index} first={index === 0} />
+    <SingleBlog {...item} last={index + 1 === blogs.length} index={index} first={index === 0} />
   );
 
   const RenderModalContent = ({ comp, createPost, closeModal }) => {
@@ -57,14 +63,52 @@ const Blogs = ({ navigation }) => {
     }
   };
 
+  const keyExtractor = () => HelperFunctions.keyGenerator();
+
+  const onMomentumScrollBegin = React.useCallback(() => setMomentum(false), [ momentum ]);
+
+  const endReached = React.useCallback(
+    () => {
+      // console.log('StateXXXXXXXX', state);
+      if (!momentum) setMomentum(true);
+      getPosts();
+    },
+    [ setMomentum, getPosts ]
+  );
+
+  const getPosts = () => {
+    dispatch.Blogs.getBlogs((res) => {
+      // console.log('PSOSTS-------', res);
+      if (!res.success) return showAlert('Something went wrong', `ERROR:: ${res.result}`, 'danger');
+      // setState({ ...state, ...res });
+    });
+  };
+
+  const onRefresh = () => {
+    dispatch.Blogs.setField('postsPagination', { limit, nextPage: 1, last: false });
+    dispatch.Blogs.setField('blogs', []);
+
+    dispatch.Blogs.getBlogs((res) => {
+      // console.log('PSOSTS-------', res);
+      if (!res.success) return showAlert('Something went wrong', `ERROR:: ${res.result}`, 'danger');
+      // setState({ ...state, ...res });
+    });
+  };
+
+  const switchToCreatePost = () => {
+    setState({ ...state, isVisible: false });
+    return navigation.navigate('NewBlog');
+  };
+
   return (
     <View style={{ flex: 1 }}>
       <BottomSheet
         isVisible={state.isVisible}
         closeModal={closeModal}
         extStyles={{
-          height: 'auto',
-          ...(![ 'instructions' ].includes(state.comp) && { top: 0, left: 0, bottom: 0, right: 0 })
+          height: 'auto'
+          // top: 0
+          // ...(![ 'instructions' ].includes(state.comp) && { top: 0, left: 0, bottom: 0, right: 0 })
         }}
       >
         {/* <Header
@@ -74,12 +118,8 @@ const Blogs = ({ navigation }) => {
           iconProps={{ color: WHITE }}
           onBackPress={closeModal}
         /> */}
-        <View style={{ height: ![ 'instructions' ].includes(state.comp) ? '100%' : 'auto' }}>
-          <RenderModalContent
-            {...state}
-            createPost={() => setState({ ...state, comp: 'newpost' })}
-            closeModal={closeModal}
-          />
+        <View style={{ height: '100%' }}>
+          <RenderModalContent {...state} createPost={switchToCreatePost} closeModal={closeModal} />
         </View>
       </BottomSheet>
       <View
@@ -90,7 +130,7 @@ const Blogs = ({ navigation }) => {
           justifyContent: 'space-between',
           paddingHorizontal: RFValue(10),
           backgroundColor: BROWN,
-          marginVertical: RFValue(15),
+          marginBottom: RFValue(15),
           marginHorizontal: RFValue(8),
           // borderWidth: 1,
           borderColor: GRAY,
@@ -134,20 +174,31 @@ const Blogs = ({ navigation }) => {
           onPress={() => setState({ ...state, isVisible: true, comp: 'instructions' })}
         />
       </Pressable>
-      <ScrollBubbles
+      {/* <ScrollBubbles
         selected={state.selectedBubble}
         onPress={selectBubble}
         options={INTERESTS}
         extStyles={{ marginTop: 0 }}
-      />
+      /> */}
 
       <View style={{ flexGrow: 1, backgroundColor: WHITE }}>
         <FlatList
+          keyExtractor={keyExtractor}
+          // onRefresh={getPosts}
+          onRefresh={onRefresh}
+          refreshing={loading.getBlogs}
+          // initialNumToRender={8}
+          // ListHeaderComponent={ListHeaderComponent}
+          // ListEmptyComponent={ListEmptyComponent}
+          // ListFooterComponent={ListFooterComponent}
           showsVerticalScrollIndicator={false}
-          style={{ flex: 1, backgroundColor: BROWN }}
-          data={[ ...new Array(15).fill() ]}
-          keyExtractor={() => HelperFunctions.keyGenerator()}
+          style={{ backgroundColor: '#eeeeee70', flex: 1 }}
+          data={blogs}
           renderItem={renderItem}
+          onEndReached={endReached}
+          onEndReachedThreshold={0.01}
+          onMomentumScrollBegin={onMomentumScrollBegin}
+          // scrollEnabled={!loading.getPosts}
         />
       </View>
     </View>
