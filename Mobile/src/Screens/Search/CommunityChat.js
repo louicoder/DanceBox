@@ -37,8 +37,8 @@ const CommunityChat = () => {
   // console.log('KEYBOARD  HEIGHT', keyboardHeight);
 
   // const socketURL = 'wss://dancebox-309908.uc.r.appspot.com';
-  // const socketURL = 'https://dance-box-2022.el.r.appspot.com';
-  const socketURL = `http://192.168.1.100:8080`;
+  const socketURL = 'https://dance-box-2022.el.r.appspot.com';
+  // const socketURL = `http://192.168.1.100:8080`;
   React.useEffect(() => {
     socket = SocketIOClient(socketURL, { jsonp: false });
     socket.emit('join-server', {

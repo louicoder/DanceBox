@@ -44,7 +44,20 @@ const HomeHeader = () => {
             style={{ width: '100%', height: '100%', borderRadius: RFValue(100) }}
           />
         ) : (
-          <DesignIcon name="user" pkg="ad" />
+          <View
+            style={{
+              height: RFValue(35),
+              width: RFValue(35),
+              // borderWidth: 1,
+              borderRadius: 50,
+              // borderColor: WHITE,
+              backgroundColor: WHITE,
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+          >
+            <DesignIcon name="user" pkg="ad" color={BLACK} />
+          </View>
         )}
       </View>
       <View style={{ flexGrow: 1, marginLeft: RFValue(10) }}>

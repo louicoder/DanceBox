@@ -20,8 +20,8 @@ const VotingRoom = ({ route, navigation }) => {
   const [ users, setUsers ] = React.useState([]);
   const { user } = useSelector((st) => st.Account);
 
-  // const socketURL = 'wss://dancebox-309908.uc.r.appspot.com';
-  const socketURL = `http://192.168.1.100:8080`;
+  const socketURL = 'wss://dance-box-2022.el.r.appspot.com';
+  // const socketURL = `http://192.168.1.100:8080`;
   React.useEffect(
     () => {
       // if (route.params && route.params.room) setVotingEvent(route.params.room);
@@ -45,18 +45,15 @@ const VotingRoom = ({ route, navigation }) => {
     [ setUsers, route.params ]
   );
 
-  React.useEffect(
-    () => {
-      // if (route.params && route.params.room)
-      const sub = FIRESTORE.collection('voting').doc(route.params.room.id).onSnapshot((doc) => {
-        setVotingEvent({ ...votingEvent, ...doc.data(), id: doc.id });
-        setVotes([ ...(doc.data().votes || []) ]);
-      });
+  React.useEffect(() => {
+    // if (route.params && route.params.room)
+    const sub = FIRESTORE.collection('voting').doc(route.params.room.id).onSnapshot((doc) => {
+      setVotingEvent({ ...votingEvent, ...doc.data(), id: doc.id });
+      setVotes([ ...(doc.data().votes || []) ]);
+    });
 
-      return () => sub();
-    },
-    [ votingEvent ]
-  );
+    return () => sub();
+  }, []);
 
   // submit vote for saving::
   const voteHandler = (option) => setVotingEvent({ ...votingEvent, vote: option.id });

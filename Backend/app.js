@@ -39,7 +39,7 @@ io.on('connection', (socket) => {
 
   socket.on('join-room', ({ roomId, uid }) => {
     socket.join(roomId);
-    if (mainRooms[roomId]) mainRooms[roomId] = [ ...mainRooms[roomId], uid ];
+    if (mainRooms[roomId]) mainRooms[roomId] = [ ...new Set([ ...mainRooms[roomId], uid ]) ];
     else mainRooms[roomId] = [ uid ];
     io.to(roomId).emit('new-user', mainRooms[roomId]);
   });
@@ -75,6 +75,7 @@ io.on('connection', (socket) => {
   });
 
   socket.on('leave-room', ({ uid, roomId }) => {
+    socket.leave(roomId);
     mainRooms[roomId] = mainRooms[roomId] && mainRooms[roomId].filter((r) => r !== uid);
     io.to(roomId).emit('new-user', mainRooms[roomId]);
   });

@@ -60,7 +60,7 @@ export default {
     async getRandomEvents ({ size, callback }, state) {
       try {
         await AxiosClient.get(`posts/random?size=${size}&type=event`).then(({ data }) => {
-          console.log('Random event', data);
+          // console.log('Random event', data);
           if (data.success) {
             dispatch.Events.setRandomEvents(data.result);
           }
