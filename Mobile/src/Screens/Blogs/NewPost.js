@@ -1,7 +1,7 @@
-import { View, Text, Image, Platform, Pressable, Alert } from 'react-native';
-import React from 'react';
+import { View, Text, Image, Platform, Pressable, Alert, Dimensions } from 'react-native';
+import React, { useCallback } from 'react';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { Buton, DesignIcon, Header, Input, TextArea, Typo } from '../../Components';
+import { BottomSheet, Buton, DesignIcon, Header, Input, TextArea, Typo } from '../../Components';
 import {
   ALL_INTERESTS,
   BLACK,
@@ -17,17 +17,29 @@ import {
 } from '../../Utils/Constants';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { PERMISSIONS, check } from 'react-native-permissions';
-import { CheckPermissions, ImagePicker, showAlert, uploadImageToFirebase } from '../../Utils/HelperFunctions';
+import {
+  CheckPermissions,
+  compressImage,
+  ImagePicker,
+  showAlert,
+  uploadImageToFirebase
+} from '../../Utils/HelperFunctions';
 import { useDispatch, useSelector } from 'react-redux';
 import { HelperFunctions } from '../../Utils';
+import FastImage from 'react-native-fast-image';
 
-const NewPost = ({ imageUrl = '', closeModal }) => {
+const { width, height } = Dimensions.get('window');
+
+const NewPost = ({ imageUrl = '' }) => {
   const [ imageLoading, setImageLoading ] = React.useState(false);
   const [ state, setState ] = React.useState({
     image: { uri: '', fileName: '', fileSize: 0 },
     categories: [],
     description: ''
   });
+  const [ isVisible, setIsvisible ] = React.useState(false);
+  const [ image, setImage ] = React.useState({ height: null, width: null });
+
   const { user } = useSelector((st) => st.Account);
   const loading = useSelector((st) => st.loading.effects.Blogs);
   const dispatch = useDispatch();
@@ -48,18 +60,21 @@ const NewPost = ({ imageUrl = '', closeModal }) => {
     );
 
   const createPost = () => {
+    // compressImageForUpload();
     const { description, image, categories } = state;
-    if (!description)
-      return Alert.alert('Message is missing', 'You need to add details to your post in order to continue, try again');
-
+    if (!description && !image.uri)
+      return Alert.alert(
+        'Post is empty',
+        'You need to add an image or words to your post in order to continue, try again'
+      );
     const payload = { description, categories, authorId: user.uid, type: 'post' };
-
     dispatch.Blogs.createBlog({
       payload,
       callback: (res) => {
         console.log('HERE blog', res);
         if (!res.success) return showAlert('Failed to create post', res.result);
-        if (state.image && state.image.fileName) return uploadImage(res.result._id);
+        // if (state.image && state.image.fileName) return uploadImage(res.result._id);
+        if (state.image && state.image.fileName) return compressImageForUpload(res.result._id);
         showAlert(
           'Successfully created post',
           'Your post has been successfully created and will be seen by others on the platform'
@@ -69,14 +84,26 @@ const NewPost = ({ imageUrl = '', closeModal }) => {
     });
   };
 
-  const uploadImage = (blogId) => {
-    const { image } = state;
-    if (!image.base64)
+  const compressImageForUpload = (blogId) =>
+    compressImage(
+      state.image,
+      (prog) => {
+        console.log('Progress', prog);
+      },
+      (url) => {
+        // console.log('ULR from COMPRESS', url);
+        if (url.base64) return uploadImage(blogId, url);
+      }
+    );
+
+  const uploadImage = (blogId, imageObject) => {
+    const { base64, fileName } = imageObject;
+    if (!base64)
       return showAlert('Invalid Image format', 'This image format is not supported or image is missing, try again');
     setImageLoading(true);
     uploadImageToFirebase(
-      `/blogs/${blogId}/${image.fileName}`,
-      image.base64,
+      `/blogs/${blogId}/${fileName}`,
+      base64,
       () => {},
       () => {
         setImageLoading(false);
@@ -112,95 +139,31 @@ const NewPost = ({ imageUrl = '', closeModal }) => {
     });
   };
 
-  // console.log('RE-rendering=----');
+  // console.log('RE-NDERxxxxx', width, state.image.width, state.image.height, width / state.image.width);
+
+  const getImageStyles = (imgWidth, imageHeight) => {
+    const ratio = WIDTH / imgWidth;
+    const height = imageHeight * ratio;
+    setImage({ ...image, width: WIDTH, height });
+    // return { width, height: imageHeight * ratio };
+  };
+
+  const openModal = () => setIsvisible(true);
+
+  const closeModal = () => setIsvisible(false);
 
   const onDescriptionChanged = (description) => setState({ ...state, description });
 
   return (
-    <View style={{ flex: 1, height: HEIGHT }}>
-      {/* <Header
-        title="Create Post"
-        titleStyles={{ color: WHITE }}
-        onBackPress={closeModal}
-        iconProps={{ color: WHITE }}
-        extStyles={{ backgroundColor: THEME_COLOR }}
-      /> */}
-      <KeyboardAwareScrollView
-        style={{ flexGrow: 1, paddingHorizontal: RFValue(8) }}
-        keyboardShouldPersistTaps="always"
-      >
-        <Typo
-          text="Add an image (Optional) [ Maximum size = 5Mbs ]"
-          size={12}
-          style={{ marginBottom: RFValue(5), marginTop: RFValue(15) }}
-        />
-        <Pressable
-          style={{
-            width: 0.35 * WIDTH,
-            height: 0.35 * WIDTH,
-            position: 'relative',
-            padding: RFValue(10),
-            // borderWidth: 1,
-            backgroundColor: BROWN,
-            marginBottom: RFValue(10)
-            // alignItems: 'center',
-            // justifyContent: 'center'
-          }}
-          onPress={pickImage}
-        >
-          {state.image && state.image.uri ? (
-            <DesignIcon
-              onPress={() => setState({ ...state, image: {} })}
-              name="close"
-              pkg="ad"
-              color={WHITE}
-              style={{ position: 'absolute', right: RFValue(10), top: RFValue(10), zIndex: 50 }}
-            />
-          ) : null}
-          {state.image && state.image.uri ? (
-            <Image source={{ uri: state.image.uri }} style={{ width: '100%', height: '100%' }} resizeMode="cover" />
-          ) : (
-            <View style={{ width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center' }}>
-              <DesignIcon name="images" pkg="et" size={60} color={GRAY} />
-              <Typo
-                text="Click to Select photo"
-                size={12}
-                color={GRAY}
-                pressable
-                onPress={pickImage}
-                style={{ textAlign: 'center', marginTop: RFValue(10) }}
-              />
-            </View>
-          )}
-          {state.image && state.image.uri ? (
-            <View
-              style={{
-                position: 'absolute',
-                width: '100%',
-                height: '100%',
-                backgroundColor: state.image ? 'rgba(0,0,0,.7)' : 'transparent',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}
-            >
-              <Typo text={'Change photo'} size={12} color={WHITE} />
-            </View>
-          ) : null}
-        </Pressable>
-        {/* <Input extInputStyles={{ backgroundColor: BROWN }} title="" /> */}
-
-        <TextArea
-          title="Enter your post detials below"
-          extInputStyles={{ backgroundColor: BROWN }}
-          placeholder="Please enter your post details right here..."
-          minSize={0.25 * HEIGHT}
-          value={state.description}
-          onChangeText={onDescriptionChanged}
-        />
-
-        <View>
-          <Typo text="Select relevant categories for your post" size={12} style={{ marginBottom: RFValue(10) }} />
-          <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginBottom: RFValue(10) }}>
+    <View style={{ flex: 1 }}>
+      <BottomSheet isVisible={isVisible} closeModal={closeModal}>
+        <View style={{ padding: RFValue(10), alignItems: 'center' }}>
+          <Typo
+            text="Select relevant categories for your post"
+            size={16}
+            style={{ marginVertical: RFValue(15), fontWeight: 'bold', marginBottom: RFValue(20) }}
+          />
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginBottom: RFValue(10), justifyContent: 'center' }}>
             {[ ...ALL_INTERESTS ].map((r) => {
               const exists = state.categories && state.categories.includes(r);
               return (
@@ -209,11 +172,11 @@ const NewPost = ({ imageUrl = '', closeModal }) => {
                   key={HelperFunctions.keyGenerator()}
                   style={{
                     backgroundColor: exists ? BLACK : BROWN,
-                    paddingVertical: RFValue(5),
+                    paddingVertical: RFValue(8),
                     paddingHorizontal: RFValue(10),
                     marginRight: RFValue(5),
                     borderRadius: 50,
-                    marginBottom: RFValue(5)
+                    marginBottom: RFValue(8)
                   }}
                 >
                   <Typo
@@ -223,30 +186,180 @@ const NewPost = ({ imageUrl = '', closeModal }) => {
                     color={exists ? WHITE : BLACK}
                     pressable
                     onPress={() => categoriesHandler(exists, r)}
-                    style={{
-                      // backgroundColor: exists ? BLACK : BROWN,
-                      // paddingVertical: RFValue(5),
-                      // paddingHorizontal: RFValue(10),
-                      // marginRight: RFValue(5),
-                      // borderRadius: 50,
-                      // marginBottom: RFValue(5)
-                    }}
+                    style={{}}
                   />
                 </Pressable>
               );
             })}
           </View>
         </View>
+      </BottomSheet>
 
-        <Buton
-          title="Submit Post"
-          onPress={createPost}
-          extStyles={{ backgroundColor: BLACK, marginBottom: RFValue(20) }}
-          loading={loading.createBlog || loading.updateBlog || imageLoading}
-        />
+      <KeyboardAwareScrollView
+        style={{ flex: 1, paddingHorizontal: RFValue(0), paddingBottom: RFValue(0) }}
+        keyboardShouldPersistTaps="handled"
+      >
+        {/* Profile Preview */}
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            paddingHorizontal: RFValue(8),
+            // borderWidth: 1,
+            width: '100%',
+            marginVertical: RFValue(15)
+          }}
+        >
+          {user.photoURL ? (
+            <FastImage
+              source={{ uri: user.photoURL }}
+              style={{ width: RFValue(45), height: RFValue(45), borderRadius: 60 }}
+            />
+          ) : (
+            <View
+              style={{
+                width: RFValue(45),
+                height: RFValue(45),
+                borderRadius: 60,
+                backgroundColor: '#eee',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+            >
+              <DesignIcon name="user" pkg="ad" size={30} />
+            </View>
+          )}
+          <View style={{ paddingHorizontal: RFValue(10), flexGrow: 1 }}>
+            <Typo text={user && (user.name || user.email)} style={{ fontWeight: 'bold' }} />
+            <Pressable
+              onPress={openModal}
+              style={{
+                backgroundColor: '#eee',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                height: RFValue(25),
+                borderRadius: RFValue(5),
+                paddingHorizontal: RFValue(10),
+                marginTop: RFValue(5),
+                flexDirection: 'row',
+                alignSelf: 'flex-start'
+              }}
+            >
+              <Typo text={state.categories && state.categories.length ? `Edit Tags` : 'Select tags'} size={11} />
+              <DesignIcon name="chevron-down" pkg="mc" size={20} />
+            </Pressable>
+          </View>
+
+          <Pressable
+            onPress={pickImage}
+            style={{ padding: RFValue(10), backgroundColor: '#eee', borderRadius: RFValue(5), flexDirection: 'row' }}
+          >
+            <DesignIcon name="camera-plus-outline" pkg="mc" color="#ffba08" size={25} onPress={pickImage} />
+            {/* <DesignIcon name="plus" pkg="ad" color={GRAY} size={25} /> */}
+          </Pressable>
+        </View>
+
+        {/* Profile Preview */}
+        <View style={{ flexGrow: 1, borderWidth: 0 }}>
+          <TextArea
+            // title="Enter your post detials below"
+            extInputStyles={{
+              backgroundColor: WHITE,
+              paddingTop: 0,
+              paddingHorizontal: RFValue(8),
+              fontSize: RFValue(16)
+              // borderWidth: 1
+            }}
+            placeholder={`What do you want to say...?\n\nTake for example:\n\nI have travelled a couple of places but nothing comes close to Rwanda in the EastAfrican region\nThere arts community is really interesting\n\nI met a couple of dancers in traditional and urban styles 😎`}
+            minSize={0.4 * (HEIGHT - RFValue(80))}
+            value={state.description}
+            onChangeText={onDescriptionChanged}
+            placeHolderTextColor="#ccc"
+            // extStyles={{ height: '100%' }}
+          />
+        </View>
+
+        {state.categories && state.categories.length ? (
+          <View
+            style={{
+              flexDirection: 'row',
+              flexWrap: 'wrap',
+              paddingHorizontal: RFValue(10),
+              // marginVertical: RFValue(10),
+              borderTopWidth: 1,
+              // borderBottomWidth: 1,
+              borderColor: '#eee',
+              paddingVertical: RFValue(10)
+            }}
+          >
+            <Typo
+              text={[ ...state.categories.map((r) => `#${r}`) ].join(', ')}
+              color={GRAY}
+              style={{ fontStyle: 'italic', marginBottom: RFValue(5) }}
+              size={12}
+            />
+          </View>
+        ) : null}
+
+        <View style={{ width }}>
+          {state.image && state.image.uri ? (
+            <View style={{ width }}>
+              <FastImage
+                source={{ uri: state.image.uri }}
+                style={image}
+                resizeMode="contain"
+                onLoad={(e) => getImageStyles(e.nativeEvent.width, e.nativeEvent.height)}
+              />
+              <Pressable
+                onPress={() => setState({ ...state, image: {} })}
+                style={{
+                  position: 'absolute',
+                  alignItems: 'center',
+                  paddingHorizontal: RFValue(10),
+                  paddingVertical: RFValue(5),
+                  right: RFValue(10),
+                  top: RFValue(10),
+                  backgroundColor: 'rgba(0,0,0,.5)',
+                  flexDirection: 'row',
+                  borderRadius: RFValue(50)
+                }}
+              >
+                <Typo
+                  text="Remove"
+                  color="#fff"
+                  style={{ lineHeight: RFValue(15) }}
+                  onPress={() => setState({ ...state, image: {} })}
+                />
+                <DesignIcon
+                  name="close"
+                  pkg="ad"
+                  size={20}
+                  style={{ marginLeft: RFValue(5) }}
+                  color="#fff"
+                  onPress={() => setState({ ...state, image: {} })}
+                />
+              </Pressable>
+            </View>
+          ) : null}
+        </View>
       </KeyboardAwareScrollView>
+      <Buton
+        title="Submit Post"
+        onPress={createPost}
+        extStyles={{
+          backgroundColor: '#ff9e00',
+          marginVertical: RFValue(0),
+          marginHorizontal: RFValue(0)
+          // borderTopWidth: 1
+        }}
+        loading={loading.createBlog || loading.updateBlog || imageLoading}
+        textStyles={{ color: '#fff' }}
+      />
     </View>
   );
 };
 
 export default NewPost;
+
+{
+}

@@ -22,6 +22,7 @@ const paginateHelper = (page, limit, totalDocuments, result, res) => {
       success: true,
       currentPage: parseInt(page),
       totalPages: Math.ceil(totalDocuments / parseInt(limit)),
+      nextPage: parseInt(page) + 1,
       last: parseInt(page) === Math.ceil(totalDocuments / parseInt(limit))
     });
   } catch (error) {
@@ -67,7 +68,7 @@ const userFiller = async (array, field = 'authorId') => {
     let final = [];
     for (const item of array) {
       const user = docs.find((r) => r.uid === item[field]);
-      console.log('EACH ITEM', item);
+      // console.log('EACH ITEM', item);
 
       if (user) {
         const { name, username, photoURL: imageUrl, email, favorites, ...rest } = user;

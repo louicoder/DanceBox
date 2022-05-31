@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, ScrollView, Pressable, FlatList } from 'react-native';
+import { View, Text, ScrollView, Pressable, FlatList, ActivityIndicator } from 'react-native';
 // import { FlatList } from 'react-native-gesture-handler';
 import { PERMISSIONS } from 'react-native-permissions';
 import { RFValue } from 'react-native-responsive-fontsize';
@@ -17,7 +17,7 @@ import { showAlert } from '../../Utils/HelperFunctions';
 
 const Events = ({ navigation, ...props }) => {
   const dispatch = useDispatch();
-  const [ state, setState ] = React.useState({ period: 'once' });
+  const [ state, setState ] = React.useState({ period: 'all', filter: '' });
   // const [ user, setUser ] = React.useState({});
   const { events, postsPagination: { limit } } = useSelector((state) => state.Events);
   const { user } = useSelector((state) => state.Account);
@@ -43,10 +43,13 @@ const Events = ({ navigation, ...props }) => {
   //   HelperFunctions.getUser(({ success, result }) => success && setUser(result));
   // }, []);
 
-  const getEvents = () => {
-    dispatch.Events.getEvents((res) => {
-      console.log('Events=============', res);
-      if (!res.success) return showAlert('Something went wrong', res.result);
+  const getEvents = (filter = '') => {
+    dispatch.Events.getEvents({
+      filter,
+      callback: (res) => {
+        console.log('Events=============', res);
+        if (!res.success) return showAlert('Something went wrong', res.result);
+      }
     });
   };
 
@@ -54,7 +57,7 @@ const Events = ({ navigation, ...props }) => {
     <EventPreview
       navigation={navigation}
       imageUrl="https://ychef.files.bbci.co.uk/1376x774/p07ztf1q.jpg"
-      extStyles={{}}
+      extStyles={{ marginBottom: events && events.length === index + 1 ? RFValue(70) : RFValue(10) }}
       {...item}
       event={item}
     />
@@ -66,7 +69,7 @@ const Events = ({ navigation, ...props }) => {
     () => {
       // console.log('StateXXXXXXXX', state);
       if (!momentum) setMomentum(true);
-      getEvents();
+      getEvents(state.filter);
     },
     [ setMomentum, getEvents ]
   );
@@ -75,12 +78,13 @@ const Events = ({ navigation, ...props }) => {
     dispatch.Events.setField('postsPagination', { limit, nextPage: 1, last: false });
     dispatch.Events.setField('events', []);
 
-    getEvents();
-    // dispatch.Events.getEvents((res) => {
-    //   // console.log('PSOSTS-------', res);
-    //   if (!res.success) return showAlert('Something went wrong', res.result);
-    //   // setState({ ...state, ...res });
-    // });
+    return getEvents();
+  };
+
+  const filterEventsByPeriod = (period) => {
+    setState({ ...state, period, filter: period === 'all' ? '' : period });
+    dispatch.Events.setField('postsPagination', { nextPage: 1, limit: 4, totalDocuments: 0, last: false });
+    return getEvents(period === 'all' ? '' : period);
   };
 
   // console.log('Events', events && events[0]);
@@ -103,10 +107,37 @@ const Events = ({ navigation, ...props }) => {
       >
         <DesignIcon name="plus" pkg="ad" onPress={() => navigation.navigate('NewEvent')} color={WHITE} />
       </Pressable>
-      <View
+
+      {/* <View
         style={{
           flexDirection: 'row',
           height: RFValue(35),
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          paddingHorizontal: RFValue(10),
+          backgroundColor: BROWN,
+          marginBottom: RFValue(15),
+          marginHorizontal: RFValue(8),
+          // borderWidth: 1,
+          borderColor: GRAY,
+          zIndex: 50
+        }}
+      >
+        <DesignIcon name="md-search-outline" pkg="io" extStyles={{ marginHorizontal: RFValue(0) }} />
+        <View style={{ flexGrow: 1 }}>
+          <Input
+            extStyles={{ height: RFValue(35), marginBottom: 0 }}
+            extInputStyles={{ height: RFValue(30), marginTop: 0, borderWidth: 0, padding: 0 }}
+            placeholder="Search community posts..."
+          />
+        </View>
+        <ActivityIndicator color={GRAY} style={{ flexShrink: 1 }} animating={false} />
+      </View> */}
+
+      <View
+        style={{
+          flexDirection: 'row',
+          height: RFValue(30),
           marginBottom: RFValue(15),
           alignItems: 'center',
           justifyContent: 'space-between',
@@ -119,35 +150,27 @@ const Events = ({ navigation, ...props }) => {
           zIndex: 50
         }}
       >
-        {/* <DesignIcon name="md-search-outline" pkg="io" extStyles={{ marginHorizontal: RFValue(0) }} />
-        <View style={{ flexGrow: 1 }}>
-          <Input
-            extStyles={{ height: RFValue(35), marginBottom: 0 }}
-            extInputStyles={{ height: RFValue(30), marginTop: 0, borderWidth: 0, padding: 0 }}
-            placeholder="Search community postsx..."
-          />
-        </View>
-        <ActivityIndicator color={GRAY} style={{ flexShrink: 1 }} animating={false} /> */}
-        {[ 'once', 'daily', 'weekly', 'monthly' ].map((r) => {
+        {[ 'all', 'once', 'daily', 'weekly' ].map((r) => {
           const same = state.period === r;
           return (
             <Pressable
-              onPress={() => setState({ ...state, period: r })}
+              onPress={() => (!loading.getEvents ? filterEventsByPeriod(r) : null)}
               key={HelperFunctions.keyGenerator()}
               style={{
-                width: '23%',
-                backgroundColor: same ? BLACK : BROWN,
-                height: RFValue(35),
+                width: '24%',
+                backgroundColor: same ? '#ff9105' : BROWN,
+                height: RFValue(30),
                 alignItems: 'center',
                 justifyContent: 'center',
                 borderRadius: RFValue(50)
               }}
             >
               <Typo
-                text={r === 'once' ? 'all' : r}
-                onPress={() => setState({ ...state, period: r })}
+                text={r === 'once' ? 'one Time' : r}
+                // onPress={() => setState({ ...state, period: r === state.period ? '' : r })}
                 style={{ textTransform: 'capitalize' }}
-                color={same ? WHITE : BLACK}
+                color={same ? WHITE : '#ff9105'}
+                size={12}
               />
             </Pressable>
           );

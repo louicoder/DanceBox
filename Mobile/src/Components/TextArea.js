@@ -41,17 +41,15 @@ const Input = ({
         onBlur={onBlur}
         scrollEnabled={false}
         // remove height of input
-        style={[
-          {
-            ...Styles.input,
-            minHeight: RFValue(minSize),
-            maxHeight: RFValue(minSize),
-            paddingTop: RFValue(10),
-            paddingBottom: RFValue(10),
-            fontFamily: 'Roboto-Regular'
-          },
-          extInputStyles
-        ]}
+        style={{
+          ...Styles.input,
+          minHeight: RFValue(minSize),
+          maxHeight: RFValue(minSize),
+          paddingTop: RFValue(10),
+          paddingBottom: RFValue(10),
+          fontFamily: 'Roboto-Regular',
+          ...extInputStyles
+        }}
         onChangeText={onChangeText}
         value={value}
         editable={!loading}

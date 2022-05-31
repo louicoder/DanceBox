@@ -39,11 +39,16 @@ export default {
       }
     },
 
-    async getEvents (callback, state) {
+    async getEvents ({ filter, callback }, state) {
       try {
         const { nextPage: page, limit, last } = state.Events.postsPagination;
+        const queryParams = filter
+          ? `page=${page}&limit=${limit}&filter=eventInterval&filterValue=${filter}`
+          : `page=${page}&limit=${limit}`;
+
+        console.log('QUERY', queryParams);
         if (!last)
-          await AxiosClient.get(`/posts/events?page=${page}&limit=${limit}`).then(({ data }) => {
+          await AxiosClient.get(`/posts/events/all?${queryParams}`).then(({ data }) => {
             if (data.success) {
               const { result, success, user, ...rest } = data;
               dispatch.Events.setEvents(page > 1 ? [ ...state.Events.events, ...data.result ] : data.result);
@@ -59,7 +64,7 @@ export default {
 
     async getRandomEvents ({ size, callback }, state) {
       try {
-        await AxiosClient.get(`posts/random?size=${size}&type=event`).then(({ data }) => {
+        await AxiosClient.get(`posts/random/events?limit=${size}&type=event`).then(({ data }) => {
           // console.log('Random event', data);
           if (data.success) {
             dispatch.Events.setRandomEvents(data.result);

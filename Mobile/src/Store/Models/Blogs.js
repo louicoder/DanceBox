@@ -1,12 +1,15 @@
 import AxiosClient from '../Axios';
 import auth from '@react-native-firebase/auth';
+import { FIRESTORE } from '../../Utils/Constants';
 
 export default {
   state: {
     blogs: [],
     activeBlog: {},
+    activeShare: '',
+    activeLike: '',
     userBlogs: [],
-    postsPagination: { nextPage: 1, limit: 4, totalDocuments: 0, last: false }
+    postsPagination: { nextPage: 1, limit: 4, totalDocuments: 0, last: false, totalPages: 1 }
   },
   reducers: {
     setField (state, field, value) {
@@ -26,7 +29,6 @@ export default {
     async createBlog ({ payload, callback }, state) {
       try {
         await AxiosClient.post('/posts/create', payload).then(({ data }) => {
-          // console.log('Reached create blog', payload, data);
           if (data.success) dispatch.Blogs.setBlogs([ data.result, ...state.Blogs.blogs ]);
           callback(data);
         });
@@ -37,14 +39,14 @@ export default {
 
     async getBlogs (callback, state) {
       try {
-        const { nextPage: page, limit, last } = state.Blogs.postsPagination;
-        // console.log(state.Blogs.postsPagination);
+        const { nextPage: page, limit, last, totalPages } = state.Blogs.postsPagination;
+        // console.log('nNEXT page|last Page|Total>>>>', page, last, totalPages);
         if (!last)
-          await AxiosClient.get(`/posts/all?page=${page}&limit=${limit}`).then(({ data }) => {
+          await AxiosClient.get(`/posts/all?type=posts&page=${page}&limit=${limit}`).then(({ data }) => {
             if (data.success) {
               const { result, success, user, ...rest } = data;
               dispatch.Blogs.setBlogs(page > 1 ? [ ...state.Blogs.blogs, ...data.result ] : data.result);
-              dispatch.Blogs.setField('postsPagination', rest);
+              dispatch.Blogs.setField('postsPagination', { ...state.Blogs.postsPagination, ...rest });
             }
             callback(data);
           });
@@ -100,13 +102,29 @@ export default {
       }
     },
 
-    async likeBlog ({ blogId, callback }, state) {
+    async favoriteBlog ({ payload, callback }, state) {
       try {
-        const uid = state.Account.user.uid || auth().currentUser.uid;
-        await AxiosClient.patch(`/posts/like/${blogId}/${uid}`).then(({ data }) => {
+        // await AxiosClient.post(`/comments/blog/create`, payload).then(({ data }) => callback(data));
+        await FIRESTORE.collection('users').doc(state.Account.user.uid).set(payload, { merge: true }).then(() => {
+          dispatch.Account.setField('user', { ...state.Account.user, ...payload });
+          dispatch.Account.setField('activeFavorite', '');
+          return callback({ success: true, result: 'Successfully added to favorites' });
+        });
+      } catch (error) {
+        return callback({ success: false, result: error.message });
+      }
+    },
+
+    async likeBlog ({ postId, callback }, state) {
+      try {
+        const userId = state.Account.user.uid || auth().currentUser.uid;
+        await AxiosClient.patch(`/posts/like/${postId}`, { userId }).then(({ data }) => {
           if (data.success) {
-            callback(data);
+            const newBlogs = [ ...state.Blogs.blogs.map((r) => (r._id === postId ? data.result : r)) ];
+            dispatch.Blogs.setField('blogs', newBlogs);
+            dispatch.Blogs.setField('activeLike', '');
           }
+          return callback(data);
         });
       } catch (error) {
         return callback({ success: false, result: error.message });

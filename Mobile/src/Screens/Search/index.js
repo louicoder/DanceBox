@@ -9,13 +9,14 @@ import Input from '../../Components/Input';
 import LoadingModal from '../../Components/LoadingModal';
 import { HelperFunctions } from '../../Utils';
 import { BLACK, BROWN, GRAY, WIDTH } from '../../Utils/Constants';
-import { devAlert } from '../../Utils/HelperFunctions';
+import { devAlert, getAsyncObjectData, storeAsyncObjectData } from '../../Utils/HelperFunctions';
 import SingleBlog from '../Blogs/SingleBlog';
 import SingleEvent from '../Events/SingleEvent';
 
 const Search = ({ navigation, ...props }) => {
   const [ state, setState ] = React.useState({
-    checked: false
+    checked: false,
+    agreement: false
   });
 
   const { events, blogs } = useSelector((state) => state.Search);
@@ -26,12 +27,17 @@ const Search = ({ navigation, ...props }) => {
   //   searchHandler();
   // }, []);
 
-  React.useEffect(
+  React.useLayoutEffect(
     () => {
-      const sub = navigation.addListener('focus', () => {
-        // setState({ ...state, search: '' });
-        // searchHandler();
-      });
+      const sub = navigation.addListener(
+        'focus',
+        async () =>
+          await getAsyncObjectData('chat-agree', (res) => {
+            console.log('AGREED--->', res);
+            setState({ ...state, agreement: res.result });
+            if (res.success) return navigation.navigate('CommunityChat');
+          })
+      );
 
       return () => sub;
     },
@@ -78,6 +84,11 @@ const Search = ({ navigation, ...props }) => {
     });
   };
 
+  const acceptTerms = async () =>
+    await storeAsyncObjectData('chat-agree', true, (res) => {
+      if (res.success) return navigation.navigate('CommunityChat');
+    });
+
   // console.log('EVEVNTS', blogs);
 
   const MoreComponent = ({ onPress, loading }) => (
@@ -114,7 +125,7 @@ const Search = ({ navigation, ...props }) => {
           textCntStyles={{ fontSize: RFValue(14), color: state.checked ? BLACK : GRAY }}
           extStyles={{ marginVertical: RFValue(15) }}
         />
-        <Buton title="Continue" disabled={!state.checked} onPress={() => navigation.navigate('CommunityChat')} />
+        <Buton title="Continue" disabled={!state.checked} onPress={acceptTerms} />
       </View>
     </View>
   );

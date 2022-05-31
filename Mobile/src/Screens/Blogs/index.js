@@ -31,9 +31,12 @@ const Blogs = ({ navigation }) => {
   const dispatch = useDispatch();
   const [ state, setState ] = React.useState({ isVisible: false });
   const [ momentum, setMomentum ] = React.useState(false);
-  const { blogs, postsPagination: { nextPage, limit, totalDocuments, last } } = useSelector((state) => state.Blogs);
+  const { blogs, postsPagination: { nextPage, limit, totalDocuments, last, totalPages } } = useSelector(
+    (state) => state.Blogs
+  );
   const loading = useSelector((state) => state.loading.effects.Blogs);
 
+  console.log('TOttal pages', totalPages, nextPage, last);
   React.useEffect(() => {
     const nav = navigation.addListener('focus', () => {
       getPosts();
@@ -76,16 +79,15 @@ const Blogs = ({ navigation }) => {
     [ setMomentum, getPosts ]
   );
 
-  const getPosts = () => {
+  const getPosts = () =>
     dispatch.Blogs.getBlogs((res) => {
       // console.log('PSOSTS-------', res);
       if (!res.success) return showAlert('Something went wrong', `ERROR:: ${res.result}`, 'danger');
       // setState({ ...state, ...res });
     });
-  };
 
   const onRefresh = () => {
-    dispatch.Blogs.setField('postsPagination', { limit, nextPage: 1, last: false });
+    dispatch.Blogs.setField('postsPagination', { limit, nextPage: 1, last: false, totalPages: 1 });
     dispatch.Blogs.setField('blogs', []);
 
     dispatch.Blogs.getBlogs((res) => {
@@ -122,31 +124,6 @@ const Blogs = ({ navigation }) => {
           <RenderModalContent {...state} createPost={switchToCreatePost} closeModal={closeModal} />
         </View>
       </BottomSheet>
-      <View
-        style={{
-          flexDirection: 'row',
-          height: RFValue(35),
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          paddingHorizontal: RFValue(10),
-          backgroundColor: BROWN,
-          marginBottom: RFValue(15),
-          marginHorizontal: RFValue(8),
-          // borderWidth: 1,
-          borderColor: GRAY,
-          zIndex: 50
-        }}
-      >
-        <DesignIcon name="md-search-outline" pkg="io" extStyles={{ marginHorizontal: RFValue(0) }} />
-        <View style={{ flexGrow: 1 }}>
-          <Input
-            extStyles={{ height: RFValue(35), marginBottom: 0 }}
-            extInputStyles={{ height: RFValue(30), marginTop: 0, borderWidth: 0, padding: 0 }}
-            placeholder="Search community posts..."
-          />
-        </View>
-        <ActivityIndicator color={GRAY} style={{ flexShrink: 1 }} animating={false} />
-      </View>
 
       <Pressable
         onPress={() => setState({ ...state, isVisible: true, comp: 'instructions' })}

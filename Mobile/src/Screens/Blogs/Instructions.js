@@ -14,16 +14,21 @@ const Instructions = ({ createPost }) => {
         style={{ alignSelf: 'center', marginVertical: RFValue(20) }}
         color={GRAY}
       />
-      <Typo size={16} text={`Please follow the instructions in order to keep this space safe for everyone\n `} />
-      <Typo size={16} text="1. Do not use abuse and vulgar language in your post" />
       <Typo
         size={16}
+        text={`Please follow the instructions in order to keep this space safe for everyone\n `}
+        style={{ fontWeight: 'bold' }}
+      />
+      <Typo size={16} text="1. Do not use abuse and vulgar language in your post" />
+      <Typo
+        // size={16}
         text={`2. Please keep your post straight to the point to avoid confusion and misunderstanding\n`}
       />
       <Typo
-        size={16}
-        text="Thanks for your cooperation on making sure we maintain a safe environment for each and everyone else"
+        // size={16}
+        text={`2. Your post should not be discriminative in nature whether by race, color, religion etc..\n`}
       />
+      <Typo text="Thanks for your cooperation on making sure we maintain a safe environment for each and everyone else" />
       <Buton title="Continue" extStyles={{ marginVertical: RFValue(10) }} onPress={createPost} />
     </View>
   );

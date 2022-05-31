@@ -105,9 +105,9 @@ const Voting = ({ navigation, route }) => {
         style={{
           width: '100%',
           // borderWidth: 1,
-          // backgroundColor: '#D4E4F6',
+          backgroundColor: '#D4E4F6',
           // backgroundColor: '#91C8CC',
-          backgroundColor: '#3C925F',
+          // backgroundColor: '#3C925F',
           borderRadius: RFValue(10),
           padding: RFValue(10),
           // height: RFValue(100),

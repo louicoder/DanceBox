@@ -1,18 +1,20 @@
 import moment from 'moment';
-import React from 'react';
-import { View, Text, ImageBackground, Pressable, ActivityIndicator } from 'react-native';
+import React, { useEffect } from 'react';
+import { View, Text, Image, Pressable, ActivityIndicator } from 'react-native';
 // import { ActivityIndicator } from 'react-native-paper';
 import { RFValue } from 'react-native-responsive-fontsize';
 import Icon from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { CommentsLikeButtons, DesignIcon, LikeCommentShare, PostProfileCard, Typo } from '../../Components';
 import { CONSTANTS, HelperFunctions } from '../../Utils';
-import { BROWN, GRAY, SHADOW, THEME_COLOR, WHITE } from '../../Utils/Constants';
-import Image from 'react-native-fast-image';
+import { BROWN, GRAY, SHADOW, THEME_COLOR, WHITE, WIDTH } from '../../Utils/Constants';
+// import Image from 'react-native-fast-image';
+import FastImage from 'react-native-fast-image';
 
-const SingleBlog = (props) => {
+const SingleBlog = ({ single, ...props }) => {
   // console.log('POST::::', props);
   const [ shareLoading, setShareLoading ] = React.useState(false);
+  const [ img, setImg ] = React.useState({ width: WIDTH, height: WIDTH });
 
   // const payload = {
   //   imageUrl,
@@ -27,55 +29,55 @@ const SingleBlog = (props) => {
   //   _id
   // };
 
-  const shareBlog = () => {
-    setShareLoading(true);
-    HelperFunctions.getsharableBase64((res) => {
-      setShareLoading(false);
-      console.log('Shareable base64', res);
-    });
-  };
+  // useEffect(() => {
+  //   if (props.imageUrl && single)
+  //     Image.getSize(props.imageUrl, (width, height) => {
+  //       const obj = { width: WIDTH, height: height * (WIDTH / width) };
+  //       setImg({ ...img, ...obj });
+  //     });
+  // }, []);
+
+  // const shareBlog = () => {
+  //   setShareLoading(true);
+  //   HelperFunctions.getsharableBase64((res) => {
+  //     setShareLoading(false);
+  //     console.log('Shareable base64', res);
+  //   });
+  // };
+
+  // const getImageStyles = (width, height) => {
+  //   return { width: WIDTH, height: img.height * (WIDTH / img.width) };
+  // };
 
   return (
     <View
       style={{
-        marginBottom: RFValue(5),
-        paddingVertical: RFValue(8),
+        marginBottom: RFValue(8),
+        paddingVertical: RFValue(10),
         paddingBottom: props.last ? RFValue(70) : RFValue(8),
         backgroundColor: WHITE
       }}
     >
       <PostProfileCard {...props} {...props.user} />
       {props.imageUrl ? (
-        <Image
+        <FastImage
           source={{ uri: props.imageUrl }}
-          style={{ width: '100%', height: RFValue(200), marginBottom: RFValue(10) }}
+          // onLoad={({ nativeEvent: { height, width } }) => {
+          //   setImg({ ...img, width, height: height * (WIDTH / width) });
+          // }}
+          resizeMode="cover"
+          // onLoadEnd={e =}
+          // style={getImageStyles()}
+          style={{ ...img, marginBottom: RFValue(15) }}
         />
       ) : null}
-      <Typo text={props.description} lines={6} style={{ marginBottom: RFValue(0), paddingHorizontal: RFValue(8) }} />
+      <Typo
+        text={props.description}
+        lines={6}
+        style={{ marginBottom: RFValue(0), paddingHorizontal: RFValue(8) }}
+        size={16}
+      />
       <LikeCommentShare {...props} />
-
-      {/* <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          width: '100%',
-          borderWidth: 0,
-          paddingHorizontal: RFValue(8)
-        }}
-      >
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            width: '100%',
-            paddingVertical: RFValue(3)
-          }}
-        >
-          <Typo text="2k likes ・ 30k comments" color={GRAY} size={13} />
-          <DesignIcon name="share" pkg="mc" size={30} />
-        </View>
-      </View> */}
     </View>
   );
 };

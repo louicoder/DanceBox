@@ -17,13 +17,13 @@ const createPost = async (req, res) => {
       result: 'You should provide the poll options and they should be atleast 2 options'
     });
 
-  if (req.body.type === 'event' && (!req.body.eventDate || !req.body.eventInterval))
+  if (req.body.type === 'event' && (!req.body.eventTime || !req.body.eventDate || !req.body.eventInterval))
     return res.json({
       success: false,
-      result: 'You should event date and event interval in order to continue'
+      result: 'You should event date, event time and event interval in order to continue'
     });
 
-  const Post = new PostsModel({ ...req.body, dateCreated: new Date().toISOString(), followers: [], likes: [] });
+  const Post = new PostsModel({ ...req.body, dateCreated: new Date().toISOString(), followers: [] });
   try {
     await Post.save().then((result) => res.json({ success: true, result }));
   } catch (error) {
@@ -44,33 +44,18 @@ const getPost = async (req, res) => {
 };
 
 const getAllPosts = async (req, res) => {
-  const { page = 1, limit = 2, type = 'post', category = '' } = req.query;
+  const { page = 1, limit = 2 } = req.query;
+
   try {
-    const total = await PostsModel.find({ type }).countDocuments();
-
-    await PostsModel.find({ type }).limit(limit * 1).skip((page - 1) * limit).then(async (result) => {
-      const unserializedResult = [ ...result.map((r) => r._doc) ];
-      const usersFilled = await userFiller(unserializedResult, 'authorId');
-      console.log('FILLED USERS', usersFilled);
-      return paginateHelper(page, limit, total, usersFilled, res);
-    });
-  } catch (error) {
-    return res.json({ success: false, result: error.message });
-  }
-};
-
-const getEventPosts = async (req, res) => {
-  const { page = 1, limit = 2, eventInterval = 'once' } = req.query;
-  try {
-    const total = await PostsModel.find({ eventInterval, type: 'event' }).countDocuments();
-
-    await PostsModel.find({ eventInterval, type: 'event' })
+    const total = await PostsModel.find({ type: 'post' }).countDocuments();
+    // console.log('Total', total);
+    await PostsModel.find({ type: 'post' })
+      .sort({ dateCreated: -1 })
       .limit(limit * 1)
       .skip((page - 1) * limit)
       .then(async (result) => {
-        const unserializedResult = [ ...result.map((r) => r._doc) ];
-        const usersFilled = await userFiller(unserializedResult, 'authorId');
-        console.log('FILLED USERS', usersFilled);
+        let usersFilled = [];
+        if (result.length) usersFilled = await userFiller([ ...result.map((r) => r._doc) ], 'authorId');
         return paginateHelper(page, limit, total, usersFilled, res);
       });
   } catch (error) {
@@ -78,14 +63,71 @@ const getEventPosts = async (req, res) => {
   }
 };
 
-const getRandomPosts = async (req, res) => {
-  const { limit = 10, type = 'post' } = req.query;
-  console.log('LIMIT,', limit, typeof limit);
+const getAllEvents = async (req, res) => {
+  const { page = 1, limit = 2, filter = '', filterValue = '' } = req.query;
+  let query = { type: 'event' };
+  if (filter && filterValue) query = { ...query, [filter]: filterValue };
+
   try {
-    await PostsModel.aggregate([ { $sample: { size: parseInt(limit) } }, { $match: { type } } ]).then(async (resp) => {
+    const total = await PostsModel.find(query).countDocuments();
+    // console.log('Total', total);
+    await PostsModel.find(query).limit(limit * 1).skip((page - 1) * limit).then(async (result) => {
+      let usersFilled = [];
+      if (result.length) usersFilled = await userFiller([ ...result.map((r) => r._doc) ], 'authorId');
+      return paginateHelper(page, limit, total, usersFilled, res);
+    });
+  } catch (error) {
+    return res.json({ success: false, result: error.message });
+  }
+};
+
+const getCalendarEvents = async (req, res) => {
+  const { page = 1, limit = 2, eventInterval = '', filter = '' } = req.query;
+
+  let query = { type: 'event' };
+  if (eventInterval) query = { ...query, eventInterval };
+
+  if (filter) query = { ...query, dateCreated: { $regex: '.*' + filter + '.*', $options: 'i' } };
+  // console.log('QUERY', query);
+
+  try {
+    const total = await PostsModel.find(query).countDocuments();
+    // console.log('Total', total);
+    await PostsModel.find(query).limit(limit * 1).skip((page - 1) * limit).then(async (result) => {
+      console.log('RESS', [ ...result.map((r) => r._doc) ]);
+      let usersFilled = [];
+      if (result.length) usersFilled = await userFiller([ ...result.map((r) => r._doc) ], 'authorId');
+      return paginateHelper(page, limit, total, usersFilled, res);
+    });
+  } catch (error) {
+    console.log('QUERY', error.message);
+    return res.json({ success: false, result: error.message });
+  }
+};
+
+const getRandomPosts = async (req, res) => {
+  const { limit: size = 5 } = req.query;
+  try {
+    await PostsModel.aggregate([ { $sample: { size } } ]).then(async (resp) => {
       // const user = FIREBASE.firestore().collection('users').doc()
-      if (!resp.length) return res.json({ success: true, result: [] });
+      res.json({ success: true, result });
+    });
+    // return res.json({ success: false, result: 'It worked on' });
+  } catch (error) {
+    return res.json({ success: false, result: error.message });
+  }
+};
+
+const getRandomEvents = async (req, res) => {
+  const { limit = 2 } = req.query;
+  console.log('Size', limit);
+  try {
+    await PostsModel.aggregate([
+      { $sample: { size: parseInt(limit) } },
+      { $match: { type: 'event' } }
+    ]).then(async (resp) => {
       const result = await userFiller(resp, 'authorId');
+      // const user = FIREBASE.firestore().collection('users').doc()
       res.json({ success: true, result });
     });
     // return res.json({ success: false, result: 'It worked on' });
@@ -138,10 +180,11 @@ const likePost = async (req, res) => {
   const { postId: _id } = req.params;
 
   try {
-    const result = await PostsModel.updateOne({ _id }, { $push: { likes: userId } });
-    console.log('RESul', result);
-    if (result.nModified <= 0) return res.json({ success: false, result: error.message });
-    return res.json({ success: true, result: 'Successfully liked post' });
+    const post = await PostsModel.updateOne({ _id }, { $push: { likes: userId } });
+    // console.log('RESul', post);
+    if (post.nModified <= 0) return res.json({ success: false, result: error.message });
+    const result = await PostsModel.findOne({ _id });
+    return res.json({ success: true, result });
   } catch (error) {
     return res.json({ success: false, result: error.message });
   }
@@ -149,13 +192,14 @@ const likePost = async (req, res) => {
 
 const followPost = async (req, res) => {
   if (!req.body.userId) return res.json({ success: false, result: 'User id is required, please try again' });
+  if (!req.params.postId) return res.json({ success: false, result: 'Post id is required, please try again' });
 
   const { userId } = req.body;
   const { postId: _id } = req.params;
 
   try {
     const post = await PostsModel.updateOne({ _id }, { $push: { followers: userId } });
-    // console.log('RESul', result);
+    // console.log('RESul', post);
     if (post.nModified <= 0) return res.json({ success: false, result: error.message });
     const result = await PostsModel.findOne({ _id });
     return res.json({ success: true, result });
@@ -179,24 +223,25 @@ const deletePost = async (req, res) => {
 };
 
 const searchPosts = async (req, res) => {
-  if (!req.query.query) return res.json({ success: false, result: 'Query string cannot be empty please try again' });
+  if (!req.query.q) return res.json({ success: false, result: 'Query string cannot be empty please try again' });
 
   try {
-    const { page = 1, limit = 1, query = '' } = req.query;
+    const { page = 1, limit = 10, q: filter } = req.query;
     // const titleString = { title: { $regex: '.*' + req.query.title + '.*', $options: 'i' } };
     // const nameString = { 'owner.name': { $regex: '.*' + req.query.title + '.*', $options: 'i' } };
 
-    const total = await PostsModel.find({
-      description: { $regex: '.*' + query + '.*', $options: 'i' }
-    }).countDocuments();
+    const query = {
+      $or: [
+        { description: { $regex: '.*' + filter + '.*', $options: 'i' } },
+        { title: { $regex: '.*' + filter + '.*', $options: 'i' } }
+      ]
+    };
+    const total = await PostsModel.find(query).countDocuments();
     // const totalPages = Math.ceil(count / limit);
-    await PostsModel.find({ description: { $regex: '.*' + query + '.*', $options: 'i' } })
-      .limit(limit * 1)
-      .skip((page - 1) * limit)
-      .then(async (result) => {
-        const usersFilled = await userFiller(result, 'authorId');
-        return paginateHelper(page, limit, total, usersFilled, res);
-      });
+    await PostsModel.find(query).limit(limit * 1).skip((page - 1) * limit).then(async (result) => {
+      const usersFilled = await userFiller([ ...result.map((r) => r._doc) ], 'authorId');
+      return paginateHelper(page, limit, total, usersFilled, res);
+    });
   } catch (error) {
     return res.json({ success: false, result: error.message });
   }
@@ -210,8 +255,10 @@ module.exports = {
   getUserPosts,
   getAllPosts,
   getRandomPosts,
+  getRandomEvents,
+  getAllEvents,
   deletePost,
+  getCalendarEvents,
   searchPosts,
-  getEventPosts,
   followPost
 };

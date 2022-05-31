@@ -55,15 +55,16 @@ const EventsInMonth = ({ navigation }) => {
       >
         Events for you:
       </Text>
-      {randomEvents.map((event) => (
-        <EventPreview
-          key={HelperFunctions.keyGenerator()}
-          {...event}
-          navigation={navigation}
-          // imageUrl="https://ychef.files.bbci.co.uk/1376x774/p07ztf1q.jpg"
-          event={event}
-        />
-      ))}
+      {randomEvents &&
+        randomEvents.map((event) => (
+          <EventPreview
+            key={HelperFunctions.keyGenerator()}
+            {...event}
+            navigation={navigation}
+            // imageUrl="https://ychef.files.bbci.co.uk/1376x774/p07ztf1q.jpg"
+            event={event}
+          />
+        ))}
     </View>
   );
 };

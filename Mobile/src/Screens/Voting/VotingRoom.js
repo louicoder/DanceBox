@@ -8,6 +8,7 @@ import { FIRESTORE, HALF_BLACK, WHITE } from '../../Utils/Constants';
 import moment from 'moment';
 import { useSelector } from 'react-redux';
 import { showAlert } from '../../Utils/HelperFunctions';
+import { color } from 'react-native/Libraries/Components/View/ReactNativeStyleAttributes';
 
 navigator.__defineGetter__('userAgent', () => 'react-native');
 
@@ -141,11 +142,24 @@ const VotingRoom = ({ route, navigation }) => {
                 borderRadius: RFValue(8)
               }}
             >
-              <Typo text={r.value} style={{ flexShrink: 1 }} size={16} />
+              <Typo text={r.value} style={{ flexShrink: 1 }} size={14} />
               {same ? (
                 <DesignIcon name="check" pkg="mc" />
               ) : !votes.find((r) => r.uid === user.uid) ? (
                 <DesignIcon name="chevron-right" pkg="mc" />
+              ) : null}
+              {votes && votes.find((r) => r.uid === user.uid) ? (
+                <Typo
+                  text={`${votes && votes.filter((r) => r.uid === user.uid).length / votes.length * 100}%`}
+                  style={{
+                    fontWeight: 'bold',
+                    backgroundColor: '#47026c',
+                    padding: RFValue(5),
+                    borderRadius: RFValue(5),
+                    color: WHITE
+                  }}
+                  size={16}
+                />
               ) : null}
             </Pressable>
           );

@@ -17,6 +17,8 @@ import Styles from './Styles';
 const DesignIcon = ({
   pkg,
   size = 25,
+  indicatorSize = 25,
+  indicatorColor = '#010203',
   onPress,
   extStyles,
   withBorder,
@@ -29,7 +31,7 @@ const DesignIcon = ({
     return withBorder ? (
       <Pressable style={[ Styles.iconWithBg(widthHeight, backColor), extStyles ]}>
         {loading ? (
-          <ActivityIndicator size={RFValue(size)} color="#010203" />
+          <ActivityIndicator size={RFValue(indicatorSize)} color={indicatorColor} />
         ) : (
           <Comp size={RFValue(size)} {...props} />
         )}
@@ -37,7 +39,7 @@ const DesignIcon = ({
     ) : (
       <View style={extStyles}>
         {loading ? (
-          <ActivityIndicator size={RFValue(size)} color="#010203" />
+          <ActivityIndicator size={RFValue(indicatorSize)} color={indicatorColor} />
         ) : (
           <Comp size={RFValue(size)} {...props} />
         )}

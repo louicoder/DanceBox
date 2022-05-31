@@ -214,8 +214,8 @@ const BlogScreens = () => (
             title="Community Discussions"
             backEnabled={false}
             {...props}
-            titleStyles={{ color: BLACK }}
-            extStyles={{ backgroundColor: WHITE }}
+            titleStyles={{ color: WHITE }}
+            extStyles={{ backgroundColor: THEME_COLOR, ...SHADOW, elevation: RFValue(8) }}
             // rightComp={() => <DesignIcon name="plus" pkg="ad" color="green" />}
           />
         ),
@@ -229,9 +229,9 @@ const BlogScreens = () => (
         header: (props) => (
           <Header
             title="Create New Post"
-            extStyles={{ backgroundColor: WHITE, ...SHADOW, elevation: RFValue(8) }}
-            titleStyles={{ color: BLACK }}
-            iconProps={{ color: BLACK }}
+            extStyles={{ backgroundColor: THEME_COLOR, ...SHADOW, elevation: RFValue(8) }}
+            titleStyles={{ color: WHITE }}
+            iconProps={{ color: WHITE }}
             iconName="pencil"
             {...props}
           />
@@ -276,7 +276,15 @@ const SearchScreens = () => (
       name="EventProfile"
       component={EventProfile}
       options={{
-        header: (props) => <Header {...props} title="Event details" />
+        header: (props) => (
+          <Header
+            {...props}
+            title="Event details"
+            titleStyles={{ color: BLACK }}
+            extStyles={{ backgroundColor: WHITE }}
+            iconProps={{ color: BLACK }}
+          />
+        )
       }}
     />
     <SearchStack.Screen
@@ -323,9 +331,9 @@ const EventScreens = () => (
           <Header
             {...props}
             title="Event details"
-            titleStyles={{ color: BLACK }}
-            extStyles={{ backgroundColor: WHITE }}
-            iconProps={{ color: BLACK }}
+            titleStyles={{ color: WHITE }}
+            extStyles={{ backgroundColor: THEME_COLOR }}
+            iconProps={{ color: WHITE }}
           />
         )
       }}

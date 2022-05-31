@@ -17,6 +17,7 @@ const NewVoteEvent = ({ closeModal }) => {
   const stateHandler = (field, value) => setState({ ...state, [field]: value });
 
   const addOptionHandler = () => {
+    if (!state.option) return;
     // if (state.option) {
     setState({
       ...state,

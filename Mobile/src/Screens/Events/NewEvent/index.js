@@ -114,7 +114,7 @@ const NewEvent = ({ navigation }) => {
 
     if (eventInterval === 'once') eventDays = [];
     if (eventInterval === 'daily') eventDays = [ ...days ];
-    if (eventInterval === 'weekly' || eventInterval === 'monthly') eventDays = eDays;
+    if (eventInterval === 'weekly') eventDays = eDays;
     const payload = {
       description,
       authorId: user.uid,
@@ -347,7 +347,7 @@ const NewEvent = ({ navigation }) => {
         <View style={{ marginBottom: RFValue(15) }}>
           <Typo text="How often is the event going to take happen" size={12} style={{ marginBottom: RFValue(5) }} />
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-            {[ 'once', 'daily', 'weekly', 'monthly' ].map((r) => {
+            {[ 'once', 'daily', 'weekly' ].map((r) => {
               const same = state.eventInterval === r;
               return (
                 <Pressable
@@ -356,7 +356,7 @@ const NewEvent = ({ navigation }) => {
                   style={{
                     backgroundColor: same ? THEME_COLOR : '#eee',
                     height: RFValue(35),
-                    width: '24%',
+                    width: '32%',
                     alignItems: 'center',
                     justifyContent: 'center'
                   }}
@@ -462,8 +462,8 @@ const NewEvent = ({ navigation }) => {
 
         <TextArea
           title="Enter details about this event below"
-          extInputStyles={{ backgroundColor: BROWN }}
-          placeholder={`Example details below...\n\nCome watch breakers battle it out. Top bboys around East Africa, all competing for the top prize\n\nTime: 2:00pm\nVenue: Goethe Zentrum Kampala\nFee: FREE!!!\n\nSee you there🎉`}
+          extInputStyles={{ backgroundColor: '#fff', paddingLeft: 0 }}
+          placeholder={`Enter event details here...\n\nCome watch breakers battle it out. Top bboys around East Africa, all competing for the top prize\n\nTime: 2:00pm\nVenue: Goethe Zentrum Kampala\nFee: FREE!!!\n\nSee you there🎉`}
           minSize={0.25 * HEIGHT}
           value={state.description}
           onChangeText={onDescriptionChanged}

@@ -6,10 +6,10 @@ import DesignIcon from './DesignIcon';
 import { Typo } from '.';
 import Image from 'react-native-fast-image';
 import Event from '../assets/event.jpg';
-import { HALF_WHITE, PURPLE, QUARTER_WHITE, SHADOW, THEME_COLOR, WHITE, WIDTH } from '../Utils/Constants';
+import { BLACK, HALF_WHITE, PURPLE, QUARTER_WHITE, SHADOW, THEME_COLOR, WHITE, WIDTH } from '../Utils/Constants';
 import LinearGradient from 'react-native-linear-gradient';
 import moment from 'moment';
-import { devAlert, showAlert } from '../Utils/HelperFunctions';
+import { abbreviateNumber, devAlert, showAlert } from '../Utils/HelperFunctions';
 import { useDispatch, useSelector } from 'react-redux';
 import { ActivityIndicator } from 'react-native-paper';
 
@@ -24,23 +24,35 @@ const EventPreview = ({
   event,
   eventDate,
   description,
+  single,
+  _id: eventId,
   ...rest
 }) => {
   const loading = useSelector((st) => st.loading.effects.Events);
   const { updatingEventId } = useSelector((st) => st.Events);
+  const [ img, setImg ] = React.useState({ width: WIDTH, height: RFValue(200) });
   const { user } = useSelector((st) => st.Account);
   const dispatch = useDispatch();
 
   const followEvent = () => {
-    dispatch.Events.setField('updatingEventId', rest._id);
+    if (rest.followers && rest.followers.includes(user.uid)) return;
+    dispatch.Events.setField('updatingEventId', eventId);
     dispatch.Events.followEvent({
-      eventId: rest._id,
+      eventId,
       userId: user.uid,
       callback: (res) => {
         if (!res.success) return showAlert('Something went wrong', res.result);
       }
     });
   };
+
+  React.useEffect(() => {
+    if (imageUrl && single)
+      Image.getSize(props.imageUrl, (width, height) => {
+        const obj = { width: WIDTH, height: height * (WIDTH / width) };
+        setImg({ ...img, ...obj });
+      });
+  }, []);
 
   return (
     <Pressable
@@ -55,7 +67,7 @@ const EventPreview = ({
         marginBottom: RFValue(20),
         backgroundColor: WHITE,
         // paddingHorizontal: RFValue(8),
-        borderRadius: RFValue(10),
+        // borderRadius: RFValue(10),
         ...SHADOW,
         elevation: RFValue(10),
         shadowColor: '#000',
@@ -70,9 +82,9 @@ const EventPreview = ({
       <Image
         source={{ uri: imageUrl }}
         resizeMode="cover"
-        style={{ width: '100%', height: '100%', borderRadius: borderRadius ? RFValue(10) : 0 }}
+        style={{ width: '100%', height: '100%', borderRadius: borderRadius ? RFValue(0) : 0 }}
       />
-      {rest.followers && !rest.followers.includes(user.uid) ? (
+      {rest.followers ? (
         <View
           style={{
             width: '100%',
@@ -81,8 +93,8 @@ const EventPreview = ({
             zIndex: 10,
             backgroundColor: '#00000070',
             justifyContent: 'flex-end',
-            padding: RFValue(10),
-            borderRadius: borderRadius ? RFValue(10) : 0
+            // borderRadius: borderRadius ? RFValue(10) : 0,
+            padding: RFValue(10)
           }}
         >
           <Pressable
@@ -92,18 +104,31 @@ const EventPreview = ({
               backgroundColor: '#6B6ADE',
               paddingHorizontal: RFValue(10),
               paddingVertical: RFValue(5),
-              borderRadius: borderRadius ? RFValue(10) : 0,
+              // borderRadius: borderRadius ? RFValue(10) : 0,
               // borderRadius: RFValue(10),
               position: 'absolute',
-              top: RFValue(15),
+              top: RFValue(10),
               zIndex: 50,
-              right: RFValue(15)
+              right: RFValue(10)
             }}
           >
-            {!loading.updateEvent && updatingEventId === rest._id ? (
+            {!loading.updateEvent && updatingEventId === eventId ? (
               <ActivityIndicator />
             ) : (
-              <Typo text="+ Follow" color={WHITE} onPress={followEvent} />
+              <Typo
+                text={
+                  rest.followers && rest.followers.includes(user.uid) ? (
+                    `${rest.followers && abbreviateNumber(rest.followers.length)} • Follower${rest.followers &&
+                    rest.followers.length > 1
+                      ? 's'
+                      : ''}`
+                  ) : (
+                    '+ Follow'
+                  )
+                }
+                color={WHITE}
+                onPress={followEvent}
+              />
             )}
           </Pressable>
         </View>
@@ -115,8 +140,8 @@ const EventPreview = ({
           left: 0,
           padding: RFValue(10),
           justifyContent: 'flex-end',
-          borderBottomRightRadius: borderRadius ? RFValue(10) : 0,
-          borderBottomLeftRadius: borderRadius ? RFValue(10) : 0,
+          // borderBottomRightRadius: borderRadius ? RFValue(10) : 0,
+          // borderBottomLeftRadius: borderRadius ? RFValue(10) : 0,
           // borderRadius: borderRadius ? RFValue(10) : 0,
 
           height: '60%',
@@ -144,15 +169,15 @@ const EventPreview = ({
           />
           <Typo
             text={`${eventInterval === 'once' ? 'One Time' : eventInterval} Event`}
-            color={WHITE}
-            size={10}
+            color={BLACK}
+            size={9}
             style={{
               fontWeight: 'normal',
               padding: RFValue(5),
               paddingHorizontal: RFValue(10),
               // backgroundColor: PURPLE,
               // backgroundColor: PURPLE,
-              backgroundColor: '#2D8928',
+              backgroundColor: '#57cc99',
               alignSelf: 'flex-start',
               borderRadius: RFValue(50)
               // width: '40%'

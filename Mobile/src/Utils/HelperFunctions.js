@@ -62,11 +62,11 @@ const switchPermissionResult = (result, permission, callback) => {
   }
 };
 
-export const ImagePicker = (callback, opts = { maxWidth: 500, maxHeight: 500 }) => {
+export const ImagePicker = (callback, opts = { height: 500, width: 500 }) => {
   const options = {
     title: 'Select Photo',
     includeBase64: true,
-    // quality: 0.5,
+    quality: 1,
     // customButtons: [ { name: 'fb', title: 'Choose Photo from Gallery' } ],
     storageOptions: {
       skipBackup: true
@@ -77,7 +77,7 @@ export const ImagePicker = (callback, opts = { maxWidth: 500, maxHeight: 500 }) 
   };
 
   launchImageLibrary(options, (response) => {
-    console.log('Image', response);
+    // console.log('Image', response);
     if (response.didCancel) {
       // console.log('User cancelled image picker');
     } else if (response.error) {
@@ -166,13 +166,21 @@ export const openLink = (url) => {
 export const getAsyncObjectData = async (key, callback) => {
   try {
     const jsonValue = await AsyncStorage.getItem(key);
-    return callback({ success: true, result: JSON.parse(jsonValue) });
+
+    return callback({ success: jsonValue ? true : false, result: JSON.parse(jsonValue) });
   } catch (error) {
     // console.log('ERROR get storage', e);
     return callback({ success: false, result: error.message });
   }
 };
 
+/**
+ * 
+ * @param {String} key 
+ * @param {*} value 
+ * @param {*} callback 
+ * @returns {Object}
+ */
 export const storeAsyncObjectData = async (key, value, callback) => {
   try {
     if (typeof key !== 'string') return callback({ error: 'Unsupported data type, Only string allowed' });
@@ -414,7 +422,7 @@ export const compressImage = async (photo, progressCallback, callback) => {
 export const dateWithoutOffset = () =>
   new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, -1);
 
-export const sharePost = async (post, dispatch) => {
+export const sharePost = async (post, dispatch, callback) => {
   dispatch.Blogs.setField('activeShare', post._id);
   try {
     if (post.imageUrl)
@@ -424,11 +432,15 @@ export const sharePost = async (post, dispatch) => {
           url,
           message: post.description || post.title
         })
-          .then((r) => dispatch.Blogs.setField('activeShare', ''))
+          .then((r) => {
+            dispatch.Blogs.setField('activeShare', '');
+            callback({ success: true, result: 'Successfully shared your post' });
+          })
           .catch((error) => {
             dispatch.Blogs.setField('activeShare', '');
-            if (error.message.indexOf('User did not share') !== -1) return null;
-            return showAlert('Something went wrong', error.message);
+            if (error.message.indexOf('User did not share') !== -1)
+              return callback({ success: true, result: error.message });
+            // return showAlert('Something went wrong', error.message);
           });
       });
     else
@@ -436,15 +448,18 @@ export const sharePost = async (post, dispatch) => {
         // url,
         message: post.description || post.title
       })
-        .then((r) => dispatch.Blogs.setField('activeShare', ''))
+        .then((r) => {
+          dispatch.Blogs.setField('activeShare', '');
+          return callback({ success: true, result: 'Successfully shared your post' });
+        })
         .catch((error) => {
           dispatch.Blogs.setField('activeShare', '');
-          if (error.message.indexOf('User did not share') !== -1) return null;
-          return showAlert('Something went wrong', error.message);
+          if (error.message.indexOf('User did not share') !== -1)
+            return callback({ success: true, result: error.message });
         });
   } catch (error) {
     dispatch.Blogs.setField('activeShare', '');
-    return showAlert('Something went wrong', error.message);
+    return callback({ success: false, result: error.message });
   }
 };
 

@@ -124,7 +124,7 @@ const CommunityChat = () => {
         style={{
           flexDirection: same ? 'row-reverse' : 'row',
           alignSelf: same ? 'flex-end' : 'flex-start',
-          marginTop: index === 0 ? RFValue(30) : 0
+          marginTop: index === 0 ? RFValue(40) : 0
           // backgroundColor: 'green'
           // width: '100%'
         }}
@@ -154,9 +154,12 @@ const CommunityChat = () => {
         <View
           style={{
             // borderWidth: 1,
-            backgroundColor: same ? color : '#eeeeee',
+            backgroundColor: same ? '#70dbff' : '#eeeeee',
             maxWidth: '60%',
             borderRadius: RFValue(20),
+            borderTopLeftRadius: !same ? 0 : RFValue(20),
+            borderTopRightRadius: same ? 0 : RFValue(20),
+
             padding: RFValue(10),
             // marginBottom: RFValue(15),
             // alignSelf: same ? 'flex-end' : 'flex-start',
@@ -190,12 +193,12 @@ const CommunityChat = () => {
             justifyContent: 'center',
             // backgroundColor: '#7FFF00',
             // position: 'absolute',
-            backgroundColor: `#000`,
+            backgroundColor: `#35d475`,
             zIndex: 200,
             position: 'absolute',
             alignItems: 'center',
             left: RFValue(10),
-            bottom: RFValue(60),
+            top: RFValue(10),
             paddingHorizontal: RFValue(10),
             // alignSelf: 'center',
             // padding: RFValue(5),
@@ -204,7 +207,7 @@ const CommunityChat = () => {
           }}
         >
           <Typo
-            text={`${users && users.length} ${users && users.length < 2 ? 'person' : 'people'} online`}
+            text={`${users && users.length} online`}
             color="#fff"
             size={12}
             style={{

@@ -4,7 +4,7 @@ import { AUTH, FIRESTORE } from '../../Utils/Constants';
 import AxiosClient from '../Axios';
 
 export default {
-  state: { user: {}, events: [], blogs: [], randomOrganisers: [], allOrganisers: [] },
+  state: { user: {}, events: [], blogs: [], randomOrganisers: [], allOrganisers: [], activeFollowing: '' },
   reducers: {
     setField (state, field, value) {
       // console.log('Setting user details----', user);
@@ -151,9 +151,13 @@ export default {
       }
     },
 
-    async followAccount ({ follower, following, callback }) {
+    async followAccount ({ following, callback }, state) {
       try {
-        await AxiosClient.post(`/accounts/follow/${following}`, { follower }).then(({ data }) => callback(data));
+        await FIRESTORE.collection('users').doc(state.Account.user.uid).set({ following }, { merge: true }).then(() => {
+          dispatch.Account.setField('user', { ...state.Account.user, following });
+          dispatch.Account.setField('activeFollowing', '');
+          return callback({ success: true, result: 'Successfully followed account' });
+        });
       } catch (error) {
         return callback({ success: false, result: error.message });
       }

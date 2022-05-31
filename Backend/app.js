@@ -90,6 +90,7 @@ io.on('connection', (socket) => {
 
   socket.on('disconnect', (args) => {
     console.log('Socket disconnected', socket.rooms.size);
+
     // users = users.filter((r) => r.socket !== socket.id);
     // io.
     // io.to('server').emit('joined-server', users);
