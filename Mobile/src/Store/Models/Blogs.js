@@ -120,10 +120,17 @@ export default {
         const userId = state.Account.user.uid || auth().currentUser.uid;
         await AxiosClient.patch(`/posts/like/${postId}`, { userId }).then(({ data }) => {
           if (data.success) {
-            const newBlogs = [ ...state.Blogs.blogs.map((r) => (r._id === postId ? data.result : r)) ];
+            const newBlogs = [
+              ...state.Blogs.blogs.map((r) => (r._id === postId ? { ...r, likes: [ ...r.likes, userId ] } : r))
+            ];
             dispatch.Blogs.setField('blogs', newBlogs);
             dispatch.Blogs.setField('activeLike', '');
           }
+          if (state.Blogs.activeBlog._id === postId)
+            dispatch.Blogs.setField('activeBlog', {
+              ...state.Blogs.activeBlog,
+              likes: [ ...state.Blogs.activeBlog.likes, userId ]
+            });
           return callback(data);
         });
       } catch (error) {

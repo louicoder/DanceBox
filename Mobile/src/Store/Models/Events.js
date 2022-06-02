@@ -9,7 +9,10 @@ export default {
     activeEvent: { followers: [], likes: [], description: '', title: '', location: '', eventDate: '' },
     updatingEventId: '',
     userEvents: [],
-    postsPagination: { nextPage: 1, limit: 4, totalDocuments: 0, last: false }
+    postsPagination: { nextPage: 1, limit: 10, totalDocuments: 0, last: false },
+    calendarPagination: { nextPage: 1, limit: 10, totalDocuments: 0, last: false },
+    calendarEvents: [],
+    periodFilter: 'all'
   },
   reducers: {
     setField (state, field, value) {
@@ -39,20 +42,44 @@ export default {
       }
     },
 
-    async getEvents ({ filter, callback }, state) {
+    async getEvents ({ callback }, state) {
       try {
         const { nextPage: page, limit, last } = state.Events.postsPagination;
-        const queryParams = filter
-          ? `page=${page}&limit=${limit}&filter=eventInterval&filterValue=${filter}`
-          : `page=${page}&limit=${limit}`;
+        const queryParams =
+          state.Events.periodFilter && state.Events.periodFilter !== 'all'
+            ? `page=${page}&limit=${limit}&filter=eventInterval&filterValue=${state.Events.periodFilter}`
+            : `page=${page}&limit=${limit}`;
 
-        console.log('QUERY', queryParams);
+        // console.log('QUERY', queryParams, page, typeof page);
         if (!last)
           await AxiosClient.get(`/posts/events/all?${queryParams}`).then(({ data }) => {
             if (data.success) {
               const { result, success, user, ...rest } = data;
-              dispatch.Events.setEvents(page > 1 ? [ ...state.Events.events, ...data.result ] : data.result);
-              dispatch.Events.setField('postsPagination', rest);
+              dispatch.Events.setEvents(page !== 1 ? [ ...state.Events.events, ...data.result ] : data.result);
+              dispatch.Events.setField('postsPagination', { ...state.Events.postsPagination, ...rest });
+            }
+            callback(data);
+          });
+        else return callback({ success: true, result: [] });
+      } catch (error) {
+        return callback({ success: false, result: error.message });
+      }
+    },
+
+    async getCalendarEvents ({ filter, callback }, state) {
+      try {
+        const { nextPage: page, limit, last } = state.Events.calendarPagination;
+        const queryParams = `page=${page}&limit=${limit}&filter=${filter}`;
+
+        if (!last)
+          await AxiosClient.get(`/posts/events/filter?${queryParams}`).then(({ data }) => {
+            if (data.success) {
+              const { result, success, user, ...rest } = data;
+              dispatch.Events.setField(
+                'calendarEvents',
+                page > 1 ? [ ...state.Events.events, ...data.result ] : data.result
+              );
+              dispatch.Events.setField('calendarPagination', rest);
             }
             callback(data);
           });
@@ -99,6 +126,8 @@ export default {
             );
             dispatch.Events.setField('events', events);
             dispatch.Events.setField('randomEvents', randomEvents);
+            if (state.Events.activeEvent._id === eventId)
+              dispatch.Events.setField('activeEvent', { ...state.Events.activeEvent, ...payload });
             callback(data);
           }
           dispatch.Events.setField('updatingEventId', '');
@@ -124,6 +153,11 @@ export default {
             dispatch.Events.setField('randomEvents', randomEvents);
             callback(data);
           }
+          if (state.Events.activeEvent._id === eventId)
+            dispatch.Events.setField('activeEvent', {
+              ...state.Events.activeEvent,
+              followers: [ ...state.Events.activeEvent.followers, userId ]
+            });
           dispatch.Events.setField('updatingEventId', '');
 
           return callback(data);
@@ -168,7 +202,11 @@ export default {
             let events = state.Events.events.map(
               (event) => (event._id === eventId ? { ...event, likes: [ ...event.likes, uid ] } : event)
             );
-
+            if (state.Events.activeEvent._id === eventId)
+              dispatch.Events.setField('activeEvent', {
+                ...state.Events.activeEvent,
+                likes: [ ...state.Events.activeEvent.likes, uid ]
+              });
             dispatch.Events.setEvents(events);
             callback(data);
           }

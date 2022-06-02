@@ -10,11 +10,15 @@ import { CONSTANTS, HelperFunctions } from '../../Utils';
 import { BROWN, GRAY, SHADOW, THEME_COLOR, WHITE, WIDTH } from '../../Utils/Constants';
 // import Image from 'react-native-fast-image';
 import FastImage from 'react-native-fast-image';
+import { useDispatch } from 'react-redux';
+import { useNavigation } from '@react-navigation/native';
 
-const SingleBlog = ({ single, ...props }) => {
+const SingleBlog = ({ single, readMore = true, blog, header = true, style, allWords = false, ...props }) => {
   // console.log('POST::::', props);
   const [ shareLoading, setShareLoading ] = React.useState(false);
   const [ img, setImg ] = React.useState({ width: WIDTH, height: WIDTH });
+  const dispatch = useDispatch();
+  const navigation = useNavigation();
 
   // const payload = {
   //   imageUrl,
@@ -55,10 +59,11 @@ const SingleBlog = ({ single, ...props }) => {
         marginBottom: RFValue(8),
         paddingVertical: RFValue(10),
         paddingBottom: props.last ? RFValue(70) : RFValue(8),
-        backgroundColor: WHITE
+        backgroundColor: WHITE,
+        ...style
       }}
     >
-      <PostProfileCard {...props} {...props.user} />
+      {header ? <PostProfileCard {...props} {...props.user} /> : null}
       {props.imageUrl ? (
         <FastImage
           source={{ uri: props.imageUrl }}
@@ -72,11 +77,23 @@ const SingleBlog = ({ single, ...props }) => {
         />
       ) : null}
       <Typo
-        text={props.description}
-        lines={6}
+        text={`${props.description && allWords ? props.description : props.description.slice(0, 200)}`}
+        // lines={6}
         style={{ marginBottom: RFValue(0), paddingHorizontal: RFValue(8) }}
-        size={16}
-      />
+        // size={16}
+      >
+        {!allWords ? (
+          <Typo
+            text=" Read more..."
+            color="blue"
+            onPress={() => {
+              dispatch.Blogs.setField('activeBlog', blog);
+              navigation.navigate('BlogProfile', blog);
+            }}
+            size={12}
+          />
+        ) : null}
+      </Typo>
       <LikeCommentShare {...props} />
     </View>
   );

@@ -155,7 +155,7 @@ const EventPreview = ({
         {/* <Typo text={title} color={WHITE} size={20} style={{ fontWeight: 'bold' }} /> */}
         <Typo text={`${title}`} color={WHITE} size={18} style={{ fontWeight: 'normal' }} />
         <Typo
-          text={`🗒 ${moment(eventDate).format('dddd, Do-MMM-YYYY')}`}
+          text={`🗒 ${moment(eventDate).format('dddd, Do・MMMM・YYYY')}`}
           color={WHITE}
           size={12}
           style={{ fontWeight: 'normal', marginVertical: RFValue(2) }}
@@ -170,7 +170,7 @@ const EventPreview = ({
           <Typo
             text={`${eventInterval === 'once' ? 'One Time' : eventInterval} Event`}
             color={BLACK}
-            size={9}
+            size={10}
             style={{
               fontWeight: 'normal',
               padding: RFValue(5),
@@ -179,6 +179,7 @@ const EventPreview = ({
               // backgroundColor: PURPLE,
               backgroundColor: '#57cc99',
               alignSelf: 'flex-start',
+              textTransform: 'capitalize',
               borderRadius: RFValue(50)
               // width: '40%'
             }}

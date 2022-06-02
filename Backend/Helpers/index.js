@@ -2,16 +2,18 @@ const Bcrypt = require('bcrypt');
 const JWT = require('jsonwebtoken');
 const { AccountModel, CommentsModel } = require('../Models');
 
-const admin = require('firebase-admin');
-require('dotenv').config();
+// const admin = require('firebase-admin');
+// require('dotenv').config();
 
-// import firebase from 'firebase-admin';
-var serviceAccount = require('../dance-box-2022-firebase-adminsdk-ghdm1-206e97b937');
+// // import firebase from 'firebase-admin';
+// var serviceAccount = require('../dance-box-2022-firebase-adminsdk-ghdm1-206e97b937');
 
-const FIREBASE = admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  databaseURL: process.env.DATABASE_URL
-});
+// const FIREBASE = admin.initializeApp({
+//   credential: admin.credential.cert(serviceAccount),
+//   databaseURL: process.env.DATABASE_URL
+// });
+
+const FIREBASE = require('../Helpers/FirebaseServices');
 
 const paginateHelper = (page, limit, totalDocuments, result, res) => {
   // console.log('RESSSSSS', page, limit, totalDocuments, result.length);
@@ -59,11 +61,10 @@ const validateToken = (req, res, next) => {
 const userFiller = async (array, field = 'authorId') => {
   try {
     const userIds = [ ...new Set([ ...array.map((r) => r[field]) ]) ];
-    // const res = await AccountModel.find({ _id: { $in: userIds } });
-    // const users = [...res.map((r) => r._doc)];
 
-    const users = await FIREBASE.firestore().collection('users').where('uid', 'in', userIds).get();
-    const docs = [ ...users.docs.map((r) => ({ ...r.data(), id: r.id })) ];
+    const users = await FIREBASE.collection('users').where('uid', 'in', userIds).get();
+
+    const docs = [ ...users.docs.map((r) => ({ ...r.data(), uid: r.id })) ];
 
     let final = [];
     for (const item of array) {

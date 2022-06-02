@@ -25,7 +25,7 @@ const EventsInMonth = ({ navigation }) => {
     month = `${yr}-${mnth}`;
 
     dispatch.Events.getRandomEvents({
-      size: 2,
+      size: 3,
       callback: ({ result, success }) => {
         // console.log('HERE marked', result);
         // let dates = {};

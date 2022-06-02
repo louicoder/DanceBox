@@ -7,9 +7,9 @@ import {
   TextInput,
   KeyboardAvoidingView,
   Platform,
-  ScrollView,
   Alert,
   Keyboard,
+  ScrollView,
   Dimensions
 } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
@@ -28,6 +28,7 @@ import Comments from './Comments';
 import CommentBox from './CommentBox';
 import { DEFAULT_PROFILE } from '../../../Utils/Constants';
 import { useKeyboard } from '../../../Utils/useKeyboardHeight';
+import SingleBlog from '../SingleBlog';
 
 const { height } = Dimensions.get('window');
 const BlogProfile = ({ navigation, route, ...props }) => {
@@ -35,16 +36,16 @@ const BlogProfile = ({ navigation, route, ...props }) => {
   const [ blog, setBlog ] = React.useState({});
   const loading = useSelector((state) => state.loading.effects.Blogs);
   // const { user } = useSelector((state) => state.Account);
-  const [ state, setState ] = React.useState({ comments: [], commentShowing: false, isVisible: true });
+  const [ state, setState ] = React.useState({ comments: [], commentShowing: false, isVisible: false });
   const [ user, setUser ] = React.useState({});
-  // const { activeBlog } = useSelector((state) => state.Blogs);
+  const { activeBlog } = useSelector((state) => state.Blogs);
   const [ KeyHeight ] = useKeyboard();
 
   React.useEffect(
     () => {
       // const sub = navigation.addListener('focus', () => {});
-      getBlog();
-      getComments();
+      // getBlog();
+      // getComments();
     },
     [ navigation ]
   );
@@ -107,29 +108,29 @@ const BlogProfile = ({ navigation, route, ...props }) => {
 
   // console.log('ACtive blog', activeBlog);
 
-  const Blog = ({ imageUrl, title, description, comments, likes, _id, ...rest }) => {
-    // console.log('Title', title);
-    return (
-      <View style={{ backgroundColor: '#fff', marginBottom: RFValue(15) }}>
-        {imageUrl ? (
-          <Image source={{ uri: imageUrl }} style={{ width: '100%', height: RFValue(350) }} resizeMode="cover" />
-        ) : null}
+  // const Blog = ({ imageUrl, title, description, comments, likes, _id, ...rest }) => {
+  //   // console.log('Title', title);
+  //   return (
+  //     <View style={{ backgroundColor: '#fff', marginBottom: RFValue(15) }}>
+  //       {imageUrl ? (
+  //         <Image source={{ uri: imageUrl }} style={{ width: '100%', height: RFValue(350) }} resizeMode="cover" />
+  //       ) : null}
 
-        <View style={{ margin: RFValue(10) }}>
-          <Text style={{ fontSize: RFValue(18), fontWeight: 'bold' }}>{title}</Text>
-          <Text style={{ fontSize: RFValue(14), marginVertical: RFValue(10) }}>{description}</Text>
-          <CommentsLikeButtons
-            likes={likes}
-            comments={comments}
-            id={_id}
-            type="blog"
-            blogId={_id}
-            likeHandler={likeHandler}
-          />
-        </View>
-      </View>
-    );
-  };
+  //       <View style={{ margin: RFValue(10) }}>
+  //         <Text style={{ fontSize: RFValue(18), fontWeight: 'bold' }}>{title}</Text>
+  //         <Text style={{ fontSize: RFValue(14), marginVertical: RFValue(10) }}>{description}</Text>
+  //         <CommentsLikeButtons
+  //           likes={likes}
+  //           comments={comments}
+  //           id={_id}
+  //           type="blog"
+  //           blogId={_id}
+  //           likeHandler={likeHandler}
+  //         />
+  //       </View>
+  //     </View>
+  //   );
+  // };
 
   const openModal = React.useCallback(
     () => {
@@ -146,10 +147,10 @@ const BlogProfile = ({ navigation, route, ...props }) => {
   );
 
   return (
-    <View style={{ flex: 1 }}>
-      {state.commentShowing && (
+    <ScrollView style={{ flex: 1 }}>
+      {/* {state.commentShowing && (
         <CommentBox close={() => setState({ ...state, commentShowing: false })} postComment={postComment} user={user} />
-      )}
+      )} */}
       {/* <KeyboardAwareScrollView
         extraScrollHeight={useSafeAreaInsets().top}
         style={{ flex: 1, backgroundColor: '#eeeeee70' }}
@@ -160,102 +161,19 @@ const BlogProfile = ({ navigation, route, ...props }) => {
           <Text>This is the best show coming through</Text>
         </View>
       </BottomSheet>
-      {blog && (
-        <View style={{ flex: 1 }}>
-          <View style={{ flexGrow: 1, borderWidth: 0 }}>
-            <FlatList
-              style={{ flex: 1, backgroundColor: '#eeeeee70', marginTop: RFValue(10) }}
-              ListHeaderComponent={() => (
-                <View>
-                  <Blog {...blog} comments={state.comments} />
-                  {user && user._id ? (
-                    <View
-                      style={{
-                        backgroundColor: '#fff',
-                        width: '100%',
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        paddingHorizontal: RFValue(10),
-                        paddingVertical: RFValue(15)
-                      }}
-                    >
-                      {user && user.imageUrl ? (
-                        <Image
-                          source={{ uri: user && user.imageUrl }}
-                          style={{
-                            width: RFValue(30),
-                            height: RFValue(30),
-                            borderRadius: 50,
-                            marginRight: RFValue(20)
-                          }}
-                        />
-                      ) : (
-                        <View
-                          style={{
-                            width: RFValue(30),
-                            height: RFValue(30),
-                            borderRadius: 50,
-                            backgroundColor: '#eee',
-                            alignItems: 'center',
-                            justifyContent: 'center'
-                          }}
-                        >
-                          <DesignIcon name="user" pkg="ad" size={20} color="#aaa" />
-                        </View>
-                      )}
-                      <Pressable
-                        onPress={openModal}
-                        style={{
-                          backgroundColor: '#eee',
-                          flexGrow: 1,
-                          flexDirection: 'row',
-                          height: RFValue(40),
-                          paddingHorizontal: RFValue(10),
-                          justifyContent: 'space-between',
-                          alignItems: 'center'
-                        }}
-                      >
-                        <Text style={{ color: '#aaa', fontSize: RFValue(14) }}>Leave your comment...</Text>
-                        {state.commentShowing && <DesignIcon name="close" color="#aaa" />}
-                      </Pressable>
-                    </View>
-                  ) : null}
-                </View>
-              )}
-              // ListFooterComponent={}
-              data={state.comments}
-              keyExtractor={() => HelperFunctions.keyGenerator()}
-              showsVerticalScrollIndicator={false}
-              renderItem={({ item, index }) => (
-                <SingleComment
-                  // extStyles={{ paddingTop: index === 0 ? RFValue(15) : 0 }}
-                  {...item}
-                  last={index + 1 === state.comments.length}
-                  first={index === 0}
-                  navigation={navigation}
-                  _id={state._id}
-                  blog={item}
-                />
-              )}
-            />
-            {/* {state.comments && !state.comments.length ? (
-              <ComingSoon title="" extStyles={{ flexGrow: 1 }}>
-                <Pressable
-                  style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
-                  onPress={() => navigation.navigate('NewBlogComment', { blogId: state._id })}
-                >
-                  <Icon name="message-text-outline" size={RFValue(30)} style={{ marginVertical: RFValue(20) }} />
-                  <Text style={{ textAlign: 'center', color: '#aaa' }}>
-                    No comments yet, touch here to be the first one to add a comment...
-                  </Text>
-                </Pressable>
-              </ComingSoon>
-            ) : null} */}
-          </View>
-        </View>
-      )}
+      <SingleBlog
+        blog={activeBlog}
+        {...activeBlog}
+        index={0}
+        last
+        first={false}
+        header={false}
+        style={{ paddingVertical: 0 }}
+        allWords
+      />
+
       {/* </KeyboardAwareScrollView> */}
-    </View>
+    </ScrollView>
   );
 };
 

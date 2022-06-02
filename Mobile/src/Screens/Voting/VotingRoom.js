@@ -43,18 +43,22 @@ const VotingRoom = ({ route, navigation }) => {
         // socket.disconnect();
       };
     },
-    [ setUsers, route.params ]
+    [ setUsers, route.params, navigation ]
   );
 
-  React.useEffect(() => {
-    // if (route.params && route.params.room)
-    const sub = FIRESTORE.collection('voting').doc(route.params.room.id).onSnapshot((doc) => {
-      setVotingEvent({ ...votingEvent, ...doc.data(), id: doc.id });
-      setVotes([ ...(doc.data().votes || []) ]);
-    });
+  React.useEffect(
+    () => {
+      // if (route.params && route.params.room)
+      const sub = FIRESTORE.collection('voting').doc(route.params.room.id).onSnapshot((doc) => {
+        setVotingEvent({ ...votingEvent, ...doc.data(), id: doc.id });
+        setVotes([ ...(doc.data().votes || []) ]);
+        console.log('Votes-----------', doc.data().votes);
+      });
 
-    return () => sub();
-  }, []);
+      return sub;
+    },
+    [ setVotes, setVotingEvent ]
+  );
 
   // submit vote for saving::
   const voteHandler = (option) => setVotingEvent({ ...votingEvent, vote: option.id });
@@ -86,7 +90,7 @@ const VotingRoom = ({ route, navigation }) => {
       {/* <Text>VotingRoom:</Text> */}
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
         <Typo
-          text={`${users && users.length} online`}
+          text={`${users && users.length} • online`}
           color={WHITE}
           style={{
             backgroundColor: '#3BBA33',
@@ -99,7 +103,7 @@ const VotingRoom = ({ route, navigation }) => {
           }}
         />
         <Typo
-          text={`${votes && votes.length} Votes so far `}
+          text={`${votes && votes.length} • Votes so far `}
           style={{
             backgroundColor: '#eee',
             alignSelf: 'flex-start',
@@ -150,7 +154,7 @@ const VotingRoom = ({ route, navigation }) => {
               ) : null}
               {votes && votes.find((r) => r.uid === user.uid) ? (
                 <Typo
-                  text={`${votes && votes.filter((r) => r.uid === user.uid).length / votes.length * 100}%`}
+                  text={`${votes && votes.filter((x) => x.id === r.id).length / votes.length * 100}%`}
                   style={{
                     fontWeight: 'bold',
                     backgroundColor: '#47026c',

@@ -117,22 +117,7 @@ const HomeScreens = ({ socket }) => (
       component={NewBlogComment}
       options={{ header: (props) => <Header title="Add Blog Comment" iconName="pencil" {...props} /> }}
     />
-    <HomeStack.Screen
-      name="EventProfile"
-      component={EventProfile}
-      options={{
-        header: (props) => (
-          <Header
-            {...props}
-            title="Event details"
-            titleStyles={{ color: WHITE }}
-            extStyles={{ backgroundColor: THEME_COLOR, zIndex: 200 }}
-            iconProps={{ color: WHITE }}
-          />
-        ),
-        cardStyle: { zIndex: 100 }
-      }}
-    />
+
     <HomeStack.Screen
       name="NewEventComment"
       component={NewEventComment}
@@ -180,6 +165,7 @@ const HomeScreens = ({ socket }) => (
         )
       })}
     />
+
     <HomeStack.Screen
       name="VotingRoom"
       component={VotingRoom}
@@ -199,6 +185,38 @@ const HomeScreens = ({ socket }) => (
           />
         )
       })}
+    />
+    <HomeStack.Screen
+      name="EventProfile"
+      component={EventProfile}
+      options={{
+        header: (props) => (
+          <Header
+            {...props}
+            title="Event details"
+            titleStyles={{ color: BLACK }}
+            extStyles={{ backgroundColor: WHITE }}
+            iconProps={{ color: BLACK }}
+            onBackPress={() => props.navigation.goBack()}
+          />
+        )
+      }}
+    />
+    <CalendarStack.Screen
+      component={Calendar}
+      name="Calendar"
+      options={{
+        header: (props) => (
+          <Header
+            {...props}
+            title="Events Calendar"
+            titleStyles={{ color: WHITE }}
+            extStyles={{ backgroundColor: THEME_COLOR }}
+            iconProps={{ color: WHITE }}
+            // onBackPress={() => props.navigation.goBack()}
+          />
+        )
+      }}
     />
   </HomeStack.Navigator>
 );
@@ -531,7 +549,7 @@ const AllStacks = (props) => (
       }}
       {...props}
     />
-    <Stacks.Screen name="Calendar" component={CalendarScreens} options={{ header: () => null }} {...props} />
+    {/* <Stacks.Screen name="Calendar" component={CalendarScreens} options={{ header: () => null }} {...props} /> */}
     <DefaultStack.Screen name="Splash" component={Splash} options={{ header: () => null }} {...props} />
     <DefaultStack.Screen name="SinglePost" component={SinglePost} options={{ header: () => null }} {...props} />
     <DefaultStack.Screen name="Interests" component={SelectInterests} options={{ header: () => null }} {...props} />

@@ -44,7 +44,7 @@ const Voting = ({ navigation, route }) => {
   const socketURL = 'wss://dance-box-2022.el.r.appspot.com';
   // const socketURL = `http://192.168.1.100:8080`;
   React.useEffect(() => {
-    socket = SocketIOClient(socketURL, { jsonp: false });
+    // socket = SocketIOClient(socketURL, { jsonp: false });
     // socket.emit('join-server', { deviceId });
 
     // socket.emit('create-room', (room) => {
@@ -105,9 +105,9 @@ const Voting = ({ navigation, route }) => {
         style={{
           width: '100%',
           // borderWidth: 1,
-          backgroundColor: '#D4E4F6',
+          // backgroundColor: '#D4E4F6',
           // backgroundColor: '#91C8CC',
-          // backgroundColor: '#3C925F',
+          backgroundColor: '#FCBB40',
           borderRadius: RFValue(10),
           padding: RFValue(10),
           // height: RFValue(100),
@@ -129,10 +129,10 @@ const Voting = ({ navigation, route }) => {
         />
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
           <Typo
-            text={`${moment(item.dateCreated).format('dddd, Do-MMMM-YYYY')}`}
+            text={`${moment(item.dateCreated).format('dddd, Do・MMMM・YYYY')}`}
             style={{}}
             size={12}
-            color={HALF_WHITE}
+            // color={HALF_WHITE}
           />
           <Typo
             text={`${item.votes ? item.votes.length : 0} votes so far`}
@@ -141,10 +141,10 @@ const Voting = ({ navigation, route }) => {
               backgroundColor: '#D5A828',
               alignSelf: 'flex-start',
               paddingHorizontal: RFValue(10),
-              paddingVertical: RFValue(5),
+              paddingVertical: RFValue(3),
               borderRadius: RFValue(50)
             }}
-            size={14}
+            size={12}
             // color="#5CEF75"
             color="#fff"
           />
@@ -169,10 +169,6 @@ const Voting = ({ navigation, route }) => {
           justifyContent: 'center',
           zIndex: 50,
           backgroundColor: THEME_COLOR,
-          // ...SHADOW,
-          // shadowOpacity: 5,
-          // elevation: RFValue(10),
-          // shadowColor: '#000',
           position: 'absolute',
           bottom: RFValue(10),
           right: RFValue(10)

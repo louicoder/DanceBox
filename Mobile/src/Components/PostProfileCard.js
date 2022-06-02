@@ -65,7 +65,7 @@ const PostProfileCard = (props) => {
             withBorder
             extStyles={{ marginRight: RFValue(10) }}
             size={20}
-            color={GRAY}
+            // color={GRAY}
           />
         )}
       </View>
@@ -79,7 +79,7 @@ const PostProfileCard = (props) => {
 
         <Typo
           text={`Created • ${moment(props.dateCreated).fromNow()}`}
-          size={12}
+          size={11}
           style={{ lineHeight: RFValue(15) }}
           color="#ffb57d"
         />

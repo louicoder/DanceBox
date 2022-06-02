@@ -54,7 +54,7 @@ const Blogs = ({ navigation }) => {
   const closeModal = React.useCallback(() => setState({ ...state, isVisible: false }), [ state.isVisible ]);
 
   const renderItem = ({ item, index }) => (
-    <SingleBlog {...item} last={index + 1 === blogs.length} index={index} first={index === 0} />
+    <SingleBlog {...item} last={index + 1 === blogs.length} index={index} first={index === 0} blog={item} />
   );
 
   const RenderModalContent = ({ comp, createPost, closeModal }) => {

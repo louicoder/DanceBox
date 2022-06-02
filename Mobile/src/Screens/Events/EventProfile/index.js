@@ -112,8 +112,6 @@ const EventProfile = ({ navigation, route }) => {
       }
     });
 
-  // console.log('PARMAS. comments', route.params);
-
   return (
     <View style={{ flex: 1 }}>
       {/* <View style={{ position: 'absolute', bottom: hyt, width: '100%', zIndex: 40, height: RFValue(100) }}>

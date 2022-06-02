@@ -17,7 +17,7 @@ const createPost = async (req, res) => {
       result: 'You should provide the poll options and they should be atleast 2 options'
     });
 
-  if (req.body.type === 'event' && (!req.body.eventTime || !req.body.eventDate || !req.body.eventInterval))
+  if (req.body.type === 'event' && (!req.body.location || !req.body.eventDate || !req.body.eventInterval))
     return res.json({
       success: false,
       result: 'You should event date, event time and event interval in order to continue'
@@ -70,7 +70,6 @@ const getAllEvents = async (req, res) => {
 
   try {
     const total = await PostsModel.find(query).countDocuments();
-    // console.log('Total', total);
     await PostsModel.find(query).limit(limit * 1).skip((page - 1) * limit).then(async (result) => {
       let usersFilled = [];
       if (result.length) usersFilled = await userFiller([ ...result.map((r) => r._doc) ], 'authorId');
@@ -82,13 +81,12 @@ const getAllEvents = async (req, res) => {
 };
 
 const getCalendarEvents = async (req, res) => {
-  const { page = 1, limit = 2, eventInterval = '', filter = '' } = req.query;
+  const { page = 1, limit = 10, eventInterval = '', filter = '' } = req.query;
 
   let query = { type: 'event' };
   if (eventInterval) query = { ...query, eventInterval };
 
-  if (filter) query = { ...query, dateCreated: { $regex: '.*' + filter + '.*', $options: 'i' } };
-  // console.log('QUERY', query);
+  if (filter) query = { ...query, eventDate: { $regex: '.*' + filter + '.*', $options: 'i' } };
 
   try {
     const total = await PostsModel.find(query).countDocuments();
@@ -169,6 +167,7 @@ const updatePost = async (req, res) => {
       return res.json({ success: false, result: 'Nothing was updated please try again' });
     });
   } catch (error) {
+    console.log('POST UPDATE ERROR', error.message);
     return res.json({ success: false, result: error.message });
   }
 };

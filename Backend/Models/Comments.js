@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 
 const comments = new mongoose.Schema({
-  replies: { type: Array },
   postId: { type: String },
   authorId: { type: String },
   dateCreated: { type: String },

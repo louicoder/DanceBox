@@ -22,32 +22,18 @@ const Events = ({ navigation, ...props }) => {
   const { events, postsPagination: { limit } } = useSelector((state) => state.Events);
   const { user } = useSelector((state) => state.Account);
   const loading = useSelector((state) => state.loading.effects.Events);
+  const { periodFilter } = useSelector((state) => state.Events);
   const [ momentum, setMomentum ] = React.useState(false);
-
-  // React.useEffect(
-  //   () => {
-  //     const sub = navigation.addListener('focus', () => {
-  //       getEvents();
-  //     });
-
-  //     return () => sub;
-  //   },
-  //   [ navigation ]
-  // );
 
   React.useEffect(() => {
     getEvents();
   }, []);
 
-  // React.useEffect(() => {
-  //   HelperFunctions.getUser(({ success, result }) => success && setUser(result));
-  // }, []);
-
-  const getEvents = (filter = '') => {
+  const getEvents = () => {
     dispatch.Events.getEvents({
-      filter,
+      // filter: state.filter,
       callback: (res) => {
-        console.log('Events=============', res);
+        // console.log('Events=============', res);
         if (!res.success) return showAlert('Something went wrong', res.result);
       }
     });
@@ -57,7 +43,7 @@ const Events = ({ navigation, ...props }) => {
     <EventPreview
       navigation={navigation}
       imageUrl="https://ychef.files.bbci.co.uk/1376x774/p07ztf1q.jpg"
-      extStyles={{ marginBottom: events && events.length === index + 1 ? RFValue(70) : RFValue(10) }}
+      extStyles={{ marginBottom: events && events.length === index + 1 ? RFValue(70) : RFValue(15) }}
       {...item}
       event={item}
     />
@@ -69,22 +55,23 @@ const Events = ({ navigation, ...props }) => {
     () => {
       // console.log('StateXXXXXXXX', state);
       if (!momentum) setMomentum(true);
-      getEvents(state.filter);
+      getEvents();
     },
     [ setMomentum, getEvents ]
   );
 
   const onRefresh = () => {
-    dispatch.Events.setField('postsPagination', { limit, nextPage: 1, last: false });
+    dispatch.Events.setField('postsPagination', { limit: 10, nextPage: 1, last: false, last: false });
     dispatch.Events.setField('events', []);
-
+    // console.log('State.filter', state.filter);
     return getEvents();
   };
 
-  const filterEventsByPeriod = (period) => {
-    setState({ ...state, period, filter: period === 'all' ? '' : period });
+  const filterEventsByPeriod = () => {
+    setState({ ...state, period: periodFilter, filter: periodFilter === 'all' ? '' : periodFilter });
     dispatch.Events.setField('postsPagination', { nextPage: 1, limit: 4, totalDocuments: 0, last: false });
-    return getEvents(period === 'all' ? '' : period);
+    dispatch.Events.setField('events', []);
+    return getEvents();
   };
 
   // console.log('Events', events && events[0]);
@@ -151,10 +138,15 @@ const Events = ({ navigation, ...props }) => {
         }}
       >
         {[ 'all', 'once', 'daily', 'weekly' ].map((r) => {
-          const same = state.period === r;
+          const same = periodFilter === r;
           return (
             <Pressable
-              onPress={() => (!loading.getEvents ? filterEventsByPeriod(r) : null)}
+              onPress={() => {
+                if (!loading.getEvents) {
+                  dispatch.Events.setField('periodFilter', r === 'all' ? '' : r);
+                  filterEventsByPeriod();
+                }
+              }}
               key={HelperFunctions.keyGenerator()}
               style={{
                 width: '24%',
