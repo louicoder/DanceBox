@@ -126,12 +126,12 @@ const NewEvent = ({ navigation }) => {
       title
     };
 
-    console.log('Payload', payload);
+    // console.log('Payload', payload);
 
     dispatch.Events.createEvent({
       payload,
       callback: (res) => {
-        console.log('HERE creating Event', res);
+        // console.log('HERE creating Event', res);
         if (!res.success) return showAlert('Failed to create post', res.result);
         if (image && image.fileName) return uploadEventImage(res.result._id);
         showAlert(
@@ -362,7 +362,7 @@ const NewEvent = ({ navigation }) => {
                   }}
                 >
                   <Typo
-                    text={r}
+                    text={r === 'once' ? 'one time' : r}
                     style={{ textTransform: 'capitalize' }}
                     color={same ? '#fff' : THEME_COLOR}
                     onPress={() => setDuration(r)}
@@ -397,9 +397,9 @@ const NewEvent = ({ navigation }) => {
                     }}
                   >
                     <Typo
-                      text={`${exists ? '• ' : ''}${r && r.slice(0, 3)}`}
+                      text={`${r && r.slice(0, 3)}`}
                       style={{ textTransform: 'capitalize' }}
-                      color={exists ? '#000' : '#000'}
+                      color={exists ? '#fff' : '#000'}
                       onPress={() => setDays(r)}
                       pressable
                       size={12}

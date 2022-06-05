@@ -30,7 +30,7 @@ export default {
     async signup ({ payload, callback }) {
       try {
         await QUERIES.createUserAccount(payload, (res) => {
-          console.log('RESULT in effects', JSON.stringify(res.result));
+          // console.log('RESULT in effects', JSON.stringify(res.result));
           if (res.success) dispatch.Account.setUserDetails(JSON.stringify(res.result));
           callback(res);
         });
@@ -44,7 +44,7 @@ export default {
         await AUTH.signInWithEmailAndPassword(email, password).then(async (data) => {
           if (data.user)
             return await FIRESTORE.collection('users').doc(data.user.uid).get().then((user) => {
-              console.log('USER EFFECTS', user.data());
+              // console.log('USER EFFECTS', user.data());
               const result = { ...user.data(), uid: user.id };
               dispatch.Account.setField('user', result);
               return callback({ success: true, result });

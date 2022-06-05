@@ -8,7 +8,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Header from '../../Components/Header';
 
 const Professions = ({ professions, setProfessions, closeModal }) => {
-  console.log('Professions', professions);
+  // console.log('Professions', professions);
   // const [ professions, setProfessions ] = React.useState([]);
   const pros = [
     // 'dancer',

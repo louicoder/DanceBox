@@ -119,29 +119,29 @@ const Voting = ({ navigation, route }) => {
           // elevation: RFValue(8)
         }}
       >
-        <Typo text={item.title} style={{ textTransform: 'capitalize', fontWeight: 'bold' }} size={18} color={WHITE} />
+        <Typo text={item.title} style={{ textTransform: 'capitalize', fontWeight: 'bold' }} size={18} color={BLACK} />
 
         <Typo
-          text={`Event expires • ${moment(moment(item.dateCreated).add(24, 'hours')).fromNow()}`}
+          text={`Expires • ${moment(moment(item.dateCreated).add(24, 'hours')).fromNow()}`}
           style={{}}
           // size={12}
           color={WHITE}
         />
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
           <Typo
-            text={`${moment(item.dateCreated).format('dddd, Do・MMMM・YYYY')}`}
+            text={`Added − ${moment(item.dateCreated).format('Do・MMMM・YYYY')}`}
             style={{}}
             size={12}
             // color={HALF_WHITE}
           />
           <Typo
-            text={`${item.votes ? item.votes.length : 0} votes so far`}
+            text={`${item.votes ? item.votes.length : 0} • Votes`}
             style={{
               marginVertical: RFValue(5),
               backgroundColor: '#D5A828',
               alignSelf: 'flex-start',
               paddingHorizontal: RFValue(10),
-              paddingVertical: RFValue(3),
+              paddingVertical: RFValue(4),
               borderRadius: RFValue(50)
             }}
             size={12}

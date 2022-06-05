@@ -92,13 +92,13 @@ const getCalendarEvents = async (req, res) => {
     const total = await PostsModel.find(query).countDocuments();
     // console.log('Total', total);
     await PostsModel.find(query).limit(limit * 1).skip((page - 1) * limit).then(async (result) => {
-      console.log('RESS', [ ...result.map((r) => r._doc) ]);
+      // console.log('RESS', [ ...result.map((r) => r._doc) ]);
       let usersFilled = [];
       if (result.length) usersFilled = await userFiller([ ...result.map((r) => r._doc) ], 'authorId');
       return paginateHelper(page, limit, total, usersFilled, res);
     });
   } catch (error) {
-    console.log('QUERY', error.message);
+    // console.log('QUERY', error.message);
     return res.json({ success: false, result: error.message });
   }
 };
@@ -118,7 +118,7 @@ const getRandomPosts = async (req, res) => {
 
 const getRandomEvents = async (req, res) => {
   const { limit = 2 } = req.query;
-  console.log('Size', limit);
+  // console.log('Size', limit);
   try {
     await PostsModel.aggregate([
       { $sample: { size: parseInt(limit) } },
@@ -167,7 +167,7 @@ const updatePost = async (req, res) => {
       return res.json({ success: false, result: 'Nothing was updated please try again' });
     });
   } catch (error) {
-    console.log('POST UPDATE ERROR', error.message);
+    // console.log('POST UPDATE ERROR', error.message);
     return res.json({ success: false, result: error.message });
   }
 };
@@ -212,7 +212,7 @@ const deletePost = async (req, res) => {
   const { postId: _id } = req.params;
   try {
     await PostsModel.deleteOne({ _id }).then((result) => {
-      console.log('DElete', result);
+      // console.log('DElete', result);
       if (result.deletedCount > 0) return res.json({ success: true, result: 'Successfully updated post' });
       return res.json({ success: false, result: 'Nothing was updated please try again' });
     });

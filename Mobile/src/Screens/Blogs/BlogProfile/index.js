@@ -9,6 +9,7 @@ import {
   Platform,
   Alert,
   Keyboard,
+  ActivityIndicator,
   ScrollView,
   Dimensions
 } from 'react-native';
@@ -16,7 +17,7 @@ import { FlatList } from 'react-native-gesture-handler';
 import Ripple from 'react-native-material-ripple';
 import { RFValue } from 'react-native-responsive-fontsize';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { BottomSheet, ComingSoon, CommentsLikeButtons, DesignIcon, SingleComment } from '../../../Components';
+import { BottomSheet, ComingSoon, CommentsLikeButtons, DesignIcon, Comments, Typo } from '../../../Components';
 import Modal from '../../../Components/Modal';
 import { CONSTANTS, HelperFunctions } from '../../../Utils';
 import SingleEvent from '../SingleBlog';
@@ -24,9 +25,9 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { useDispatch, useSelector } from 'react-redux';
 import LoadingModal from '../../../Components/LoadingModal';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import Comments from './Comments';
+// import Comments from './Comments';
 import CommentBox from './CommentBox';
-import { DEFAULT_PROFILE } from '../../../Utils/Constants';
+import { DEFAULT_PROFILE, THEME_COLOR, WHITE } from '../../../Utils/Constants';
 import { useKeyboard } from '../../../Utils/useKeyboardHeight';
 import SingleBlog from '../SingleBlog';
 
@@ -34,39 +35,66 @@ const { height } = Dimensions.get('window');
 const BlogProfile = ({ navigation, route, ...props }) => {
   const dispatch = useDispatch();
   const [ blog, setBlog ] = React.useState({});
-  const loading = useSelector((state) => state.loading.effects.Blogs);
-  // const { user } = useSelector((state) => state.Account);
-  const [ state, setState ] = React.useState({ comments: [], commentShowing: false, isVisible: false });
-  const [ user, setUser ] = React.useState({});
+  // const loading = useSelector((state) => state.loading.effects.Blogs);
+  const loading = useSelector((state) => state.loading.effects);
+  const { user } = useSelector((state) => state.Account);
+  const { comments } = useSelector((state) => state.General);
+  const [ comment, setComment ] = React.useState('');
+  // const [ user, setUser ] = React.useState({});
   const { activeBlog } = useSelector((state) => state.Blogs);
   const [ KeyHeight ] = useKeyboard();
 
   React.useEffect(
     () => {
-      // const sub = navigation.addListener('focus', () => {});
-      // getBlog();
-      // getComments();
+      // console.log('EVENT PROFILE', route.params);
+      const sub = navigation.addListener('focus', () => {
+        getPostComments();
+      });
+
+      return () => {
+        navigation.removeListener(sub);
+      };
     },
     [ navigation ]
   );
 
-  React.useEffect(
-    () => {
-      const sub = navigation.addListener('focus', () =>
-        HelperFunctions.getUser(({ success, result }) => success && setUser(result))
-      );
-      console.log('USER', user);
-      return () => sub;
-    },
-    [ navigation ]
-  );
+  const getPostComments = () => {
+    dispatch.General.setField('comments', []);
+    dispatch.General.setField('commentsPagination', {
+      nextPage: 1,
+      limit: 10,
+      totalDocuments: 0,
+      last: false,
+      totalPages: 1
+    });
+
+    dispatch.General.getPostComments({
+      postId: route.params._id,
+      callback: ({ result, success }) => {
+        // console.log('Comments', result);
+        if (!success) return HelperFunctions.Notify('Erro getting comments', result);
+        // setState({ ...state, comments: result });
+      }
+    });
+  };
+
+  // React.useEffect(
+  //   () => {
+  //     const sub = navigation.addListener('focus', () =>
+  //       HelperFunctions.getUser(({ success, result }) => success && setUser(result))
+  //     );
+  //     console.log('USER', user);
+  //     return () => sub;
+  //   },
+  //   [ navigation ]
+  // );
 
   const getComments = () =>
     dispatch.Blogs.getBlogComments({
       blogId: route.params._id,
       callback: ({ result, success }) => {
         if (!success) return HelperFunctions.Notify('Erro getting comments', result);
-        setState({ ...state, comments: result });
+        // setState({ ...state, comments: result });
       }
     });
 
@@ -89,91 +117,83 @@ const BlogProfile = ({ navigation, route, ...props }) => {
     });
   };
 
-  const postComment = (comment) => {
-    // posting comment
+  const postComment = () => {
     Keyboard.dismiss();
-    const { email, name, imageUrl, uid } = user;
-    const owner = { email, name, imageUrl, uid };
-    dispatch.Blogs.createBlogComment({
-      blogId: route.params._id,
-      payload: { comment, authorId: user._id, type: 'blog', id: route.params._id },
-      callback: ({ success, result }) => {
-        if (!success) return HelperFunctions.Notify('Error', result);
-        let comments = [ ...state.comments ];
-        comments.unshift(result);
-        setState({ ...state, comments, commentShowing: false });
+    // console.log('Raeched posting comment', comment);
+    if (!comment) return showAlert('Empty comment', 'Please add a comment in order to continue commenting.', 'danger');
+    const payload = { comment, authorId: user.uid, postId: route.params._id };
+    dispatch.General.postComment({
+      // eventId: user,
+      payload,
+      callback: ({ result, success }) => {
+        if (!success) return showAlert('Failed!', result);
+        setComment('');
+        // let comments = [ ...state.comments ];
+        // comments.unshift(result);
+        // setState({ ...state, comments, commentShowing: false });
       }
     });
   };
 
-  // console.log('ACtive blog', activeBlog);
-
-  // const Blog = ({ imageUrl, title, description, comments, likes, _id, ...rest }) => {
-  //   // console.log('Title', title);
-  //   return (
-  //     <View style={{ backgroundColor: '#fff', marginBottom: RFValue(15) }}>
-  //       {imageUrl ? (
-  //         <Image source={{ uri: imageUrl }} style={{ width: '100%', height: RFValue(350) }} resizeMode="cover" />
-  //       ) : null}
-
-  //       <View style={{ margin: RFValue(10) }}>
-  //         <Text style={{ fontSize: RFValue(18), fontWeight: 'bold' }}>{title}</Text>
-  //         <Text style={{ fontSize: RFValue(14), marginVertical: RFValue(10) }}>{description}</Text>
-  //         <CommentsLikeButtons
-  //           likes={likes}
-  //           comments={comments}
-  //           id={_id}
-  //           type="blog"
-  //           blogId={_id}
-  //           likeHandler={likeHandler}
-  //         />
-  //       </View>
-  //     </View>
-  //   );
-  // };
-
-  const openModal = React.useCallback(
-    () => {
-      setState({ ...state, isVisible: true });
-    },
-    [ setState ]
-  );
-
-  const closeModal = React.useCallback(
-    () => {
-      setState({ ...state, isVisible: false });
-    },
-    [ setState ]
-  );
-
   return (
-    <ScrollView style={{ flex: 1 }}>
-      {/* {state.commentShowing && (
-        <CommentBox close={() => setState({ ...state, commentShowing: false })} postComment={postComment} user={user} />
-      )} */}
-      {/* <KeyboardAwareScrollView
-        extraScrollHeight={useSafeAreaInsets().top}
-        style={{ flex: 1, backgroundColor: '#eeeeee70' }}
-      > */}
-      {/* <LoadingModal isVisible={loading.getBlog || loading.likeBlog} /> */}
-      <BottomSheet isVisible={state.isVisible} closeModal={closeModal}>
-        <View style={{ height, paddingTop: useSafeAreaInsets().top }}>
-          <Text>This is the best show coming through</Text>
-        </View>
-      </BottomSheet>
-      <SingleBlog
-        blog={activeBlog}
-        {...activeBlog}
-        index={0}
-        last
-        first={false}
-        header={false}
-        style={{ paddingVertical: 0 }}
-        allWords
-      />
+    <View style={{ flex: 1 }}>
+      {/* <BottomSheet isVisible={state.isVisible} closeModal={closeModal}>
+          <View style={{ height, paddingTop: useSafeAreaInsets().top }}>
+            <Text>This is the best show coming through</Text>
+          </View>
+        </BottomSheet> */}
+      <ScrollView style={{ flex: 1 }}>
+        <SingleBlog
+          blog={activeBlog}
+          {...activeBlog}
+          index={0}
+          // last
+          first={false}
+          header={false}
+          style={{ paddingVertical: 0 }}
+          allWords
+        />
+        <Comments postId={route.params && route.params._id} navigation={navigation} style={{}} />
 
-      {/* </KeyboardAwareScrollView> */}
-    </ScrollView>
+        {/* </KeyboardAwareScrollView> */}
+      </ScrollView>
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          position: 'absolute',
+          bottom: 0,
+          width: '100%',
+          backgroundColor: '#ddd',
+          paddingHorizontal: RFValue(10)
+        }}
+      >
+        <TextInput
+          placeholder="Enter your comment here..."
+          multiline
+          style={{ maxHeight: RFValue(100), width: '75%', marginRight: RFValue(10), fontSize: RFValue(14) }}
+          value={comment}
+          onChangeText={(e) => setComment(e)}
+        />
+        {loading.General.postComment || loading.General.getPostComments ? (
+          <ActivityIndicator color="#000" />
+        ) : (
+          <Typo
+            text="Post"
+            onPress={postComment}
+            style={{
+              backgroundColor: THEME_COLOR,
+              paddingHorizontal: RFValue(10),
+              paddingVertical: RFValue(5),
+              borderRadius: RFValue(50)
+            }}
+            pressable
+            color={WHITE}
+          />
+        )}
+      </View>
+    </View>
   );
 };
 

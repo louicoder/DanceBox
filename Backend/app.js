@@ -55,7 +55,7 @@ io.on('connection', (socket) => {
   // });
 
   socket.on('add-participant', (usr) => {
-    console.log('LEAVING ROOM--------', usr);
+    // console.log('LEAVING ROOM--------', usr);
     participants.push({ ...usr, votes: [] });
     const parts = participants.filter((u) => u.room === usr.room);
     const userz = users.filter((u) => u.room === usr.room);
@@ -81,7 +81,7 @@ io.on('connection', (socket) => {
   });
 
   socket.on('vote', (usr) => {
-    console.log('Voting', usr);
+    // console.log('Voting', usr);
     // participants.map(r => r.id === usr.voted ? ({ ...r, votes: [...r.votes, usr.voter] }) : r);
     votes.push(usr);
     const votez = votes.filter((v) => v.room === usr.room);
@@ -89,12 +89,10 @@ io.on('connection', (socket) => {
   });
 
   socket.on('disconnect', (args) => {
-    console.log('Socket disconnected', socket.rooms.size);
-
+    // console.log('Socket disconnected', socket.rooms.size);
     // users = users.filter((r) => r.socket !== socket.id);
     // io.
     // io.to('server').emit('joined-server', users);
-
     // users = users.filter((usr) => usr.id !== socket.id);
     // io.to('server').emit('new-user', users);
   });

@@ -11,7 +11,7 @@ const register = async (req, res) => {
   const { password: pass, ...rest } = req.body;
   const password = hashPassword(pass);
   const payload = { ...rest, password, dateCreated: new Date().toISOString() };
-  console.log('Crated user', password, payload);
+  // console.log('Crated user', password, payload);
 
   try {
     const user = new AccountModel(payload);
@@ -20,7 +20,7 @@ const register = async (req, res) => {
       return res.json({ success: true, result: { user, token } });
     });
   } catch (error) {
-    console.log('Reacted here', error.message);
+    // console.log('Reacted here', error.message);
     return res.json({ success: false, result: error.message });
   }
 };
@@ -83,7 +83,7 @@ const followAccount = async (req, res) => {
   const { following: _id } = req.params;
   const { follower: id } = req.body;
 
-  console.log('Follower - following', id, _id);
+  // console.log('Follower - following', id, _id);
 
   try {
     const follower = await AccountModel.updateOne({ _id }, { $push: { followers: id } });

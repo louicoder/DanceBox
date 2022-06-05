@@ -10,14 +10,17 @@ const createComment = async (req, res) => {
 
   // const { type } = req.query;
   const { postId, comment, authorId } = req.body;
-  const payload = { postId, authorId, comment, dateCreated: dateWithoutOffset(), likes: [] };
+  const payload = { postId, authorId, comment, dateCreated: new Date().toISOString(), likes: [] };
   const COMM = new CommentsModel(payload);
   try {
     const comment = await COMM.save();
     const fbUser = await FIREBASE.collection('users').doc(authorId).get();
-    const user = { ...fbUser.data(), uid: fbUser.id };
+    let user = { username: '', email: '', imageUrl: '' };
+    const { photoURL: imageUrl } = fbUser.data();
+    if (fbUser) {
+      user = { ...user, ...fbUser.data(), imageUrl, uid: fbUser.id };
+    }
     const result = { ...comment._doc, user };
-    console.log('COMmeNT----', result);
     return res.json({ success: true, result });
   } catch (error) {
     return res.json({ success: false, result: error.message });
@@ -31,7 +34,7 @@ const getBlogComments = async (req, res) => {
   const { page = 1, limit = 10 } = req.query;
   try {
     const total = await CommentsModel.find({ id, commentType: 'blog' }).countDocuments();
-    console.log('Here in blog comments', total);
+    // console.log('Here in blog comments', total);
     const response = await CommentsModel.find({ id, commentType: 'blog' });
     let final = await userFiller(response, 'authorId');
     // final.sort((a, b) => b.dateCreated - a.dateCreated);
@@ -66,11 +69,16 @@ const getPostComments = async (req, res) => {
   const { page = 1, limit = 10 } = req.query;
   try {
     const total = await CommentsModel.find({ postId }).countDocuments();
-    CommentsModel.find({ postId }).limit(limit * 1).skip((page - 1) * limit).then(async (response) => {
-      const users = [ ...response.map((r) => r._doc) ];
-      let final = await userFiller(users, 'authorId');
-      return paginateHelper(page, limit, total, final, res);
-    });
+    CommentsModel.find({ postId })
+      .sort({ dateCreated: -1 })
+      .limit(limit * 1)
+      .skip((page - 1) * limit)
+      .then(async (response) => {
+        if (!response.length) return paginateHelper(page, limit, total, response, res);
+        const users = [ ...response.map((r) => r._doc) ];
+        let final = await userFiller(users, 'authorId');
+        return paginateHelper(page, limit, total, final, res);
+      });
   } catch (error) {
     // console.log('Final comments', error.message);
     return res.json({ success: false, result: error.message });

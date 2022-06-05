@@ -26,7 +26,7 @@ const Login = ({ navigation }) => {
 
   React.useEffect(() => {
     // login();
-    // getAsyncStorage('user', (res) => console.log('STorage key', res));
+    getAsyncStorage('user', (res) => console.log('STorage key', res));
   }, []);
 
   const googleSignin = async () => {
@@ -37,7 +37,7 @@ const Login = ({ navigation }) => {
       // setUserInfo(info);
       const { idToken, ...rest } = await GoogleSignin.signIn();
 
-      console.log('REsuer', rest);
+      // console.log('REsuer', rest);
       // Create a Google credential with the token
       const googleCredential = auth.GoogleAuthProvider.credential(idToken);
 
@@ -45,17 +45,16 @@ const Login = ({ navigation }) => {
       return auth().signInWithCredential(googleCredential);
     } catch (error) {
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-        console.log('ERror', 'SIGN_IN_CANCELLED');
+        // console.log('ERror', 'SIGN_IN_CANCELLED');
         // user cancelled the login flow
       } else if (error.code === statusCodes.IN_PROGRESS) {
-        console.log('ERror', 'IN_PROGRESS');
+        // console.log('ERror', 'IN_PROGRESS');
         // operation (e.g. sign in) is in progress already
       } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-        console.log('ERror', 'PLAY_SERVICES_NOT_AVAILABLE');
+        // console.log('ERror', 'PLAY_SERVICES_NOT_AVAILABLE');
         // play services not available or outdated
       } else {
-        console.log('ERror', 'Other error');
-
+        // console.log('ERror', 'Other error');
         // some other error happened
       }
     }
@@ -72,7 +71,7 @@ const Login = ({ navigation }) => {
       email,
       password,
       callback: (res) => {
-        console.log('RES from login', res);
+        // console.log('RES from login', res);
         if (!res.success) return showAlert('Error logging in', res.result);
         return navigation.navigate('Main', { screen: 'Home' });
       }

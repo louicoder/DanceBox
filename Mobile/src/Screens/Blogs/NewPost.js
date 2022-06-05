@@ -71,7 +71,7 @@ const NewPost = ({ imageUrl = '' }) => {
     dispatch.Blogs.createBlog({
       payload,
       callback: (res) => {
-        console.log('HERE blog', res);
+        // console.log('HERE blog', res);
         if (!res.success) return showAlert('Failed to create post', res.result);
         // if (state.image && state.image.fileName) return uploadImage(res.result._id);
         if (state.image && state.image.fileName) return compressImageForUpload(res.result._id);
@@ -88,7 +88,7 @@ const NewPost = ({ imageUrl = '' }) => {
     compressImage(
       state.image,
       (prog) => {
-        console.log('Progress', prog);
+        // console.log('Progress', prog);
       },
       (url) => {
         // console.log('ULR from COMPRESS', url);

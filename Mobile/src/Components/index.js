@@ -27,6 +27,7 @@ import EventPreview from './EventPreview';
 import Header from './Header';
 import PostProfileCard from './PostProfileCard';
 import LikeCommentShare from './LikeCommentShare';
+import Comments from './Comments';
 
 export {
   IconComp,
@@ -57,5 +58,6 @@ export {
   EventPreview,
   Header,
   PostProfileCard,
-  LikeCommentShare
+  LikeCommentShare,
+  Comments
 };

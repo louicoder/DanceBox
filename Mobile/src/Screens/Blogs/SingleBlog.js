@@ -90,7 +90,7 @@ const SingleBlog = ({ single, readMore = true, blog, header = true, style, allWo
               dispatch.Blogs.setField('activeBlog', blog);
               navigation.navigate('BlogProfile', blog);
             }}
-            size={12}
+            // size={12}
           />
         ) : null}
       </Typo>

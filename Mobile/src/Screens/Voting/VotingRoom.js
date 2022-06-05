@@ -26,7 +26,7 @@ const VotingRoom = ({ route, navigation }) => {
   React.useEffect(
     () => {
       // if (route.params && route.params.room) setVotingEvent(route.params.room);
-      // console.log('Route', route.params);
+      console.log('Route', route.params);
       socket = SocketIOClient(socketURL, { jsonp: false });
       // socket.emit('join-server', { deviceId });
 
@@ -52,7 +52,7 @@ const VotingRoom = ({ route, navigation }) => {
       const sub = FIRESTORE.collection('voting').doc(route.params.room.id).onSnapshot((doc) => {
         setVotingEvent({ ...votingEvent, ...doc.data(), id: doc.id });
         setVotes([ ...(doc.data().votes || []) ]);
-        console.log('Votes-----------', doc.data().votes);
+        // console.log('Votes-----------', doc.data().votes);
       });
 
       return sub;
@@ -74,11 +74,11 @@ const VotingRoom = ({ route, navigation }) => {
         user: user.username || user.name || user.email
       };
       const payload = { votes: [ ...votes, newVote ] };
-      console.log('Voted', votingEvent.id);
+      // console.log('Voted', votingEvent.id);
 
       await FIRESTORE.collection('voting').doc(votingEvent.id).set(payload, { merge: true }).then(() => {
         showAlert('Success', 'You have successfully voted. wait while other also vote');
-        return navigation.goBack();
+        // return navigation.goBack();
       });
     } catch (error) {
       return showAlert('Something went wrong', error.message);
@@ -126,6 +126,7 @@ const VotingRoom = ({ route, navigation }) => {
         votingEvent.options &&
         votingEvent.options.map((r, index) => {
           const same = votingEvent.vote === r.id;
+          const percent = votes && votes.filter((x) => x.id === r.id).length / votes.length * 100;
           return (
             <Pressable
               key={r.id}
@@ -139,28 +140,40 @@ const VotingRoom = ({ route, navigation }) => {
                 justifyContent: 'space-between',
                 marginBottom: RFValue(10),
                 borderWidth: same ? 1 : 1,
-                paddingVertical: RFValue(10),
-                paddingHorizontal: RFValue(10),
+                // paddingVertical: RFValue(10),
+                height: RFValue(50),
+                // paddingHorizontal: RFValue(10),
                 borderColor: !same ? '#D0ECFE' : '#2F3CDB',
                 backgroundColor: '#D0ECFE',
                 borderRadius: RFValue(8)
               }}
             >
-              <Typo text={r.value} style={{ flexShrink: 1 }} size={14} />
+              <View
+                style={{
+                  height: '100%',
+                  position: 'absolute',
+                  backgroundColor: '#00000012',
+                  width: `${percent}%`,
+                  // width: `${100}%`,
+                  borderRadius: RFValue(8)
+                }}
+              />
+              <Typo text={r.value} style={{ flexShrink: 1, marginLeft: RFValue(10) }} size={14} />
               {same ? (
-                <DesignIcon name="check" pkg="mc" />
+                <DesignIcon name="check" pkg="mc" style={{ marginRight: RFValue(10) }} />
               ) : !votes.find((r) => r.uid === user.uid) ? (
-                <DesignIcon name="chevron-right" pkg="mc" />
+                <DesignIcon name="chevron-right" pkg="mc" style={{ marginRight: RFValue(10) }} />
               ) : null}
               {votes && votes.find((r) => r.uid === user.uid) ? (
                 <Typo
-                  text={`${votes && votes.filter((x) => x.id === r.id).length / votes.length * 100}%`}
+                  text={`${percent}%`}
                   style={{
                     fontWeight: 'bold',
-                    backgroundColor: '#47026c',
+                    // backgroundColor: '#47026c',
                     padding: RFValue(5),
                     borderRadius: RFValue(5),
-                    color: WHITE
+                    marginRight: RFValue(10)
+                    // color: WHITE
                   }}
                   size={16}
                 />
@@ -168,13 +181,8 @@ const VotingRoom = ({ route, navigation }) => {
             </Pressable>
           );
         })}
-      <Buton
-        title="Submit Vote"
-        onPress={() =>
-          votes.find((r) => r.uid === user.uid)
-            ? showAlert('Already voted!', 'You have already voted, you cannot vote again!')
-            : postVote()}
-      />
+
+      {votes && !votes.find((r) => r.uid === user.uid) ? <Buton title="Submit Vote" onPress={postVote} /> : null}
     </ScrollView>
   );
 };

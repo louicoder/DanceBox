@@ -48,7 +48,7 @@ const Signup = ({ navigation }) => {
       // type: 'doctors',
       callback: (res) => {
         if (!res.success) {
-          console.log('RESULT', res.result);
+          // console.log('RESULT', res.result);
           // setState((r) => ({ ...state, error: res.result, visible: false }));
           return showAlert('Error Logging In', res.result, 'danger', 'top');
         }

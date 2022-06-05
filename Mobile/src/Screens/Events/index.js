@@ -143,7 +143,7 @@ const Events = ({ navigation, ...props }) => {
             <Pressable
               onPress={() => {
                 if (!loading.getEvents) {
-                  dispatch.Events.setField('periodFilter', r === 'all' ? '' : r);
+                  dispatch.Events.setField('periodFilter', r);
                   filterEventsByPeriod();
                 }
               }}

@@ -36,7 +36,7 @@ const Blogs = ({ navigation }) => {
   );
   const loading = useSelector((state) => state.loading.effects.Blogs);
 
-  console.log('TOttal pages', totalPages, nextPage, last);
+  // console.log('TOttal pages', totalPages, nextPage, last);
   React.useEffect(() => {
     const nav = navigation.addListener('focus', () => {
       getPosts();

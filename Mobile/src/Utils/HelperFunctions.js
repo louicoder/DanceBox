@@ -349,7 +349,7 @@ export const showAlert = (message, description, type, position, duration = 4500)
 
 export const takePhoto = () => {
   launchCamera({ saveToPhotos: true }, (res) => {
-    console.log('RES from camera', res);
+    // console.log('RES from camera', res);
     if (!res.assets)
       return showAlert(
         'Error taking photo',
@@ -371,7 +371,7 @@ export const takePhoto = () => {
 
 export const compressImage = async (photo, progressCallback, callback) => {
   const { uri, ...rest } = photo;
-  console.log('TOKEN', TINY_PNG_TOKEN, TINY_PNG_URL);
+  // console.log('TOKEN', TINY_PNG_TOKEN, TINY_PNG_URL);
   try {
     const path = uri.replace('file://', '');
     const formData = RNFetchBlob.wrap(path);
@@ -414,7 +414,7 @@ export const compressImage = async (photo, progressCallback, callback) => {
     progressCallback({ progress: 0, progressText: '' });
     return callback(base);
   } catch (error) {
-    console.log('Error optimizing', error.message);
+    // console.log('Error optimizing', error.message);
     return showAlert('Error happened when trying to transform the image', error.message);
   }
 };

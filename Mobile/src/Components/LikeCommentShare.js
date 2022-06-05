@@ -74,7 +74,7 @@ const LikeCommentShare = ({ extStyles = {}, _id: postId, ...props }) => {
   const shareHandler = async () =>
     await sharePost({ ...props, _id: postId }, dispatch, (res) => {
       // setShareLoading(false);
-      console.log('FRomsharing----', res);
+      // console.log('FRomsharing----', res);
     });
 
   return (

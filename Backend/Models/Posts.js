@@ -18,6 +18,7 @@ const PostSchema = new mongoose.Schema({
   endDate: { type: String },
   eventInterval: { type: String, enum: [ 'once', 'daily', 'weekly' ] },
   location: { type: String },
+  eventDays: { type: Array },
 
   // Poll props
   pollOptions: { type: Array, validate: [ (val) => val.length < 2, 'Options should be atleast two, try again' ] }

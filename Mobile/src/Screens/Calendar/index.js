@@ -115,7 +115,7 @@ const CalendarComponent = ({ navigation }) => {
           style={{ paddingBottom: useSafeAreaInsets().bottom + RFValue(20), marginTop: RFValue(0) }}
           onMonthChange={(month) => {
             const det = month && month.dateString && month.dateString.slice(0, 7);
-            console.log('month changed', det);
+            // console.log('month changed', det);
             dispatch.Events.setField('calendarEvents', []);
             dispatch.Events.setField('calendarPagination', {
               nextPage: 1,
