@@ -56,7 +56,9 @@ const likeComment = async (req, res) => {
     // console.log('RESul', post);
     if (post.nModified <= 0) return res.json({ success: false, result: error.message });
     const result = await CommentsModel.findOne({ _id });
-    return res.json({ success: true, result });
+    const fbUser = await FIREBASE.collection('users').doc(userId).get();
+    const { username, email, photoURL: imageUrl } = fbUser.data();
+    return res.json({ success: true, result: { ...result._doc, user: { email, username, imageUrl }, uid: fbUser.id } });
   } catch (error) {
     return res.json({ success: false, result: error.message });
   }

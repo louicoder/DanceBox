@@ -8,7 +8,8 @@ export default {
     blogsActiveFavorite: '',
     blogsActiveShare: '',
     comments: [],
-    commentsPagination: { nextPage: 1, limit: 10, totalDocuments: 0, last: false, totalPages: 1 }
+    commentsPagination: { nextPage: 1, limit: 10, totalDocuments: 0, last: false, totalPages: 1 },
+    activeCommentLike: ''
   },
   reducers: {
     setField (state, field, value) {
@@ -61,6 +62,23 @@ export default {
         });
         // else return callback({ success: true, result: [] });
       } catch (error) {
+        return callback({ success: false, result: error.message });
+      }
+    },
+
+    async likePostComment ({ userId, postId, callback }, state) {
+      try {
+        await AxiosClient.patch(`/comments/like/${postId}?`, { userId }).then(({ data }) => {
+          if (data.success) {
+            dispatch.General.setField('comments', [
+              ...state.General.comments.map((r) => (r._id === postId ? data.result : r))
+            ]);
+            dispatch.General.setField('activeCommentLike', '');
+          }
+          callback(data);
+        });
+      } catch (error) {
+        dispatch.General.setField('activeCommentLike', '');
         return callback({ success: false, result: error.message });
       }
     }

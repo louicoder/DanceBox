@@ -264,7 +264,17 @@ const BlogScreens = () => (
     <BlogStack.Screen
       name="BlogProfile"
       component={BlogProfile}
-      options={{ header: (props) => <Header {...props} title="Blog details" /> }}
+      options={{
+        header: (props) => (
+          <Header
+            {...props}
+            title="Post details"
+            extStyles={{ backgroundColor: THEME_COLOR, ...SHADOW, elevation: RFValue(8) }}
+            titleStyles={{ color: WHITE }}
+            iconProps={{ color: WHITE }}
+          />
+        )
+      }}
     />
   </BlogStack.Navigator>
 );
