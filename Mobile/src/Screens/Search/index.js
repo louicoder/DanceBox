@@ -9,7 +9,7 @@ import Input from '../../Components/Input';
 import LoadingModal from '../../Components/LoadingModal';
 import { HelperFunctions } from '../../Utils';
 import { BLACK, BROWN, GRAY, WIDTH } from '../../Utils/Constants';
-import { devAlert, getAsyncObjectData, storeAsyncObjectData } from '../../Utils/HelperFunctions';
+import { devAlert, getAsyncObjectData, showAlert, storeAsyncObjectData } from '../../Utils/HelperFunctions';
 import SingleBlog from '../Blogs/SingleBlog';
 import SingleEvent from '../Events/SingleEvent';
 
@@ -27,22 +27,21 @@ const Search = ({ navigation, ...props }) => {
   //   searchHandler();
   // }, []);
 
-  React.useLayoutEffect(
-    () => {
-      const sub = navigation.addListener(
-        'focus',
-        async () =>
-          await getAsyncObjectData('chat-agree', (res) => {
-            console.log('AGREED--->', res);
-            setState({ ...state, agreement: res.result });
-            if (res.success) return navigation.navigate('CommunityChat');
-          })
-      );
+  // React.useLayoutEffect(
+  //   () => {
+  //     const sub = navigation.addListener(
+  //       'focus',
+  //       async () =>
+  //         await getAsyncObjectData('chat-agree', (res) => {
+  //           setState({ ...state, agreement: res.result });
+  //           if (res.success) return navigation.navigate('CommunityChat');
+  //         })
+  //     );
 
-      return () => sub;
-    },
-    [ navigation ]
-  );
+  //     return () => sub;
+  //   },
+  //   [ navigation ]
+  // );
 
   const searchHandler = () => {
     Keyboard.dismiss();
@@ -86,7 +85,9 @@ const Search = ({ navigation, ...props }) => {
 
   const acceptTerms = async () =>
     await storeAsyncObjectData('chat-agree', true, (res) => {
-      if (res.success) return navigation.navigate('CommunityChat');
+      if (!res.success) return showAlert('Failed', res.result);
+      dispatch.General.setField('chatAgree', true);
+      return navigation.navigate('CommunityChat');
     });
 
   // console.log('EVEVNTS', blogs);

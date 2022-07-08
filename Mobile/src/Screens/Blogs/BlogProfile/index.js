@@ -153,7 +153,7 @@ const BlogProfile = ({ navigation, route, ...props }) => {
           style={{ paddingVertical: 0 }}
           allWords
         />
-        <Comments postId={route.params && route.params._id} navigation={navigation} style={{}} />
+        <Comments postId={route.params && route.params._id} navigation={navigation} style={{ marginTop: 0 }} />
 
         {/* </KeyboardAwareScrollView> */}
       </ScrollView>

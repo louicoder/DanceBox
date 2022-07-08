@@ -5,7 +5,13 @@ import { RFValue } from 'react-native-responsive-fontsize';
 import { Input, Password, Buton, Typo, LoginReg } from '../../Components';
 // import Icon from '../../assets/blob.svg';
 import { useDispatch, useSelector } from 'react-redux';
-import { getAsyncStorage, showAlert, validateEmail, ValidateEmail } from '../../Utils/HelperFunctions';
+import {
+  getAsyncObjectData,
+  getAsyncStorage,
+  showAlert,
+  validateEmail,
+  ValidateEmail
+} from '../../Utils/HelperFunctions';
 import { HEIGHT, THEME_COLOR, WIDTH } from '../../Utils/Constants';
 import { GoogleSignin, GoogleSigninButton, statusCodes } from '@react-native-google-signin/google-signin';
 
@@ -26,7 +32,7 @@ const Login = ({ navigation }) => {
 
   React.useEffect(() => {
     // login();
-    getAsyncStorage('user', (res) => console.log('STorage key', res));
+    getAsyncObjectData('user', (res) => console.log('STorage key', res));
   }, []);
 
   const googleSignin = async () => {

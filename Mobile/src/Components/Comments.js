@@ -126,7 +126,7 @@ const Comments = ({ style = {}, postId, navigation }) => {
                       marginBottom: RFValue(3)
                     }}
                   >
-                    <Typo text={r.user && (r.user.username || r.user.email)} size={13} style={{ fontWeight: 'bold' }} />
+                    <Typo text={r.user && (r.user.name || r.user.email)} size={13} style={{ fontWeight: 'bold' }} />
                     <Typo text={r.comment} size={12} style={{ marginVertical: RFValue(0) }} />
                   </View>
                   <Typo

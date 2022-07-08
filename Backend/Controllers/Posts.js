@@ -117,7 +117,7 @@ const getRandomPosts = async (req, res) => {
 };
 
 const getRandomEvents = async (req, res) => {
-  const { limit = 2 } = req.query;
+  const { limit = 5 } = req.query;
   // console.log('Size', limit);
   try {
     await PostsModel.aggregate([

@@ -2,7 +2,7 @@ import { View, Text } from 'react-native';
 import React from 'react';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { BLACK, SHADOW, WHITE, BROWN, THEME_COLOR } from '../../Utils/Constants';
+import { BLACK, SHADOW, WHITE, BROWN, THEME_COLOR, GRAY } from '../../Utils/Constants';
 import { useSelector } from 'react-redux';
 import { DesignIcon, Typo } from '../../Components';
 import FastImage from 'react-native-fast-image';
@@ -12,18 +12,20 @@ const HomeHeader = () => {
   return (
     <View
       style={{
-        marginTop: useSafeAreaInsets().top,
+        paddingTop: useSafeAreaInsets().top,
         // marginBottom: RFValue(10),
         // borderWidth: 1,
         backgroundColor: WHITE,
-        backgroundColor: THEME_COLOR,
+        // backgroundColor: THEME_COLOR,
         paddingHorizontal: RFValue(10),
         flexDirection: 'row',
         alignItems: 'center',
-        height: RFValue(60),
+        height: useSafeAreaInsets().top + RFValue(60),
         ...SHADOW,
-        elevation: RFValue(10),
-        shadowRadius: RFValue(3)
+        shadowOpacity: 0.2,
+        shadowRadius: RFValue(3),
+        shadowColor: '#aaa',
+        elevation: RFValue(8)
         // shadowColor: 'red'
       }}
     >
@@ -51,26 +53,26 @@ const HomeHeader = () => {
               // borderWidth: 1,
               borderRadius: 50,
               // borderColor: WHITE,
-              backgroundColor: WHITE,
+              backgroundColor: BROWN,
               alignItems: 'center',
               justifyContent: 'center'
             }}
           >
-            <DesignIcon name="user" pkg="ad" color={BLACK} />
+            <DesignIcon name="user" pkg="ad" color={GRAY} />
           </View>
         )}
       </View>
       <View style={{ flexGrow: 1, marginLeft: RFValue(10) }}>
-        <Typo text="Welcome back," size={14} color={WHITE} style={{ fontWeight: 'bold' }} />
+        <Typo text="Welcome back," size={16} color={BLACK} style={{ fontWeight: 'bold' }} />
         <Typo
           text={user.userName || user.email}
-          size={12}
+          // size={12}
           style={{ fontWeight: 'normal', textTransform: 'none', lineHeight: RFValue(15) }}
-          color={WHITE}
+          color={BLACK}
         />
       </View>
-      {/* <DesignIcon withBorder={false} name="bell-outline" pkg="mc" widthHeight={35} /> */}
-      {/* <DesignIcon withBorder={false} name="setting" pkg="ad" widthHeight={35} color={WHITE} /> */}
+      <DesignIcon name="notifications-outline" pkg="io" size={30} />
+      <DesignIcon style={{ marginLeft: RFValue(10) }} name="setting" pkg="ad" size={30} color={BLACK} />
       {/* <DesignIcon name="user" pg="ad" /> */}
     </View>
   );

@@ -20,10 +20,15 @@ const Splash = ({ navigation: { navigate } }) => {
 
   useEffect(() => {
     getUser();
+
+    return () => {
+      StatusBar.setBackgroundColor('#fff');
+      StatusBar.setBarStyle('dark-content');
+    };
   }, []);
 
   const getUser = async () => {
-    console.log('Splash=====', AUTH.currentUser);
+    // console.log('Splash=====', AUTH.currentUser);
 
     if (!AUTH.currentUser) return navigate('Login');
     return dispatch.Account.getUserDetails({

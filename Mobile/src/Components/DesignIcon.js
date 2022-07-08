@@ -29,7 +29,7 @@ const DesignIcon = ({
 }) => {
   const HOC = (props, Comp) => {
     return withBorder ? (
-      <Pressable style={[ Styles.iconWithBg(widthHeight, backColor), extStyles ]}>
+      <Pressable style={[ Styles.iconWithBg(widthHeight, backColor), extStyles ]} onPress={props.onPress}>
         {loading ? (
           <ActivityIndicator size={RFValue(indicatorSize)} color={indicatorColor} />
         ) : (

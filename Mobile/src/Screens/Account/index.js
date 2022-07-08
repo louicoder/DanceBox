@@ -21,11 +21,13 @@ import Image from 'react-native-fast-image';
 import { abbreviateNumber, keyGenerator, showAlert } from '../../Utils/HelperFunctions';
 import { hideMessage, showMessage } from 'react-native-flash-message';
 import Feedback from './Feedback';
+import EditPhoto from './EditPhoto';
 
 const Account = ({ navigation }) => {
   const { user } = useSelector((state) => state.Account);
   const dispatch = useDispatch();
-  const [ state, setState ] = React.useState({ comp: '' });
+  const [ state, setState ] = React.useState({ comp: '', ...user });
+  // const [Account, setAccount] = React.useState({...user})
   const [ isVisible, setIsVisible ] = React.useState(false);
 
   React.useEffect(() => {
@@ -119,6 +121,8 @@ const Account = ({ navigation }) => {
     switch (comp) {
       case 'feedback':
         return <Feedback closeModal={closeModal} />;
+      case 'photo':
+        return <EditPhoto closeModal={closeModal} />;
       default:
         break;
     }
@@ -127,9 +131,9 @@ const Account = ({ navigation }) => {
   return (
     <View style={{ flex: 1 }}>
       <BottomSheet isVisible={isVisible} closeModal={closeModal} extStyles={{ top: 0 }}>
-        {/* <View style={{ height: 'auto', right: 0, top: 0, left: 0, bottom: 0 }}> */}
-        <RenderModalContent comp={state.comp} closeModal={closeModal} />
-        {/* </View> */}
+        <View style={{ height: '100%' }}>
+          <RenderModalContent comp={state.comp} closeModal={closeModal} />
+        </View>
       </BottomSheet>
       <ScrollView style={{ flexGrow: 1, backgroundColor: BROWN }}>
         <View
@@ -139,6 +143,7 @@ const Account = ({ navigation }) => {
             backgroundColor: WHITE,
             paddingTop: RFValue(20),
             paddingTop: useSafeAreaInsets().top + RFValue(20)
+            // borderWidth: 1
           }}
         >
           <View
@@ -150,6 +155,7 @@ const Account = ({ navigation }) => {
               borderRadius: 100,
               backgroundColor: WHITE,
               marginBottom: RFValue(10)
+              // borderWidth: 1
             }}
           >
             <Pressable
@@ -162,6 +168,7 @@ const Account = ({ navigation }) => {
                 right: RFValue(15),
                 right: 0,
                 bottom: 0,
+                zIndex: 100,
                 ...SHADOW,
                 shadowOffset: { width: 0, height: RFValue(5) },
                 shadowRadius: RFValue(8),
@@ -178,39 +185,55 @@ const Account = ({ navigation }) => {
                 backColor={WHITE}
                 size={22}
                 color={GREEN}
-                onPress={devMode}
+                onPress={() => {
+                  setIsVisible(true);
+                  setState({ ...state, comp: 'photo' });
+                }}
               />
             </Pressable>
-            {user.imageUrl ? (
+            {user.photoURL ? (
               <Image
-                source={{ uri: user.imageUrl }}
+                source={{ uri: user.photoURL }}
                 style={{
                   width: '100%',
                   height: '100%',
                   borderRadius: 1 / 2 * HEIGHT,
-                  zIndex: 5,
-                  ...SHADOW,
-                  shadowColor: BLACK,
-                  elevation: RFValue(15)
+                  zIndex: 5
+                  // ...SHADOW,
+                  // shadowColor: BLACK,
+                  // elevation: RFValue(15)
                 }}
                 resizeMode="cover"
               />
             ) : (
-              <DesignIcon
-                color={GREEN}
-                name="user"
-                pkg="ad"
-                size={RFValue(50)}
+              <View
                 style={{
-                  // borderWidth: 1,
-                  padding: RFValue(15),
-                  borderRadius: RFValue(80),
-                  backgroundColor: WHITE,
                   ...SHADOW,
-                  shadowColor: GRAY,
-                  elevation: RFValue(10)
+                  width: RFValue(100),
+                  height: RFValue(100),
+                  borderRadius: 200,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  backgroundColor: '#fff',
+                  shadowOpacity: 0.2
                 }}
-              />
+              >
+                <DesignIcon
+                  color={GREEN}
+                  name="user"
+                  pkg="ad"
+                  size={RFValue(50)}
+                  style={{
+                    // borderWidth: 1,
+                    padding: RFValue(15),
+                    borderRadius: RFValue(80),
+                    backgroundColor: WHITE
+                    // ...SHADOW,
+                    // shadowColor: GRAY,
+                    // elevation: RFValue(10)
+                  }}
+                />
+              </View>
             )}
           </View>
 
@@ -222,6 +245,13 @@ const Account = ({ navigation }) => {
             // lines={1}
           />
           <Typo text={`${user.email}`} style={{ marginVertical: RFValue(0) }} size={12} color={GRAY} />
+          <Typo
+            text={`${user.followers && abbreviateNumber(user.followers.length)} Followers  |  ${user.following &&
+              abbreviateNumber(user.following.length)} Following`}
+            style={{ marginVertical: RFValue(0) }}
+            size={14}
+            // color={GRAY}
+          />
 
           <Typo
             text=""
@@ -247,8 +277,21 @@ const Account = ({ navigation }) => {
             // { title: 'following', caption: '0' },
             // { title: 'Posts', caption: '0' },
             // { title: 'about you', icon: true, name: 'ios-information-circle-outline', pkg: 'io' },
-            { title: 'settings', icon: true, name: 'setting' },
-            { title: 'Edit profile', icon: true, name: 'form', pkg: 'ad' },
+            {
+              title: 'settings',
+              icon: true,
+              name: 'setting',
+              active: true,
+              onPress: () => navigation.navigate('Settings')
+            },
+            {
+              title: 'Edit profile',
+              active: true,
+              icon: true,
+              name: 'form',
+              pkg: 'ad',
+              onPress: () => navigation.navigate('EditProfile')
+            },
             { title: 'favorites', name: 'bookmark-outline', icon: true, pkg: 'mc' },
             { title: 'Invite a friend', icon: true, name: 'share-social-outline', pkg: 'io' },
             { title: 'Terms & conditions', icon: true, name: 'document-text-outline', pkg: 'io' },

@@ -1,6 +1,6 @@
 import { View, Pressable, Alert } from 'react-native';
 import React from 'react';
-import { HEIGHT, THEME_COLOR, WHITE } from '../../Utils/Constants';
+import { BLACK, HEIGHT, THEME_COLOR, WHITE } from '../../Utils/Constants';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { Buton, DesignIcon, Header, Input, Typo } from '../../Components';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
@@ -60,9 +60,9 @@ const NewVoteEvent = ({ closeModal }) => {
       <Header
         title="Add Voting details"
         onBackPress={closeModal}
-        extStyles={{ backgroundColor: THEME_COLOR }}
-        iconProps={{ color: WHITE }}
-        titleStyles={{ color: WHITE }}
+        extStyles={{ backgroundColor: WHITE }}
+        iconProps={{ color: BLACK }}
+        titleStyles={{ color: BLACK }}
       />
       <View style={{ flexGrow: 1 }}>
         <KeyboardAwareScrollView style={{ flex: 1, paddingHorizontal: RFValue(8) }} keyboardShouldPersistTaps="always">

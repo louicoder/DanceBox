@@ -2,12 +2,13 @@ import { QUERIES } from '../../Firebase';
 import { HelperFunctions } from '../../Utils';
 import { AUTH, FIRESTORE } from '../../Utils/Constants';
 import AxiosClient from '../Axios';
+import firestore from '@react-native-firebase/firestore';
+import { storeAsyncObjectData } from '../../Utils/HelperFunctions';
 
 export default {
   state: { user: {}, events: [], blogs: [], randomOrganisers: [], allOrganisers: [], activeFollowing: '' },
   reducers: {
     setField (state, field, value) {
-      // console.log('Setting user details----', user);
       return { ...state, [field]: value };
     },
     setUserDetails (state, user) {
@@ -62,7 +63,7 @@ export default {
           return callback({ success: true, result: 'Logged out successfully' });
         });
       } catch (error) {
-        // console.log('Error loggin out', error.message);
+        console.log('Error loggin out', error.message);
         return failedRequest(callback, error.message);
       }
     },
@@ -115,8 +116,11 @@ export default {
     async updateAccountDetails ({ uid, payload, callback }, state) {
       try {
         // await AxiosClient.post(`/accounts/update/${uid}`, payload).then(({ data }) => callback(data));
-        await QUERIES.updateDoc('users', uid, payload, (res) => {
-          if (res.success) dispatch.Account.setUserDetails({ ...state.Account.user, ...res.result });
+        await QUERIES.updateDoc('users', uid, payload, async (res) => {
+          if (res.success) {
+            dispatch.Account.setUserDetails({ ...state.Account.user, ...res.result });
+            await storeAsyncObjectData('user', { ...state.Account.user, ...payload }, (res) => callback(res));
+          }
           callback(res);
         });
       } catch (error) {
@@ -151,13 +155,15 @@ export default {
       }
     },
 
-    async followAccount ({ following, callback }, state) {
+    async followAccount ({ following, callback, followed }, state) {
       try {
-        await FIRESTORE.collection('users').doc(state.Account.user.uid).set({ following }, { merge: true }).then(() => {
-          dispatch.Account.setField('user', { ...state.Account.user, following });
-          dispatch.Account.setField('activeFollowing', '');
-          return callback({ success: true, result: 'Successfully followed account' });
-        });
+        await FIRESTORE.collection('users').doc(state.Account.user.uid).set({ following }, { merge: true });
+        await FIRESTORE.collection('users')
+          .doc(followed)
+          .set({ followers: firestore.FieldValue.arrayUnion(state.Account.user.uid) }, { merge: true });
+        dispatch.Account.setField('user', { ...state.Account.user, following });
+        dispatch.Account.setField('activeFollowing', '');
+        return callback({ success: true, result: 'Successfully followed account' });
       } catch (error) {
         return callback({ success: false, result: error.message });
       }

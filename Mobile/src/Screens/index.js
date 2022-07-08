@@ -24,6 +24,9 @@ import Voting from './Voting';
 import Intro from './Intro';
 import Signup from './Signup';
 import AddProfilePhoto from './AddProfilePhoto';
+import EditProfile from './Account/EditProfile';
+import Settings from './Account/Settings';
+import Favorites from './Favorites';
 
 export {
   Home,
@@ -51,5 +54,8 @@ export {
   Voting,
   Intro,
   Signup,
-  AddProfilePhoto
+  AddProfilePhoto,
+  EditProfile,
+  Settings,
+  Favorites
 };

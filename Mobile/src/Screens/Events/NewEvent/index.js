@@ -437,13 +437,13 @@ const NewEvent = ({ navigation }) => {
               >
                 <DesignIcon name="calendar" pkg="ad" onPress={() => setDate(r.onPress)} color={BLACK} />
                 <Typo
-                  text={r.value ? moment(r.value).format('dddd・Do・MMMM・YYYY') : `${r.title}`}
+                  text={r.value ? moment(r.value).format('dddd, Do - MMMM - YYYY') : `${r.title}`}
                   style={{ paddingLeft: RFValue(15), flexGrow: 1 }}
                   // color={state[r.value] ? '#000' : '#aaa'}
                   color={BLACK}
                   pressable
                   onPress={() => setDate(r.onPress)}
-                  size={12}
+                  size={14}
                 />
                 <DesignIcon
                   name="chevron-down"

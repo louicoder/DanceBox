@@ -20,6 +20,7 @@ import {
   GRAY,
   HALF_BROWN,
   HALF_GRAY,
+  LIGHT_GREEN,
   THEME_COLOR,
   THEME_COLOR6,
   THEME_COLOR7,
@@ -159,15 +160,18 @@ const EventProfile = ({ navigation, route }) => {
           extInputStyles={{ backgroundColor: HALF_GRAY, marginBottom: 0, marginTop: 0 }}
         />
       </View> */}
+      <StatusBar backgroundColor="#fff" barStyle="dark-content" />
+
       <ScrollView style={{ flex: 1, backgroundColor: 'transparent', paddingHorizontal: RFValue(0) }}>
         <EventPreview
           // onPress={() => null}
           // borderRadius={false}
-          extStyles={{ marginBottom: 0, height: 3 / 4 * WIDTH, borderRadius: 0 }}
+          extStyles={{ marginBottom: 0, borderRadius: 0, shadowOpacity: 0, elevation: 0 }}
           event={activeEvent}
           {...activeEvent}
           borderRadius={false}
           onPress={false}
+          showFollowers={false}
         />
         <View style={{ paddingHorizontal: RFValue(8) }}>
           <Typo
@@ -180,7 +184,7 @@ const EventProfile = ({ navigation, route }) => {
               ? 's'
               : ''}`}
             style={{
-              backgroundColor: '#eee',
+              backgroundColor: LIGHT_GREEN,
               paddingVertical: RFValue(5),
               alignSelf: 'flex-start',
               marginVertical: RFValue(15),
@@ -191,46 +195,13 @@ const EventProfile = ({ navigation, route }) => {
           <Typo text="Details" size={18} style={{ fontWeight: 'bold', marginVertical: RFValue(8) }} />
 
           <Typo text={activeEvent && activeEvent.description} />
-
-          {/* <Typo
-            text="Follow the conversation"
-            size={18}
-            style={{ fontWeight: 'bold', marginTop: RFValue(15), marginBottom: RFValue(10) }}
-          /> */}
         </View>
+        {/* <Typo
+          text="Follow the conversation"
+          size={18}
+          style={{ fontWeight: 'bold', marginTop: RFValue(15), marginBottom: RFValue(10) }}
+        /> */}
 
-        {/* {[ ...new Array(3).fill() ].map((r) => (
-          <View
-            style={{
-              width: '100%',
-              flexDirection: 'row',
-              alignItems: 'flex-start',
-              marginBottom: RFValue(25),
-              paddingHorizontal: RFValue(8)
-            }}
-          >
-            <View
-              style={{
-                width: 0.1 * WIDTH,
-                height: 0.1 * WIDTH,
-                borderRadius: RFValue(50),
-                backgroundColor: BROWN,
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}
-            >
-              <DesignIcon name="user" pkg="ad" />
-            </View>
-
-            <View style={{ flexShrink: 1, marginLeft: RFValue(15) }}>
-              <Typo
-                text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quo plebiscito decreta a senatu est consuli quaestio Cn. Theophrasti igitur, inquit, tibi liber ille placet de beata vita? Dicet pro me ipsa virtus nec dubitabit isti vestro beato M. Summum ením bonum exposuit vacuitatem doloris;"
-                size={13}
-              />
-            </View>
-          </View>
-        ))}
-        <Buton title="View All Comments" extStyles={{ marginHorizontal: RFValue(8), height: RFValue(40) }} /> */}
         <Comments postId={route.params && route.params._id} navigation={navigation} />
       </ScrollView>
       <View

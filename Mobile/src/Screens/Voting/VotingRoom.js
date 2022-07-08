@@ -26,7 +26,7 @@ const VotingRoom = ({ route, navigation }) => {
   React.useEffect(
     () => {
       // if (route.params && route.params.room) setVotingEvent(route.params.room);
-      console.log('Route', route.params);
+      // console.log('Route', route.params);
       socket = SocketIOClient(socketURL, { jsonp: false });
       // socket.emit('join-server', { deviceId });
 
@@ -153,7 +153,7 @@ const VotingRoom = ({ route, navigation }) => {
                   height: '100%',
                   position: 'absolute',
                   backgroundColor: '#00000012',
-                  width: `${percent}%`,
+                  width: `${Math.ceil(percent)}%`,
                   // width: `${100}%`,
                   borderRadius: RFValue(8)
                 }}
@@ -166,7 +166,7 @@ const VotingRoom = ({ route, navigation }) => {
               ) : null}
               {votes && votes.find((r) => r.uid === user.uid) ? (
                 <Typo
-                  text={`${percent}%`}
+                  text={`${Math.ceil(percent)}%`}
                   style={{
                     fontWeight: 'bold',
                     // backgroundColor: '#47026c',

@@ -67,8 +67,8 @@ const Organisers = ({ navigation }) => {
               borderRadius: RFValue(10),
               // marginLeft: i === 0 ? RFValue(10) : 0
               ...SHADOW,
-              shadowColor: '#000',
-              elevation: RFValue(10)
+              // shadowColor: '#000',
+              elevation: RFValue(8)
               // shadowRadius: RFValue(2),
               // shadowOffset: { width: 0, height: RFValue(8) }
             }}

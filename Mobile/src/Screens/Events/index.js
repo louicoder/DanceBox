@@ -6,12 +6,12 @@ import { RFValue } from 'react-native-responsive-fontsize';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
-import { Buton, DesignIcon, EventPreview, Filters, ScrollBubbles, Typo } from '../../Components';
+import { Buton, DesignIcon, EventPreview, Filters, Header, ScrollBubbles, Typo } from '../../Components';
 import LoadingModal from '../../Components/LoadingModal';
 import Modal from '../../Components/Modal';
 import { Input } from '../../Components';
 import { HelperFunctions } from '../../Utils';
-import { BLACK, BROWN, GRAY, INTERESTS, THEME_COLOR, WHITE } from '../../Utils/Constants';
+import { BLACK, BROWN, GRAY, INTERESTS, SHADOW, THEME_COLOR, WHITE } from '../../Utils/Constants';
 import SingleEvent from './SingleEvent';
 import { showAlert } from '../../Utils/HelperFunctions';
 
@@ -24,6 +24,29 @@ const Events = ({ navigation, ...props }) => {
   const loading = useSelector((state) => state.loading.effects.Events);
   const { periodFilter } = useSelector((state) => state.Events);
   const [ momentum, setMomentum ] = React.useState(false);
+
+  React.useEffect(() => {
+    navigation.setOptions({
+      header: () => (
+        <Header
+          title="Community events"
+          backEnabled={false}
+          extStyles={{ ...SHADOW, shadowRadius: 10, shadowOpacity: 0.1 }}
+          // rightComp={() => (
+          //   <Pressable onPress={() => navigation.navigate('NewEvent')}>
+          //     <DesignIcon
+          //       name="plus"
+          //       withBorder
+          //       onPress={() => navigation.navigate('NewEvent')}
+          //       backColor={THEME_COLOR}
+          //       color="#fff"
+          //     />
+          //   </Pressable>
+          // )}
+        />
+      )
+    });
+  }, []);
 
   React.useEffect(() => {
     getEvents();
@@ -43,9 +66,10 @@ const Events = ({ navigation, ...props }) => {
     <EventPreview
       navigation={navigation}
       imageUrl="https://ychef.files.bbci.co.uk/1376x774/p07ztf1q.jpg"
-      extStyles={{ marginBottom: events && events.length === index + 1 ? RFValue(70) : RFValue(15) }}
+      extStyles={{ marginBottom: events && events.length === index + 1 ? RFValue(70) : RFValue(20) }}
       {...item}
       event={item}
+      showDescriptionPreview
     />
   );
 
@@ -89,7 +113,13 @@ const Events = ({ navigation, ...props }) => {
           borderRadius: RFValue(90),
           alignItems: 'center',
           justifyContent: 'center',
-          zIndex: 400
+          zIndex: 400,
+          ...SHADOW,
+          elevation: RFValue(6),
+          shadowRadius: 10,
+          shadowOpacity: 0.3,
+          shadowOffset: { height: RFValue(5), width: RFValue(0) },
+          shadowColor: '#000'
         }}
       >
         <DesignIcon name="plus" pkg="ad" onPress={() => navigation.navigate('NewEvent')} color={WHITE} />
@@ -125,7 +155,7 @@ const Events = ({ navigation, ...props }) => {
         style={{
           flexDirection: 'row',
           height: RFValue(30),
-          marginBottom: RFValue(15),
+          marginVertical: RFValue(15),
           alignItems: 'center',
           justifyContent: 'space-between',
           // paddingHorizontal: RFValue(10),
@@ -149,8 +179,8 @@ const Events = ({ navigation, ...props }) => {
               }}
               key={HelperFunctions.keyGenerator()}
               style={{
-                width: '24%',
-                backgroundColor: same ? '#ff9105' : BROWN,
+                width: '23%',
+                backgroundColor: same ? '#ff9105' : '#ff910510',
                 height: RFValue(30),
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -162,7 +192,7 @@ const Events = ({ navigation, ...props }) => {
                 // onPress={() => setState({ ...state, period: r === state.period ? '' : r })}
                 style={{ textTransform: 'capitalize' }}
                 color={same ? WHITE : '#ff9105'}
-                size={12}
+                size={13}
               />
             </Pressable>
           );

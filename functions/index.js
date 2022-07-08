@@ -3,6 +3,8 @@ const admin = require('firebase-admin');
 admin.initializeApp(functions.config().firebase);
 // const path = require('path');
 
+const APP_URL = 'https://dance-box-2022.el.r.appspot.com/api';
+
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
@@ -14,7 +16,7 @@ const mkdirp = require('mkdirp');
 //
 exports.sendWelcomeEmail = functions.auth.user().onCreate((user) => {
   const { email, uid, displayName: name = '', photoURL = '', emailVerified, phoneNumber = '' } = user;
-  return admin.firestore().collection('users').doc(`${uid}`).set({
+  admin.firestore().collection('users').doc(`${uid}`).set({
     email,
     uid,
     name,
@@ -25,6 +27,8 @@ exports.sendWelcomeEmail = functions.auth.user().onCreate((user) => {
     followers: [],
     dateCreated: new Date().toISOString()
   });
+
+  // await axios.post(`${APP_URL}/account/create`)
 });
 
 exports.resizeImage = functions.storage.object().onFinalize(async (object) => {

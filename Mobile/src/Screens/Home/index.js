@@ -1,5 +1,15 @@
 import React from 'react';
-import { View, Dimensions, ScrollView, Text, Alert, ImageBackground, Pressable, TextInput } from 'react-native';
+import {
+  View,
+  Dimensions,
+  ScrollView,
+  Text,
+  Alert,
+  ImageBackground,
+  Pressable,
+  TextInput,
+  StatusBar
+} from 'react-native';
 import Ripple from 'react-native-material-ripple';
 import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -14,6 +24,7 @@ import StickyView from '../../Components/StickyView';
 import CommentBox from '../../Components/CommentBox';
 import Image from 'react-native-fast-image';
 import { BLACK, BROWN, INTERESTS, SHADOW, THEME_COLOR, WHITE } from '../../Utils/Constants';
+import Selection from './Selection';
 
 const { width } = Dimensions.get('window');
 
@@ -26,9 +37,11 @@ const Home = ({ navigation, ...props }) => {
   const { blogs } = useSelector((state) => state.Blogs);
 
   // console.log('IN MONTH', state.eventsInMonth);
-  React.useEffect(() => {
+  React.useLayoutEffect(() => {
     // getRandomOrganisers();
     // getEventsInMonth();
+    StatusBar.setBackgroundColor('#fff');
+    StatusBar.setBarStyle('dark-content');
   }, []);
 
   // console.log('USER', user);
@@ -62,11 +75,14 @@ const Home = ({ navigation, ...props }) => {
   return (
     <View style={{ flex: 1 }}>
       {/* <SafeAreaView style={{ flex: 1 }}> */}
+      <StatusBar backgroundColor="#fff" barStyle="dark-content" />
 
       {/* </SafeAreaView> */}
 
       <ScrollView style={{ flexGrow: 1, width: '100%', backgroundColor: '#fff' }} showsVerticalScrollIndicator={false}>
         <TopCategories navigation={navigation} />
+
+        <Selection navigation={navigation} />
 
         <Organisers navigation={navigation} />
 

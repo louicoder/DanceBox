@@ -6,21 +6,26 @@ import io from 'socket.io-client';
 import moment from 'moment';
 import {
   BLACK,
+  DARK_BLUE,
+  DARK_GREEN,
   FIRESTORE,
   GRAY,
   HALF_BLACK,
   HALF_WHITE,
   HEIGHT,
+  LIGHT_BLUE,
+  LIGHT_GREEN,
   SHADOW,
   THEME_COLOR,
   THEME_COLOR3,
-  WHITE
+  WHITE,
+  WIDTH
 } from '../../Utils/Constants';
 import { HelperFunctions } from '../../Utils';
 import { BottomSheet, Buton, Button, DesignIcon, Input, Typo } from '../../Components';
 import { getUniqueId } from 'react-native-device-info';
 import SocketIOClient from 'socket.io-client/dist/socket.io.js';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { keyGenerator } from '../../Utils/HelperFunctions';
 import NewVoteEvent from './NewVoteEvent';
@@ -30,7 +35,7 @@ navigator.__defineGetter__('userAgent', () => 'react-native');
 const { height } = Dimensions.get('window');
 let socket;
 const Voting = ({ navigation, route }) => {
-  // const {} = useSelector((state) => state.Account);
+  const { user } = useSelector((state) => state.Account);
   const [ room, setRoom ] = React.useState({ users: 0, participants: [], votes: [] });
   const [ event, setEvent ] = React.useState({});
   const [ votingEvents, setVotingEvents ] = React.useState([]);
@@ -99,57 +104,111 @@ const Voting = ({ navigation, route }) => {
   const closeModal = () => setModal(false);
 
   const renderItem = ({ item, index }) => {
+    const timeDifference = moment(new Date().toISOString()).diff(item.dateCreated, 'hours');
+    console.log('Diff', timeDifference);
+
+    const votedOrNot = item.votes && item.votes.find((r) => r.uid === user.uid);
     return (
-      <Pressable
-        onPress={() => navigation.navigate('VotingRoom', { room: item })}
+      <View
+        // onPress={() => navigation.navigate('VotingRoom', { room: item })}
         style={{
-          width: '100%',
-          // borderWidth: 1,
-          // backgroundColor: '#D4E4F6',
+          // width: '100%',
+          borderWidth: 1,
+          borderColor: `${DARK_GREEN}70`,
+          alignSelf: 'center',
+          width: WIDTH - RFValue(20),
+          backgroundColor: '#fff',
           // backgroundColor: '#91C8CC',
-          backgroundColor: '#FCBB40',
+          // backgroundColor: '#FCBB40',
           borderRadius: RFValue(10),
           padding: RFValue(10),
+          paddingVertical: RFValue(15),
           // height: RFValue(100),
-          width: '100%',
-          marginTop: index === 0 ? RFValue(15) : 0,
-          marginBottom: index + 1 === (votingEvents && votingEvents.length) ? 0 : RFValue(15)
-          // shadowColor: '#aaa',
-          // ...SHADOW
+          // width: '100%',
+          marginTop: index === 0 ? RFValue(20) : 0,
+          marginBottom: index + 1 === (votingEvents && votingEvents.length) ? RFValue(70) : RFValue(20),
+          // ...SHADOW,
+          shadowColor: '#000'
+          // shadowOffset: { width: 0, height: RFValue(10) }
           // elevation: RFValue(8)
         }}
       >
-        <Typo text={item.title} style={{ textTransform: 'capitalize', fontWeight: 'bold' }} size={18} color={BLACK} />
-
+        <View style={{ position: 'absolute', right: RFValue(10), top: RFValue(10) }}>
+          <DesignIcon
+            name={timeDifference > 24 ? 'lock' : 'unlock'}
+            pkg="fa"
+            size={20}
+            color={timeDifference > 24 ? 'red' : 'green'}
+            withBorder
+          />
+        </View>
         <Typo
+          text={item.title}
+          style={{
+            textTransform: 'capitalize',
+            fontWeight: 'bold',
+            marginBottom: RFValue(10),
+            marginRight: RFValue(50)
+          }}
+          size={18}
+          color={BLACK}
+        />
+
+        {/* <Typo
           text={`Expires • ${moment(moment(item.dateCreated).add(24, 'hours')).fromNow()}`}
           style={{}}
           // size={12}
-          color={WHITE}
-        />
+          // color={WHITE}
+        /> */}
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: RFValue(5) }}>
+            <DesignIcon name="calendar" extStyles={{ marginRight: RFValue(10) }} />
+            <Typo
+              text={`${moment(item.dateCreated).format('dddd, Do - MMMM - YYYY')}`}
+              style={{}}
+              // size={12}
+              // color={HALF_WHITE}
+            />
+          </View>
+        </View>
+
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <DesignIcon name="chart" pkg="sim" extStyles={{ marginRight: RFValue(10) }} />
           <Typo
-            text={`Added − ${moment(item.dateCreated).format('Do・MMMM・YYYY')}`}
+            text={`${item.votes ? item.votes.length : 0} • total votes`}
             style={{}}
-            size={12}
+            // size={12}
             // color={HALF_WHITE}
           />
+        </View>
+
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            marginVertical: RFValue(5),
+            // borderWidth: 1,
+            width: '100%'
+          }}
+        >
+          <DesignIcon name="clock" pkg="sim" extStyles={{ marginRight: RFValue(10) }} />
           <Typo
-            text={`${item.votes ? item.votes.length : 0} • Votes`}
-            style={{
-              marginVertical: RFValue(5),
-              backgroundColor: '#D5A828',
-              alignSelf: 'flex-start',
-              paddingHorizontal: RFValue(10),
-              paddingVertical: RFValue(4),
-              borderRadius: RFValue(50)
-            }}
-            size={12}
-            // color="#5CEF75"
-            color="#fff"
+            text={`${timeDifference > 24
+              ? 'This event is over the due date for voting and votes will not be valid anymore'
+              : 'Your votes are valid for this event'}`}
+            style={{ color: timeDifference > 24 ? 'red' : 'green', flexShrink: 1, fontWeight: 'normal' }}
+            // size={12}
+            // color={HALF_WHITE}
           />
         </View>
-      </Pressable>
+
+        <Buton
+          title={votedOrNot ? 'Show Voting Results' : 'go To Voting'}
+          extStyles={{ marginTop: RFValue(5), backgroundColor: LIGHT_BLUE, height: RFValue(35) }}
+          textStyles={{ color: DARK_BLUE }}
+          onPress={() => navigation.navigate('VotingRoom', { room: item })}
+        />
+      </View>
     );
   };
 
@@ -177,11 +236,12 @@ const Voting = ({ navigation, route }) => {
         <DesignIcon name="plus" pkg="ad" color={WHITE} onPress={openModal} />
       </Pressable>
       {/* PARTICIPANT LIST */}
-      <View style={{ flexGrow: 1, backgroundColor: WHITE }}>
+      <View style={{ flexGrow: 1, paddingHorizontal: RFValue(0) }}>
         <FlatList
           keyExtractor={(item) => item.id}
-          style={{ flex: 1, marginHorizontal: RFValue(8) }}
+          style={{ flexGrow: 1, paddingHorizontal: RFValue(0) }}
           data={votingEvents}
+          showsVerticalScrollIndicator={false}
           // ListHeaderComponent={() => (
           // )}
           renderItem={renderItem}

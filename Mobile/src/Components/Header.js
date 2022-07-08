@@ -58,7 +58,7 @@ const Header = ({
           {LeftComponent ? (
             <LeftComponent />
           ) : (
-            <Typo text={title} size={18} style={{ fontWeight: 'bold', ...titleStyles }} />
+            <Typo text={title} size={20} style={{ fontWeight: 'bold', ...titleStyles }} />
           )}
         </View>
         <View style={{}}>{RightComponent ? <RightComponent /> : null}</View>

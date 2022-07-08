@@ -46,7 +46,7 @@ const EventsInMonth = ({ navigation }) => {
     >
       <Text
         style={{
-          marginVertical: RFValue(15),
+          marginBottom: RFValue(15),
           fontSize: RFValue(16),
           fontWeight: 'bold',
           backgroundColor: '#fff'
@@ -63,6 +63,7 @@ const EventsInMonth = ({ navigation }) => {
             navigation={navigation}
             // imageUrl="https://ychef.files.bbci.co.uk/1376x774/p07ztf1q.jpg"
             event={event}
+            showDescriptionPreview
           />
         ))}
     </View>

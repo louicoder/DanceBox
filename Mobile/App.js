@@ -1,114 +1,87 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow strict-local
- */
+import * as React from 'react';
+import { Text, View, StyleSheet, TouchableHighlight, Animated, Easing, Pressable } from 'react-native';
 
-import React from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  ScrollView,
-  View,
-  Text,
-  StatusBar,
-} from 'react-native';
+export default function App () {
+  const [ state, setState ] = React.useState({ toggled: false });
+  const [ height, setHeight ] = React.useState(0);
+  const animValue = new Animated.Value(0);
 
-import {
-  Header,
-  LearnMoreLinks,
-  Colors,
-  DebugInstructions,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+  const animate = () => {
+    // setState({ ...state, display: 'flex' });
+    console.log('HEight after', height);
 
-const App: () => React$Node = () => {
+    Animated.spring(animValue, {
+      toValue: height,
+      duration: 1000,
+      // easing: Easing.linear,
+      useNativeDriver: false
+    }).start(() => {
+      // Animated.timing(animValue, {
+      //   toValue: 0,
+      //   duration: 1000,
+      //   // easing: Easing.linear,
+      //   useNativeDriver: false
+      // }).start();
+    });
+  };
+
+  console.log('HEight', height);
+
   return (
-    <>
-      <StatusBar barStyle="dark-content" />
-      <SafeAreaView>
-        <ScrollView
-          contentInsetAdjustmentBehavior="automatic"
-          style={styles.scrollView}>
-          <Header />
-          {global.HermesInternal == null ? null : (
-            <View style={styles.engine}>
-              <Text style={styles.footer}>Engine: Hermes</Text>
-            </View>
-          )}
-          <View style={styles.body}>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Step One</Text>
-              <Text style={styles.sectionDescription}>
-                Edit <Text style={styles.highlight}>App.js</Text> to change this
-                screen and then come back to see your edits.
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>See Your Changes</Text>
-              <Text style={styles.sectionDescription}>
-                <ReloadInstructions />
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Debug</Text>
-              <Text style={styles.sectionDescription}>
-                <DebugInstructions />
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Learn More</Text>
-              <Text style={styles.sectionDescription}>
-                Read the docs to discover what to do next:
-              </Text>
-            </View>
-            <LearnMoreLinks />
-          </View>
-        </ScrollView>
-      </SafeAreaView>
-    </>
+    <View style={styles.container}>
+      <Pressable style={{ alignItems: 'center', borderWidth: 1, padding: 10 }} onPress={animate}>
+        <Text>Press me here</Text>
+      </Pressable>
+
+      <Animated.View
+        onLayout={(e) => {
+          console.log('Width Layout--->', e.nativeEvent.layout);
+          // setHeight(e.nativeEvent.layout.height);
+          // setState({ ...state, height: 0 });
+        }}
+        style={{
+          borderWidth: 1,
+          borderColor: 'blue',
+          // display: 'none',
+          // overflow: 'hidden',
+          // ...state
+          // height: animValue
+          transform: [ { scale: 1 } ]
+          // opacity: animValue.current.interpolate({
+          //   inputRange: [ 0, 0.5 * state.height, state.height ],
+          //   outputRange: [ 0, 0.5, 1 ],
+          //   extrapolate: 'identity'
+          // })
+          // zIndex: -10
+          // opacity: state.height >= 0 ? 1 : 0
+        }}
+      >
+        <Animated.Text
+          style={[ styles.paragraph, {} ]}
+          onLayout={(e) => {
+            console.log('Width=====--->', e.nativeEvent.layout);
+            // setState({ ...state, ...e.nativeEvent.layout, top: -e.nativeEvent.height, opacity: 0 });
+          }}
+        >
+          Change code in the editor and watch it change on your phone! Save to get a shareable urlx.
+        </Animated.Text>
+      </Animated.View>
+    </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
-  scrollView: {
-    backgroundColor: Colors.lighter,
+  container: {
+    flex: 1,
+    // justifyContent: 'center',
+    // paddingTop: Constants.statusBarHeight,
+    backgroundColor: '#ecf0f1',
+    padding: 8
   },
-  engine: {
-    position: 'absolute',
-    right: 0,
-  },
-  body: {
-    backgroundColor: Colors.white,
-  },
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-    color: Colors.black,
-  },
-  sectionDescription: {
-    marginTop: 8,
+  paragraph: {
+    margin: 24,
     fontSize: 18,
-    fontWeight: '400',
-    color: Colors.dark,
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-  footer: {
-    color: Colors.dark,
-    fontSize: 12,
-    fontWeight: '600',
-    padding: 4,
-    paddingRight: 12,
-    textAlign: 'right',
-  },
+    fontWeight: 'bold',
+    textAlign: 'center'
+  }
 });
-
-export default App;

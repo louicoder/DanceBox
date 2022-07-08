@@ -11,33 +11,36 @@ import { useDispatch, useSelector } from 'react-redux';
 import { showMessage } from 'react-native-flash-message';
 
 const PostProfileCard = (props) => {
-  // console.log('IMAEGEE--', props.imageUrl);
   const { user, activeFollowing } = useSelector((st) => st.Account);
+  const loading = useSelector((st) => st.loading.effects.Account);
   const dispatch = useDispatch();
   // console.log('USER', props.authorId, user.uid);
+  // console.log('IMAEGEE--', props.authorId, user.uid);
 
   const alreadyFollowed = user && user.following && user.following.includes(props.authorId);
 
   const followAccount = () => {
-    dispatch.Blogs.setField('activeFollowing', props._id);
+    dispatch.Account.setField('activeFollowing', props._id);
     let following = [];
     if (user.following) following = [ ...user.following, props.authorId ];
     else following.push(props.authorId);
+    console.log('Followed', props.authorId, 'Follower', user.uid);
 
     dispatch.Account.followAccount({
       following,
+      followed: props.authorId,
       callback: (res) => {
         if (!res.success) return showAlert('Something went wrong', res.result, 'danger');
-        return showMessage({
-          message: 'Successfully favorited post',
-          description: 'Successfully favorited this item and it will now be in your favorited posts',
-          floating: true,
-          // backgroundColor: BLACK,
-          textStyle: { color: WHITE },
-          style: { backgroundColor: BLACK },
-          position: 'top',
-          type: 'sucess'
-        });
+        // return showMessage({
+        //   message: 'Successfully favorited post',
+        //   description: 'Successfully favorited this item and it will now be in your favorited posts',
+        //   floating: true,
+        //   // backgroundColor: BLACK,
+        //   textStyle: { color: WHITE },
+        //   style: { backgroundColor: BLACK },
+        //   position: 'top',
+        //   type: 'sucess'
+        // });
       }
     });
   };
@@ -79,17 +82,25 @@ const PostProfileCard = (props) => {
 
         <Typo
           text={`Created • ${moment(props.dateCreated).fromNow()}`}
-          size={11}
-          style={{ lineHeight: RFValue(15) }}
-          color="#ffb57d"
+          size={10}
+          style={{ lineHeight: RFValue(13) }}
+          // color="#ffb57d"
+          color="#aaa"
         />
       </View>
 
-      {/* {user && user.uid !== props.authorId && !alreadyFollowed ? activeFollowing === props._id ? (
+      {activeFollowing === props._id && loading.followAccount ? (
         <ActivityIndicator animating color={BLACK} />
-      ) : (
-        <Typo text="+ Follow" style={{}} onPress={followAccount} pressable color="#682a92" size={14} />
-      ) : null} */}
+      ) : user.uid !== props.authorId && !alreadyFollowed ? (
+        <Typo
+          text="+ Follow"
+          style={{}}
+          onPress={() => (!loading.followAccount ? followAccount() : null)}
+          pressable
+          color="#682a92"
+          size={14}
+        />
+      ) : null}
     </View>
   );
 };

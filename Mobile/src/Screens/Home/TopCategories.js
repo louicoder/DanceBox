@@ -22,11 +22,12 @@ const TopCategories = ({ navigation: { navigate } }) => {
         width: '100%',
         paddingHorizontal: RFValue(10),
         backgroundColor: '#fff',
-        marginTop: RFValue(30),
-        marginBottom: RFValue(40)
+        marginVertical: RFValue(30)
+        // marginBottom: RFValue(30)
       }}
     >
-      {/* <HeaderLinker title="Top Categories" all={false} /> */}
+      {/* <Typo text="Quick Actions" size={16} style={{ fontWeight: 'bold', marginHorizontal: RFValue(10) }} /> */}
+
       <View
         style={{
           width: '100%',

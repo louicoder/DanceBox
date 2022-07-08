@@ -14,16 +14,9 @@ import Professions from './Professions';
 const FinishRegisration = ({ navigation }) => {
   const dispatch = useDispatch();
   const loading = useSelector((state) => state.loading.effects.Account);
+  const { user } = useSelector((state) => state.Account);
   const [ visible, setVisible ] = React.useState(false);
-  const [ state, setState ] = React.useState({
-    name: 'Sample name',
-    // username: 'Kodak',
-    phoneNumber: '+256783140303',
-    about:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. At negat Epicurus-hoc enim vestrum lumen estquemquam, qui honeste non vivat, iucunde posse vivere. Scio enim esse quosdam, qui quavis lingua philosophari possint; Causa autem fuit huc veniendi \n\n\n ut quosdam hinc libros promerem. Quodsi vultum tibi, si incessum fingeres, quo gravior viderere, non esses tui similis; Duo Reges: constructio interrete. Sic vester sapiens magno aliquo emolumento commotus cicuta, si opus erit, dimicabit.',
-    address: 'Kampala-Buagnda rd plot 123',
-    professions: []
-  });
+  const [ state, setState ] = React.useState({ ...user });
 
   React.useEffect(() => navigation.setParams({ goToAddPhoto: () => navigation.navigate('Interests') }), []);
 
@@ -33,7 +26,8 @@ const FinishRegisration = ({ navigation }) => {
       uid: AUTH.currentUser.uid,
       payload,
       callback: (resp) =>
-        resp.success ? navigation.navigate('Interests') : showAlert('Something went wrong', resp.result)
+        // resp.success ? navigation.navigate('Interests') : showAlert('Something went wrong', resp.result);
+        navigation.goBack()
     });
   };
 
@@ -43,9 +37,12 @@ const FinishRegisration = ({ navigation }) => {
 
   return (
     <View style={{ flex: 1 }}>
-      <BottomSheet isVisible={visible} closeModal={closeModal}>
+      <BottomSheet isVisible={visible} closeModal={closeModal} extStyles={{ top: 0, right: 0, left: 0, bottom: 0 }}>
+        <Header title="Select professions" onBackPress={closeModal} />
+
         <View
           style={{
+            // height: HEIGHT - useSafeAreaInsets().top,
             height: '100%',
             backgroundColor: '#fff'
             // paddingTop: RFValue(20),
@@ -60,14 +57,17 @@ const FinishRegisration = ({ navigation }) => {
           />
         </View>
       </BottomSheet>
-      <KeyboardAwareScrollView style={{ flex: 1, paddingHorizontal: RFValue(8) }} showsVerticalScrollIndicator={false}>
+      <KeyboardAwareScrollView
+        style={{ flex: 1, paddingHorizontal: RFValue(8), paddingTop: RFValue(10) }}
+        showsVerticalScrollIndicator={false}
+      >
         <Input
           title="full name / event name / company name / group name"
           placeholder="Enter your full name/ company name/event name etc..."
           extInputStyles={{ backgroundColor: '#eee', height: RFValue(40), borderWidth: 0 }}
           value={state.name}
           onChangeText={(name) => setState({ ...state, name })}
-          extStyles={{ marginTop: RFValue(20) }}
+          extStyles={{ marginTop: RFValue(0) }}
         />
         <Select
           title="what's are your professions"

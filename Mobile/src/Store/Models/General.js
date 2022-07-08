@@ -9,7 +9,8 @@ export default {
     blogsActiveShare: '',
     comments: [],
     commentsPagination: { nextPage: 1, limit: 10, totalDocuments: 0, last: false, totalPages: 1 },
-    activeCommentLike: ''
+    activeCommentLike: '',
+    chatAgree: false
   },
   reducers: {
     setField (state, field, value) {

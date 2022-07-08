@@ -92,11 +92,21 @@ export const FIRESTORE = _FIRESTORE();
 export const MESSAGING = _MESSAGING();
 export const AUTH = _AUTH();
 
+export const LIGHT_BLUE = '#D7EBFD';
+export const DARK_BLUE = '#0056D1';
+
+export const LIGHT_GREEN = '#D6FDE9';
+export const DARK_GREEN = '#00A557';
+
+export const LIGHT_RED = '#FFE1E2';
+export const DARK_RED = '#EE0028';
+
 export const SHADOW = {
-  shadowColor: '#000',
+  shadowColor: '#aaa',
   shadowOffset: { width: 0, height: RFValue(5) },
   shadowRadius: 8,
-  shadowOpacity: 0.5
+  elevation: RFValue(5),
+  shadowOpacity: 0.1
 };
 
 // export { WIDTH, HEIGHT };

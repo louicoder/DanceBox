@@ -90,7 +90,7 @@ export default function Intro ({ navigation }) {
   const setNewIndex = () => {
     // this log below continues to run even when I clear the interval in the cleanup function in the useEffect.
     // How do I know it's clear. The log runs but with a different interval Id from the reference on timer I created above
-    console.log('Still Running Interval', timer.current);
+    // console.log('Still Running Interval', timer.current);
     return setIndex((r) => (r !== 2 ? r + 1 : 0));
   };
 
