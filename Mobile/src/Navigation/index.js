@@ -561,7 +561,9 @@ const AllStacks = (props) => (
       name="Signup"
       component={Signup}
       options={{
-        header: (props) => <Header title="" {...props} backEnabled={false} extStyles={{ backgroundColor: WHITE }} />
+        header: (props) => (
+          <Header title="" {...props} backEnabled={false} extStyles={{ backgroundColor: THEME_COLOR }} />
+        )
       }}
       {...props}
     />
